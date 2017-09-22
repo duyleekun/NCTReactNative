@@ -5,7 +5,6 @@ export default (state, action) => {
     const {type} = action;
     if (isResponse(type)) {
         if (isResponseOk(type)) {
-            //TODO: merge to state
             return state.merge(action.payload.response.entities,{deep: true})
         }
     }

@@ -29,8 +29,8 @@ export const actions = createActions({
                 GET: (id, ...query) => ({path: `/playlists/${id}`, query: query, schemaName: 'playlist'}),
             },
             SONG: {
-                QUERY: (...query) => ({path: '/songs', query: query}),
-                GET: (id, ...query) => ({path: `/songs/${id}`, query: query}),
+                QUERY: (...query) => ({path: '/songs', query: query, schemaName: 'song'}),
+                GET: (id, ...query) => ({path: `/songs/${id}`, query: query, schemaName: 'song'}),
             },
             VIDEO: {
                 QUERY: (...query) => ({path: '/videos', query: query}),

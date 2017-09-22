@@ -1,12 +1,13 @@
 import {StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
 import HelloScreen from "../screens/helloScreen";
 import HomeScreen from "../screens/homeScreen";
+import SongDetailScreen from "../screens/songDetailScreen";
 import PlaylistDetailScreen from "../screens/playlistDetailScreen";
 import * as React from "react";
 import {MainTabBar} from "../components/mainTabBar";
 
 export default StackNavigator({
-    SongDetail: { screen: HelloScreen},
+    SongDetail: { screen: SongDetailScreen},
     PlaylistDetail: { screen: PlaylistDetailScreen},
     VideoDetail: { screen: HelloScreen},
     MainTabBar: {
