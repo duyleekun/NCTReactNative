@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 
 import thunkMiddleware from 'redux-thunk'
 import { createLogger } from 'redux-logger'
-import { apiMiddleware } from 'redux-api-middleware';
-
+// import { apiMiddleware } from 'redux-api-middleware';
+import apiMiddleWare from './middleware/api'
 
 import { createStore, applyMiddleware } from 'redux'
 // import { } from './actions'
@@ -16,9 +16,9 @@ import AppNavigator from "./config/routes";
 const store = createStore(
     rootReducer,
     applyMiddleware(
-        apiMiddleware,
+        apiMiddleWare,
         thunkMiddleware, // lets us dispatch() functions
-        createLogger() // neat middleware that logs actions
+        createLogger(), // neat middleware that logs actions
     )
 )
 

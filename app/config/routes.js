@@ -1,87 +1,75 @@
-import {DrawerNavigator, StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
+import {StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
 import HelloScreen from "../screens/helloScreen";
-import {Text, View} from "react-native";
+import HomeScreen from "../screens/homeScreen";
+import PlaylistDetailScreen from "../screens/playlistDetailScreen";
 import * as React from "react";
 import {MainTabBar} from "../components/mainTabBar";
 
-const stackNav = StackNavigator({
-    Home: {screen: HelloScreen},
-    Detail: {screen: HelloScreen},
-    Playlist: {screen: HelloScreen},
-}, {
-    headerMode: 'none'
-})
-
-const AppNavigator = TabNavigator({
-    TabItem1: {
-        screen: stackNav,
-        navigationOptions: {
-            tabBarLabel: "Của Tui",
-            // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
-        }
-    },
-    TabItem2: {
+export default StackNavigator({
+    SongDetail: { screen: HelloScreen},
+    PlaylistDetail: { screen: PlaylistDetailScreen},
+    VideoDetail: { screen: HelloScreen},
+    MainTabBar: {
         screen: TabNavigator({
-            TabItem21: {
-                screen: stackNav,
+            TabItem1: {
+                screen: HelloScreen,
                 navigationOptions: {
-                    tabBarLabel: "Trang Chủ",
-                    // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
+                    tabBarLabel: "Của Tui",
                 }
             },
-            TabItem22: {
-                screen: stackNav,
+            TabItem2: {
+                screen: TabNavigator({
+                    TabItem21: {
+                        screen: HomeScreen,
+                        navigationOptions: {
+                            tabBarLabel: "Trang Chủ",
+                        }
+                    },
+                    TabItem22: {
+                        screen: HelloScreen,
+                        navigationOptions: {
+                            tabBarLabel: "Playlist",
+                        }
+                    },
+                    TabItem23: {
+                        screen: HelloScreen,
+                        navigationOptions: {
+                            tabBarLabel: "BXH",
+                        }
+                    },
+                    TabItem24: {
+                        screen: HelloScreen,
+                        navigationOptions: {
+                            tabBarLabel: "Chủ Đề",
+                        }
+                    }
+                }, {
+                    tabBarOptions: {
+                        activeTintColor: '#222'
+                    },
+                    swipeEnabled: true,
+                    tabBarPosition: 'top',
+                    tabBarComponent: TabBarTop,
+                }),
                 navigationOptions: {
-                    tabBarLabel: "Playlist",
-                    // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
-                }
-            },
-            TabItem23: {
-                screen: stackNav,
-                navigationOptions: {
-                    tabBarLabel: "BXH",
-                    // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
-                }
-            },
-            TabItem24: {
-                screen: stackNav,
-                navigationOptions: {
-                    tabBarLabel: "Chủ Đề",
+                    tabBarLabel: "Online",
                     // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
                 }
             }
         }, {
-            tabBarOptions: {
-                activeTintColor: '#222'
-            },
-            swipeEnabled: true,
+            tabBarComponent: MainTabBar,
+            initialRouteName: 'TabItem2',
             tabBarPosition: 'top',
-            tabBarComponent: TabBarTop,
+            swipeEnabled: true
         }),
         navigationOptions: {
-            tabBarLabel: "Online",
-            // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
+            header: null
         }
     }
 }, {
-    tabBarComponent: MainTabBar,
-    tabBarOptions: {
-        activeTintColor: '#222',
-        labelStyle: {
-            fontSize: 12,
-        },
-        style: {
-            backgroundColor: 'blue',
-            justifyContent: 'center'
-        },
-        tabStyle: {
-            backgroundColor: 'red',
-            flex: 0,
-            alignSelf: 'center'
-        }
-    },
-    tabBarPosition: 'top',
-    swipeEnabled: true
+    // headerMode: () => {
+    //     debugger
+    //     return 'none'
+    // },
+    initialRouteName: 'MainTabBar'
 })
-
-export default AppNavigator

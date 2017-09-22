@@ -7,7 +7,7 @@ export class MainTabBar extends Component {
         const {navigationState, jumpToIndex, getLastPosition, position, navigation, getLabel} = this.props
         const {routes, index} = navigationState;
         return (<View style={{flexDirection: 'row',marginTop: 15, justifyContent: 'space-between', backgroundColor: 'transparent'}}>
-            <Button title="Left" />
+            <View></View>
             {routes.map((route, i) => {
                 const focused = index === i;
                 const scene = {
@@ -19,7 +19,7 @@ export class MainTabBar extends Component {
                     <Text style={{padding: 10, color: focused ? 'red' : 'blue'}} key={route.key}>{getLabel(scene)}</Text>
                 )
             })}
-            <Button title="Search" />
+            <View></View>
         </View>)
     }
 }

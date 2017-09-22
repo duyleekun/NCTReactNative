@@ -1,16 +1,36 @@
-import React, { Component } from 'react';
+import {connect} from "react-redux";
 import {Button, Text, View} from "react-native";
+import * as React from "react";
+import actions from "../actions"
 
-export default class extends Component {
+class HomeScreen extends React.Component {
+    static navigationOptions = ({navigation}) => {
+        let {state: {params: {title} = {title: (new Date()).toISOString()}}} = navigation
+        return {
+            title
+        }
+    }
 
     render() {
-        const { navigate } = this.props.navigation;
-        return (
-            <View>
-                <Text>LOL</Text>
-                <Button title="Chat with Lucy" onPress={()=> navigate('Detail')}>Nav</Button>
-            </View>
-
-        )
+        let props = this.props;
+        return (<View>
+            <Text>Home</Text>
+            <Button title="Nest Navigate" onPress={() => props.navigate('PlaylistDetail')}/>
+            <Button title="Test" onPress={() => props.loadHomePage()}/>
+        </View>)
     }
 }
+
+export default connect(
+    (state, ownProps) => {
+        return {
+            navigate: ownProps.navigation.navigate
+        }
+    },
+    (dispatch, ownProps) => {
+        return {
+            loadHomePage: () => {
+                dispatch(actions.api.request.home.query())
+            }
+        }
+    })(HomeScreen);
