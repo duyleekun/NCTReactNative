@@ -1,17 +1,14 @@
-
-import React, { Component } from 'react';
-
+import React, {Component} from 'react';
 import thunkMiddleware from 'redux-thunk'
-import { createLogger } from 'redux-logger'
-// import { apiMiddleware } from 'redux-api-middleware';
+import {createLogger} from 'redux-logger'
 import apiMiddleWare from './middleware/api'
-
-import { createStore, applyMiddleware } from 'redux'
-// import { } from './actions'
+import {createStore, applyMiddleware} from 'redux'
 import rootReducer from './reducers'
 import {addNavigationHelpers} from "react-navigation";
 import {connect, Provider} from "react-redux";
 import AppNavigator from "./config/routes";
+import Player from "./components/player"
+import {View} from "react-native";
 
 const store = createStore(
     rootReducer,
@@ -22,29 +19,25 @@ const store = createStore(
     )
 )
 
-class MyNCT extends Component {
-    render() {
-        return (
-            <AppNavigator navigation={addNavigationHelpers({
-                dispatch: this.props.dispatch,
-                state: this.props.nav,
-            })} />
-        );
-    }
-}
-
-const mapStateToProps = (state) => ({
-    nav: state.nav
-});
-
-
-const AppWithNavigationState = connect(mapStateToProps)(MyNCT);
+const AppWithNavigationState = connect(
+    (state) => ({
+        nav: state.nav
+    })
+)((props) => (
+    <View style={{flex: 1}}>
+        <AppNavigator navigation={addNavigationHelpers({
+            dispatch: props.dispatch,
+            state: props.nav,
+            style: {flex: 1}
+        })}/>
+        <Player style={{width: '100%'}} />
+    </View>));
 
 export default class extends React.Component {
     render() {
         return (
             <Provider store={store}>
-                <AppWithNavigationState />
+                <AppWithNavigationState/>
             </Provider>
         );
     }

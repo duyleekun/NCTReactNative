@@ -3,6 +3,7 @@ import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "rea
 import * as React from "react";
 import Dimensions from 'Dimensions';
 import {API_REQUEST_SONG_GET} from "../actions/api";
+import {PLAYER_NOWLIST_ADD, PLAYER_NOWLIST_CLEAR, PLAYER_PLAY} from "../actions/player";
 
 class SongDetailScreen extends React.Component {
 
@@ -41,7 +42,10 @@ export default connect(
     (dispatch, ownProps) => {
         return {
             loadSong: (songId) => {
-                dispatch(API_REQUEST_SONG_GET(songId))
+                dispatch(API_REQUEST_SONG_GET(songId));
+                dispatch(PLAYER_NOWLIST_CLEAR());
+                dispatch(PLAYER_NOWLIST_ADD(songId));
+                dispatch(PLAYER_PLAY());
             }
         }
     })(SongDetailScreen);

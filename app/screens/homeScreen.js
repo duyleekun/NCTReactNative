@@ -50,6 +50,7 @@ export default connect(
             },
             gotoShowCaseItem: (item) => {
                 let {navigate} = ownProps.navigation
+                console.log(item.type)
                 switch (item.type) {
                     case 'Video':
                         // navigate('VideoDetail',{id: item.itemId, title: item.title})
@@ -58,7 +59,7 @@ export default connect(
                         navigate('PlaylistDetail',{id: item.itemId, title: item.title})
                         break;
                     case 'Song':
-                        // navigate('SongDetail',{id: item.itemId, title: item.title})
+                        navigate('SongDetail',{id: item.itemId, title: item.title})
                         break;
                     default:
                 }
