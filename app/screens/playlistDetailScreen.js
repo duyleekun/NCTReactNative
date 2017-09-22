@@ -1,8 +1,8 @@
 import {connect} from "react-redux";
 import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
-import actions from "../actions"
 import Dimensions from 'Dimensions';
+import {API_REQUEST_PLAYLIST_GET} from "../actions/api";
 
 class PlaylistDetailScreen extends React.Component {
 
@@ -10,7 +10,7 @@ class PlaylistDetailScreen extends React.Component {
         let {state: {params: {title} = {title: (new Date()).toISOString()}}} = navigation
         return {
             title,
-            header: null
+            // header: null
         }
     }
 
@@ -30,7 +30,7 @@ class PlaylistDetailScreen extends React.Component {
                    source={{uri: playlistResponse.playlistImage}}/>
             <FlatList
                 data={playlistResponse.listSong.map((id) => entities.songs[id])}
-                keyExtractor={(item) => item.songId}
+                keyExtractor={(item) => item.songKey}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({item}) => (
                     <TouchableWithoutFeedback onPress={() => this.props.gotoSong(item)}>
@@ -58,11 +58,11 @@ export default connect(
     (dispatch, ownProps) => {
         return {
             loadPlaylist: (playlistId) => {
-                dispatch(actions.api.request.playlist.get(playlistId))
+                dispatch(API_REQUEST_PLAYLIST_GET(playlistId))
             },
             gotoSong: (item) => {
                 let {navigate} = ownProps.navigation
-                navigate('SongDetail',{id: item.songId, title: item.songTitle})
+                navigate('SongDetail',{id: item.songKey, title: item.songTitle})
             }
         }
     })(PlaylistDetailScreen);

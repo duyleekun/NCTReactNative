@@ -1,8 +1,8 @@
 import {connect} from "react-redux";
 import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
-import actions from "../actions"
 import Dimensions from 'Dimensions';
+import {API_REQUEST_SONG_GET} from "../actions/api";
 
 class SongDetailScreen extends React.Component {
 
@@ -10,7 +10,7 @@ class SongDetailScreen extends React.Component {
         let {state: {params: {title} = {title: (new Date()).toISOString()}}} = navigation
         return {
             title,
-            header: null
+            // header: null
         }
     }
 
@@ -25,9 +25,8 @@ class SongDetailScreen extends React.Component {
         let {state: {params: {id: songId}}} = props.navigation;
         let {entities} = props
         let {songs: {[songId]: songResponse = {}} = {[songId]: {}}} = entities;
-        console.log(songResponse)
         return (<View>
-            {songResponse.songTitle}
+            <Text>{songResponse.songTitle}</Text>
         </View>)
     }
 }
@@ -42,7 +41,7 @@ export default connect(
     (dispatch, ownProps) => {
         return {
             loadSong: (songId) => {
-                dispatch(actions.api.request.song.get(songId))
+                dispatch(API_REQUEST_SONG_GET(songId))
             }
         }
     })(SongDetailScreen);

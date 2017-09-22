@@ -1,7 +1,7 @@
 import * as schemas from "../config/apiSchema";
 import {normalize, schema} from 'normalizr';
-import actions from '../actions'
-import {isRequest} from "../actions/api";
+
+import {API_RESPONSE_ERROR, API_RESPONSE_SUCCESS, isRequest} from "../actions/api";
 
 const API_ROOT = 'https://graph.nhaccuatui.com/v4';
 
@@ -18,13 +18,13 @@ export default ({dispatch, getState}) => next => action => {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                dispatch(actions.api.response.success({
+                dispatch(API_RESPONSE_SUCCESS({
                     request: payload,
                     response: normalize(responseJson.data, schemas[schemaName])
                 }))
             })
             .catch((error) => {
-                dispatch(actions.api.response.error(error))
+                dispatch(API_RESPONSE_ERROR(error))
             })
     }
     return next(action)

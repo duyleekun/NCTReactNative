@@ -1,7 +1,6 @@
 import {connect} from "react-redux";
 import {Button, Text, View} from "react-native";
 import * as React from "react";
-import actions from "../actions"
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({navigation}) => {
@@ -30,7 +29,7 @@ export default connect(
     (dispatch, ownProps) => {
         return {
             loadHomePage: () => {
-                dispatch(actions.api.request.home.query())
+                dispatch(API_REQUEST_HOME_QUERY())
             }
         }
     })(HomeScreen);

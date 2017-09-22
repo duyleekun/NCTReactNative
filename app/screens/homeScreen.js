@@ -1,8 +1,9 @@
 import {connect} from "react-redux";
 import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
-import actions from "../actions"
+
 import Dimensions from 'Dimensions';
+import {API_REQUEST_HOME_QUERY} from "../actions/api";
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -45,7 +46,7 @@ export default connect(
     (dispatch, ownProps) => {
         return {
             loadHomePage: () => {
-                dispatch(actions.api.request.home.query())
+                dispatch(API_REQUEST_HOME_QUERY())
             },
             gotoShowCaseItem: (item) => {
                 let {navigate} = ownProps.navigation
