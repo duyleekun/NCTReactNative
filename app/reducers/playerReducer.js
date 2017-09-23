@@ -5,10 +5,13 @@ import {
 } from "../actions/player";
 import Immutable from 'seamless-immutable'
 
+
 let initialState = Immutable({isPlaying: false, nowList: [], nowAt: -1});
 
 export default handleActions({
-    [PLAYER_PLAY]: (state, action) => state.set('isPlaying', true).update('nowAt',(currentNowAt)=> currentNowAt > -1 ? currentNowAt : (state.nowList.length - 1)),
+    [PLAYER_PLAY]: (state, action) => {
+        return state.set('isPlaying', true).update('nowAt', (currentNowAt) => currentNowAt > -1 ? currentNowAt : (state.nowList.length - 1))
+    },
     [PLAYER_PAUSE]: (state, action) => state.set('isPlaying', false),
     [PLAYER_NOWLIST_ADD]: (state, action) => state.update('nowList', (nowList) => nowList.concat([action.payload.songKey])),
     [PLAYER_NOWLIST_CLEAR]: (state, action) => state.set('isPlaying', false).set('nowList', []).set('nowAt', -1),
