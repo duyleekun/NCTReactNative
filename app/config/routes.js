@@ -12,44 +12,39 @@ export default StackNavigator({
     VideoDetail: {screen: HelloScreen},
     MainTabBar: {
         screen: TabNavigator({
-            TabItem1: {
+            ["ME/HOME"]: {
                 screen: HelloScreen,
                 navigationOptions: {
                     tabBarLabel: "Của Tui",
-                    tabBarGroup: "Của Tui"
                 }
             },
-            TabItem21: {
+            ["ONLINE/HOME"]: {
                 screen: HomeScreen,
                 navigationOptions: {
                     tabBarLabel: "Trang Chủ",
-                    tabBarGroup: "Online"
                 }
             },
-            TabItem22: {
+            ["ONLINE/PLAYLIST"]: {
                 screen: HelloScreen,
                 navigationOptions: {
                     tabBarLabel: "Playlist",
-                    tabBarGroup: "Online"
                 }
             },
-            TabItem23: {
+            ["ONLINE/BXH"]: {
                 screen: HelloScreen,
                 navigationOptions: {
                     tabBarLabel: "BXH",
-                    tabBarGroup: "Online"
                 }
             },
-            TabItem24: {
+            ["ONLINE/TOPIC"]: {
                 screen: HelloScreen,
                 navigationOptions: {
                     tabBarLabel: "Chủ Đề",
-                    tabBarGroup: "Online"
                 }
             }
         }, {
             tabBarComponent: MainTabBar,
-            initialRouteName: 'TabItem21',
+            initialRouteName: "ONLINE/HOME",
             tabBarPosition: 'top',
             swipeEnabled: true,
             animationEnabled: true,
