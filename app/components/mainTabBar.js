@@ -1,24 +1,28 @@
 import {Component} from 'react'
-import {Button, Text, View} from "react-native";
+import {Button, Text, View, Animated} from "react-native";
 import * as React from "react";
+import Dimensions from "Dimensions"
 
 export class MainTabBar extends Component {
     render() {
         const {navigationState, jumpToIndex, getLastPosition, position, navigation, getLabel} = this.props
+        const offset = position.interpolate({
+            inputRange: [0, 1, 4],
+            outputRange: [Dimensions.get('window').width, 0, 0]
+        });
+
         const {routes, index} = navigationState;
-        return (<View style={{flexDirection: 'column'}}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15, marginBottom: 15}}>
+        return (<View style={{position: 'absolute', zIndex: 1000, width: '100%', top: 0}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', zIndex: 1001}}>
                 <View></View>
-                <Text style={{color: index === 0 ? 'red' : 'blue'}}>Của Tui</Text>
-                <Text style={{color: index > 0 ? 'red' : 'blue'}}>Online</Text>
+                <Text style={{padding: 15, color: index === 0 ? 'red' : 'blue'}}>Của Tui</Text>
+                <Text style={{padding: 15, color: index > 0 ? 'red' : 'blue'}}>Online</Text>
                 <View></View>
             </View>
-            <View style={{
+            <Animated.View style={{
                 flexDirection: 'row',
-                marginBottom: 15,
                 justifyContent: 'space-between',
-                backgroundColor: 'transparent',
-                display: index === 0 ? 'none' : 'flex'
+                marginLeft: offset
             }}>
                 <View></View>
                 {routes.map((route, i) => {
@@ -29,12 +33,12 @@ export class MainTabBar extends Component {
                         index: i,
                     };
                     return (
-                        <Text style={{padding: 10, color: focused ? 'red' : 'blue'}}
+                        <Text style={{padding: 15, color: focused ? 'red' : 'blue'}}
                               key={route.key}>{getLabel(scene)}</Text>
                     )
                 }).splice(1)}
                 <View></View>
-            </View>
+            </Animated.View>
         </View>)
     }
 }
