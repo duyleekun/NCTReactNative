@@ -3,6 +3,8 @@ package com.mynct;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.zmxv.RNSound.RNSoundPackage;
+import com.tanguyantoine.react.MusicControl;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -25,6 +27,9 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
           new RNSoundPackage()
+          new MainReactPackage(),
+            new RNSoundPackage(),
+            new MusicControl()
       );
     }
   };
