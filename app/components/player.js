@@ -71,8 +71,8 @@ class Player extends React.Component {
 
         return (
             <Animated.View style={{
-                ...imageStyle
-            }} {...this._panResponder.panHandlers}>
+                ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
+            }} {...this._panResponder.panHandlers} clipsToBounds={false}>
                 <View style={{
                     flexDirection: 'row',
                     height: 50,
@@ -91,8 +91,6 @@ class Player extends React.Component {
                 </View>
 
                 <View style={{
-                    position: 'absolute',
-                    top: 50,
                     height: Dimensions.get('window').height,
                     width: '100%',
                     backgroundColor: 'red'

@@ -12,7 +12,7 @@ export class MainTabBar extends Component {
         });
 
         const {routes, index} = navigationState;
-        return (<View style={{position: 'absolute', zIndex: 1000, width: Dimensions.get('window').width, top: 0}}>
+        return (<View style={{position: 'absolute', zIndex: 1000, width: Dimensions.get('window').width, top: 0, backgroundColor: 'green'}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', zIndex: 1001}}>
                 <View></View>
                 <Text style={{padding: 15, color: index === 0 ? 'red' : 'blue'}}>Của Tui</Text>
