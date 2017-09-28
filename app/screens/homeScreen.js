@@ -4,6 +4,7 @@ import * as React from "react";
 
 import Dimensions from 'Dimensions';
 import {API_REQUEST_HOME_QUERY} from "../actions/api";
+import FeatureComponent from "../components/featureComponent"
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -31,7 +32,10 @@ class HomeScreen extends React.Component {
                 )}
                 horizontal={true}
             />
-            <Text>{JSON.stringify(homeResponse.Showcase)}</Text>
+            {/*<Text>{JSON.stringify(homeResponse.Showcase)}</Text>*/}
+            <View style={{padding: 15}}>
+                <FeatureComponent navigation={this.props.navigation}/>
+            </View>
         </View>)
     }
 }

@@ -7,9 +7,13 @@ import * as React from "react";
 import {MainTabBar} from "../components/mainTabBar";
 
 export default StackNavigator({
-    SongDetail: {screen: SongDetailScreen},
+    ArtistListDetail: {screen: HelloScreen},
     PlaylistDetail: {screen: PlaylistDetailScreen},
+    SongDetail: {screen: SongDetailScreen},
+    SongListDetail: {screen: HelloScreen},
+    Top100Detail: {screen: HelloScreen},
     VideoDetail: {screen: HelloScreen},
+    VideoListDetail: {screen: HelloScreen},
     MainTabBar: {
         screen: TabNavigator({
             ["ME/HOME"]: {
