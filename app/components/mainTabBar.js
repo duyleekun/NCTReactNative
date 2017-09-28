@@ -12,18 +12,19 @@ export class MainTabBar extends Component {
         });
 
         const {routes, index} = navigationState;
-        return (<View style={{position: 'absolute', zIndex: 1000, width: Dimensions.get('window').width, top: 0, backgroundColor: 'green'}}>
+        return (<View style={{position: 'absolute', zIndex: 1000, width: Dimensions.get('window').width, top: 0, backgroundColor: 'transparent'}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', zIndex: 1001}}>
                 <View></View>
-                <Text style={{padding: 15, color: index === 0 ? 'red' : 'blue'}}>Của Tui</Text>
-                <Text style={{padding: 15, color: index > 0 ? 'red' : 'blue'}}>Online</Text>
+                <Text style={{padding: 15, color: index === 0 ? 'red' : 'blue',}} onPress={()=>navigation.navigate(routes[0].key)}>Của Tui</Text>
+                <Text style={{padding: 15, color: index > 0 ? 'red' : 'blue'}} onPress={()=>navigation.navigate(routes[1].key)}>Online</Text>
                 <View></View>
             </View>
             <Animated.View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginLeft: offset,
-                width: '100%'
+                width: '100%',
+                backgroundColor: 'green'
             }}>
                 <View></View>
                 {routes.map((route, i) => {
@@ -35,6 +36,7 @@ export class MainTabBar extends Component {
                     };
                     return (
                         <Text style={{padding: 15, color: focused ? 'red' : 'blue'}}
+                              onPress={()=>navigation.navigate(route.key)}
                               key={route.key}>{getLabel(scene)}</Text>
                     )
                 }).splice(1)}
