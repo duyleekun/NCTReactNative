@@ -688,11 +688,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = DQADN3FJ9P;
+						DevelopmentTeam = 579Y6Q5295;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = DQADN3FJ9P;
+						DevelopmentTeam = 579Y6Q5295;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1164,7 +1164,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = DQADN3FJ9P;
+				DEVELOPMENT_TEAM = 579Y6Q5295;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1196,7 +1196,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = DQADN3FJ9P;
+				DEVELOPMENT_TEAM = 579Y6Q5295;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-music-control/ios",
@@ -1225,7 +1225,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = DQADN3FJ9P;
+				DEVELOPMENT_TEAM = 579Y6Q5295;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-music-control/ios",
@@ -1238,6 +1238,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = phucnguyen.MyNCT;
 				PRODUCT_NAME = MyNCT;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1248,7 +1249,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = DQADN3FJ9P;
+				DEVELOPMENT_TEAM = 579Y6Q5295;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-music-control/ios",
@@ -1261,6 +1262,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = phucnguyen.MyNCT;
 				PRODUCT_NAME = MyNCT;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

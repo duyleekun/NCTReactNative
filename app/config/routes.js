@@ -25,7 +25,7 @@ export default StackNavigator({
                 }
             },
             ["ONLINE/PLAYLIST"]: {
-                screen: HelloScreen,
+                screen: PlaylistDetailScreen,
                 navigationOptions: {
                     tabBarLabel: "Playlist",
                 }
