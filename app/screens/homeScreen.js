@@ -34,7 +34,7 @@ class HomeScreen extends React.Component {
             />
             {/*<Text>{JSON.stringify(homeResponse.Showcase)}</Text>*/}
             <View style={{padding: 15}}>
-                <FeatureComponent navigation={this.props.navigation}/>
+                <FeatureComponent onClick={(route) => this.props.gotoFeatureItem(route)} />
             </View>
         </View>)
     }
@@ -53,20 +53,25 @@ export default connect(
                 dispatch(API_REQUEST_HOME_QUERY())
             },
             gotoShowCaseItem: (item) => {
-                let {navigate} = ownProps.navigation
-                console.log(item.type)
+                let {navigate} = ownProps.navigation;
+                console.log(item.type);
                 switch (item.type) {
                     case 'Video':
                         // navigate('VideoDetail',{id: item.itemId, title: item.title})
                         break;
                     case 'List':
-                        navigate('PlaylistDetail',{id: item.itemId, title: item.title})
+                        navigate('PlaylistDetail',{id: item.itemId, title: item.title});
                         break;
                     case 'Song':
-                        navigate('SongDetail',{id: item.itemId, title: item.title})
+                        navigate('SongDetail',{id: item.itemId, title: item.title});
                         break;
                     default:
                 }
+            },
+            gotoFeatureItem: (route) =>{
+                console.log(route);
+                let {navigate} = ownProps.navigation;
+                navigate(route)
             }
         }
     })(HomeScreen);

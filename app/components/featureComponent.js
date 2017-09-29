@@ -1,8 +1,8 @@
 import {Component} from 'react'
 import React from 'react';
-import {FlatList, Image, Text, View} from "react-native";
+import {FlatList, Image, Text, TouchableOpacity} from "react-native";
 import {connect} from "react-redux";
-
+import Styles from "../assets/styles/featureComponentStyles"
 const thumbnails = {
     artist: require("../assets/images/ic_nghesy.png"),
     video: require("../assets/images/ic_video.png"),
@@ -10,7 +10,7 @@ const thumbnails = {
     top: require("../assets/images/ic_top100.png")
 };
 
-class FeatureComponent extends Component{
+export default class FeatureComponent extends Component{
     getImage(img: String){
         return thumbnails[img];
     }
@@ -38,39 +38,39 @@ class FeatureComponent extends Component{
     ];
 
     _renderItem = ({item}) => (
-        <View onPress={this.props.gotoScreen(item)} style={{width: '25%', textAlign: 'center'}}>
+        <TouchableOpacity  onPress={() => this.props.onClick(item.route)} style={Styles.holder}>
             <Image
-                style={{width: 70, height: 70}}
+                style={Styles.img}
                 source={this.getImage(item.picUrl)}
-                // source={require("../assets/images/ic_top100.png")}
             />
-            <Text>
+            <Text style={Styles.text}>
                 {item.textString}
             </Text>
-        </View>
+        </TouchableOpacity>
     );
     render(){
         return (
             <FlatList
                 data={this.tabs}
                 numColumns={4}
+                keyExtractor={item=>item.route}
                 renderItem={this._renderItem}
             />
         )
     }
 }
-export default connect(
-    (state, ownProps) => {
-        return {
-            navigate: ownProps.navigation.navigate,
-            entities: state.entities
-        }
-    },
-    (dispatch, ownProps) => {
-        return {
-            gotoScreen: (item) => {
-                let {navigate} = ownProps.navigation;
-                // navigate(item.route)
-            }
-        }
-    })(FeatureComponent);
+// export default connect(
+//     (state, ownProps) => {
+//         return {
+//             navigate: ownProps.navigation.navigate,
+//             entities: state.entities
+//         }
+//     },
+//     (dispatch, ownProps) => {
+//         return {
+//             gotoScreen: (item) => {
+//                 let {navigate} = ownProps.navigation;
+//                 navigate(item.route)
+//             }
+//         }
+//     })(FeatureComponent);
