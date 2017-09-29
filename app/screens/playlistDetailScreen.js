@@ -1,8 +1,7 @@
 import {connect} from "react-redux";
 import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
-import Dimensions from 'Dimensions';
-import {AlbumCell} from '../components/albumCell'
+import AlbumCell from '../components/albumCell'
 import {API_REQUEST_PLAYLIST_QUERY} from "../actions/api";
 
 class PlaylistDetailScreen extends React.Component {
@@ -21,24 +20,38 @@ class PlaylistDetailScreen extends React.Component {
         props.loadPlaylist();
     }
 
+    _onPressItem = (id: string) => (
+        this.setState((state)=>{
+            const selected = new Map(state.selected);
+            selected.set(id, !selected.get(id));
+            return {selected};
+        })
+    );
+
+    _renderItem = ({item}) => (
+        <AlbumCell
+            onPressItem={this._onPressItem}
+        />
+    );
+
+
     render() {
         let {props} = this;
         // let {state: {params: {id: playlistId}}} = props.navigation;
         let {entities} = props
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
-        console.log('json playlist: ' + JSON.stringify(entities))
+        // console.log('json playlist: ' + JSON.stringify(playlists))
         return (<View>
-            {/*<Image style={{width: Dimensions.get('window').width, aspectRatio: 619 / 250}}*/}
-                   {/*source={{uri: playlistResponse.playlistImage}}/>*/}
-            {/*<FlatList*/}
-                {/*data={playlistResponse.listSong.map((id) => entities.songs[id])}*/}
-                {/*keyExtractor={(item) => item.songKey}*/}
-                {/*showsHorizontalScrollIndicator={false}*/}
-                {/*renderItem={({item}) => (*/}
-                    {/*<AlbumCell/>*/}
-                {/*)}*/}
-                {/*horizontal={true}*/}
-            {/*/>*/}
+            <FlatList
+                data={['a','b']}
+                // keyExtractor={(item) => item.songKey}
+                showsHorizontalScrollIndicator={false}
+                // getItemLayout={(data, index) => (
+                //     {length: 40, offset: 40 * index, index}
+                // )}
+                renderItem = {this._renderItem}
+                horizontal={true}
+            />
         </View>)
     }
 }

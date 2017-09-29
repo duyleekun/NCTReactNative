@@ -1,19 +1,25 @@
 /**
  * Created by nguyenphuc on 9/28/17.
  */
-import {Component} from 'react'
 import {Image, Text, TouchableWithoutFeedback, View} from "react-native";
+import * as React from "react";
+import Dimensions from 'Dimensions';
 
-export class AlbumCell extends Component{
+export default class AlbumCell extends React.PureComponent{
+
+    _onPress = () => {
+        // this.props._onPressItem(this.props.id)
+    }
+
     render(){
         let props = this.props
-        return (<TouchableWithoutFeedback /*onPress={() => props.gotoSong(item)}*/>
-            <View style={{width: Dimensions.get('window').width, aspectRatio: 619 / 250}}>
-            <Image source={{uri: item.image}} style={{width: '100%', height: '100%'}}/>
+        return (<View>
+            <View style={{width: Dimensions.get('window').width/3, aspectRatio: 1}}>
+            <Image source={{uri: 'http://avatar.nct.nixcdn.com/playlist/2017/05/10/b/d/4/4/1494409311789.jpg'}} style={{width: '100%', height: '100%'}}/>
             </View>
             <View>
-                <Text>{item.songTitle}</Text>
+                <Text>nguyen Huu Phuc</Text>
             </View>
-        </TouchableWithoutFeedback>)
+        </View>)
     }
 }
