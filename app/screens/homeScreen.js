@@ -18,7 +18,7 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities: {home: {0: homeResponse} = {0: {Showcase: []}}}} = this.props
-        return (<View>
+        return (<View style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
                 keyExtractor={(item) => item.itemId}
@@ -33,7 +33,7 @@ class HomeScreen extends React.Component {
                 horizontal={true}
             />
             {/*<Text>{JSON.stringify(homeResponse.Showcase)}</Text>*/}
-            <View style={{padding: 15}}>
+            <View style={{margin: 15, paddingBottom: 10, marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                 <FeatureComponent onClick={(route) => this.props.gotoFeatureItem(route)} />
             </View>
         </View>)
