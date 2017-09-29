@@ -59,18 +59,3 @@ export default class FeatureComponent extends Component{
         )
     }
 }
-// export default connect(
-//     (state, ownProps) => {
-//         return {
-//             navigate: ownProps.navigation.navigate,
-//             entities: state.entities
-//         }
-//     },
-//     (dispatch, ownProps) => {
-//         return {
-//             gotoScreen: (item) => {
-//                 let {navigate} = ownProps.navigation;
-//                 navigate(item.route)
-//             }
-//         }
-//     })(FeatureComponent);
