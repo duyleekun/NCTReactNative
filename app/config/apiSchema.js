@@ -10,7 +10,7 @@ export const home = new schema.Entity('home',{
     AlbumHot: [playlist],
     VideoHot: [video],
     SongHot: [song],
-    TopicHot: [topic],
+    // TopicHot: [topic],
     Relax: [video],
     PlayListByTime: [playlist],
 },{ idAttribute: () => 0 });

@@ -5,8 +5,11 @@ import * as React from "react";
 import Dimensions from 'Dimensions';
 import {API_REQUEST_HOME_QUERY} from "../actions/api";
 import Feature from "../components/featureComponent"
-import SectionHeader from "../components/sectionHeaderComponent"
+
 import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_HEADER_RANKING,SECTION_HEADER_SONG,SECTION_HEADER_VIDEO} from "../config/constants"
+import SectionHeader from "../components/sectionHeaderComponent"
+import HotTopic from "../components/hotTopicComponent"
+
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -34,13 +37,14 @@ class HomeScreen extends React.Component {
                 )}
                 horizontal={true}
             />
-            <Text>{JSON.stringify(homeResponse.TopicHot)}</Text>
+            {/*<Text>{JSON.stringify(homeResponse.TopicHot)}</Text>*/}
             <View style={{margin: 15, paddingBottom: 10}}>
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <Feature onClick={(route) => this.props.gotoFeatureItem(route)} />
                 </View>
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Album Hot"} icon={SECTION_HEADER_ALBUM}/>
+                    <HotTopic dataList={homeResponse.TopicHot}/>
                 </View>
             </View>
         </View>)
