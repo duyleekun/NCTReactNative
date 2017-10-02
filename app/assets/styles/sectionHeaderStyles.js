@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
         flexDirection: "row"
     },
     imgMore: {
-        height: 15,
-        width: 15,
+        height: 14,
+        width: 14,
         paddingBottom:0,
         marginLeft: 1
     },
@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
         color: "#32AAEA"
     },
     icon:{
-        height: 12,
-        width: 12,
+        height: 11,
+        width: 11,
         marginRight:3
     },
     title:{

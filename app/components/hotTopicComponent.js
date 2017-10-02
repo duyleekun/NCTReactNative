@@ -1,15 +1,16 @@
 import {Component} from 'react'
 import React from 'react';
 import {FlatList, Image, Text, TouchableOpacity} from "react-native";
+import Styles from '../assets/styles/hotTopicStyle'
 
 export default class HotTopicComponent extends Component{
     _renderItem = ({item}) => (
-        <TouchableOpacity style={{justifyContent: 'center',alignItems: 'center',flex: 1}}>
+        <TouchableOpacity style={Styles.holder}>
             <Image
-                style={{width: 30, height: 30, tintColor: "#32AAEA"}}
+                style={Styles.icon}
                 source={{uri: item.iconUrl}}
             />
-            <Text style={{textAlign: "center"}}>
+            <Text style={Styles.text}>
                 {item.title}
                 {/*{item.iconBGUrl}*/}
             </Text>
@@ -20,11 +21,10 @@ export default class HotTopicComponent extends Component{
         // console.log(this.props.dataList[0].iconBGUrl)
         return (
             <FlatList
-                data={this.props.dataList}
+                data={this.props.data}
                 numColumns={4}
                 keyExtractor={item=>item.topicId}
                 renderItem={this._renderItem}
-                style={{display: "flex", alignItem: "flex-start"}}
             />
         )
     }

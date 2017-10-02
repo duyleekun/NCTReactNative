@@ -2,7 +2,7 @@ import {Component} from 'react'
 import React from 'react';
 import {View, Image, Text, TouchableOpacity} from "react-native";
 import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_HEADER_RANKING,SECTION_HEADER_SONG,SECTION_HEADER_VIDEO} from "../config/constants"
-import Styles from "../assets/styles/sectionHeaderComponentStyles"
+import Styles from "../assets/styles/sectionHeaderStyles"
 const icons = {
     [SECTION_HEADER_ALBUM]: require("../assets/images/ic_recommend_scene.png"),
     [SECTION_HEADER_TODAY]: require("../assets/images/ic_recommend_by_time.png"),

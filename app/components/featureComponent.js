@@ -2,7 +2,7 @@ import {Component} from 'react'
 import React from 'react';
 import {FlatList, Image, Text, TouchableOpacity} from "react-native";
 import {connect} from "react-redux";
-import Styles from "../assets/styles/featureComponentStyles"
+import Styles from "../assets/styles/featureStyles"
 const thumbnails = {
     artist: require("../assets/images/ic_nghesy.png"),
     video: require("../assets/images/ic_video.png"),

@@ -17,11 +17,12 @@ class HomeScreen extends React.Component {
     }
 
     componentDidMount() {
-        let props = this.props
+        let props = this.props;
         props.loadHomePage()
     }
 
     render() {
+        let {entities} = this.props;
         let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: []}}}} = this.props;
         return (<View style={{backgroundColor: "white"}}>
             <FlatList
@@ -37,14 +38,13 @@ class HomeScreen extends React.Component {
                 )}
                 horizontal={true}
             />
-            {/*<Text>{JSON.stringify(homeResponse.TopicHot)}</Text>*/}
             <View style={{margin: 15, paddingBottom: 10}}>
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <Feature onClick={(route) => this.props.gotoFeatureItem(route)} />
                 </View>
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
-                    <SectionHeader title={"Album Hot"} icon={SECTION_HEADER_ALBUM}/>
-                    <HotTopic dataList={homeResponse.TopicHot}/>
+                    <SectionHeader title={"Chủ Đề"} icon={SECTION_HEADER_TOPIC}/>
+                    <HotTopic data={homeResponse.TopicHot.map((id) => entities.topics[id])}/>
                 </View>
             </View>
         </View>)
