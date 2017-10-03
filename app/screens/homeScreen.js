@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
+import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View, ScrollView} from "react-native";
 import * as React from "react";
 
 import Dimensions from 'Dimensions';
@@ -9,6 +9,7 @@ import Feature from "../components/featureComponent"
 import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_HEADER_RANKING,SECTION_HEADER_SONG,SECTION_HEADER_VIDEO} from "../config/constants"
 import SectionHeader from "../components/sectionHeaderComponent"
 import HotTopic from "../components/hotTopicComponent"
+import HomeRanking from "../components/homeRankingComponent"
 
 
 class HomeScreen extends React.Component {
@@ -23,8 +24,8 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: []}}}} = this.props;
-        return (<View style={{backgroundColor: "white"}}>
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: []}}}} = this.props;
+        return (<ScrollView style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
                 keyExtractor={(item) => item.itemId}
@@ -44,10 +45,21 @@ class HomeScreen extends React.Component {
                 </View>
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Chủ Đề"} icon={SECTION_HEADER_TOPIC}/>
-                    <HotTopic data={homeResponse.TopicHot.map((id) => entities.topics[id])}/>
+                    <HotTopic
+                        data={homeResponse.TopicHot.map((id) => entities.topics[id])}
+                    />
+                </View>
+                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA", position: 'relative'}}>
+                    <SectionHeader title={"BXH Bài Hát Việt Nam"} icon={SECTION_HEADER_RANKING}/>
+                    <HomeRanking
+                        data={
+                            entities.rankingMusics === undefined ?
+                                [] :
+                                entities.rankingMusics[homeResponse.BXH].items.map(item => entities.rankingItems[item])}
+                    />
                 </View>
             </View>
-        </View>)
+        </ScrollView>)
     }
 }
 

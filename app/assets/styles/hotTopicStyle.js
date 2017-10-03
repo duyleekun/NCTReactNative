@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
         tintColor: "#32AAEA"
     },
     text:{
-        textAlign: "center"
+        textAlign: "center",
+        marginTop: 10
     }
 });
 export default styles
