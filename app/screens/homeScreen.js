@@ -10,6 +10,7 @@ import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_H
 import SectionHeader from "../components/sectionHeaderComponent"
 import HotTopic from "../components/hotTopicComponent"
 import HomeRanking from "../components/homeRankingComponent"
+import HomeRankingMV from "../components/homeRankingMVComponent"
 import SongHot from "../components/songHotComponent"
 
 
@@ -25,7 +26,7 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: [],SongHot: []}}}} = this.props;
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: [],SongHot: [],BXHVideo: []}}}} = this.props;
         return (<ScrollView style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
@@ -41,16 +42,16 @@ class HomeScreen extends React.Component {
                 horizontal={true}
             />
             <View style={{margin: 15, paddingBottom: 10}}>
-                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <Feature onClick={(route) => this.props.gotoFeatureItem(route)} />
                 </View>
-                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Chủ Đề"} icon={SECTION_HEADER_TOPIC}/>
                     <HotTopic
                         data={homeResponse.TopicHot.map((id) => entities.topics[id])}
                     />
                 </View>
-                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA", position: 'relative'}}>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA", position: 'relative'}}>
                     <SectionHeader title={"BXH Bài Hát Việt Nam"} icon={SECTION_HEADER_RANKING}/>
                     <HomeRanking
                         data={
@@ -59,10 +60,18 @@ class HomeScreen extends React.Component {
                                 entities.rankingMusics[homeResponse.BXH].items.map(item => entities.rankingItems[item])}
                     />
                 </View>
-                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
                     <SongHot
                         data={homeResponse.SongHot.map(songKey => entities.songs[songKey]).slice(0,5)}/>
+                </View>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
+                    <HomeRankingMV
+                        data={
+                            entities.rankingVideos === undefined ?
+                                [] :
+                                entities.rankingVideos[homeResponse.BXHVideo].items.map(item => entities.rankingItems[item])}/>
                 </View>
             </View>
         </ScrollView>)

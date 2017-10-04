@@ -2,7 +2,7 @@ import {Component} from 'react'
 import React from 'react';
 import Dimensions from 'Dimensions';
 import {View, Image, Text, TouchableOpacity} from "react-native";
-import Styles from '../assets/styles/homeRankingStyles'
+import Styles from '../assets/styles/homeRankingMVStyles'
 
 export default class HomeRankingComponent extends Component{
     render(){
@@ -77,7 +77,7 @@ export default class HomeRankingComponent extends Component{
                             numberOfLines={2}
                             ellipsizeMode={"tail"}
                             style={Styles.artists}>
-                            {data[2].artistNames}
+                            {data[1].artistNames}
                         </Text>
                     </View>
                 </TouchableOpacity>
