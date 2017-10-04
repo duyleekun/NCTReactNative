@@ -10,12 +10,13 @@ import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_H
 import SectionHeader from "../components/sectionHeaderComponent"
 import HotTopic from "../components/hotTopicComponent"
 import HomeRanking from "../components/homeRankingComponent"
+import SongHot from "../components/songHotComponent"
 
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
         title: 'Home',
-    }
+    };
 
     componentDidMount() {
         let props = this.props;
@@ -24,7 +25,7 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: []}}}} = this.props;
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: [],SongHot: []}}}} = this.props;
         return (<ScrollView style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
@@ -57,6 +58,11 @@ class HomeScreen extends React.Component {
                                 [] :
                                 entities.rankingMusics[homeResponse.BXH].items.map(item => entities.rankingItems[item])}
                     />
+                </View>
+                <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
+                    <SongHot
+                        data={homeResponse.SongHot.map(songKey => entities.songs[songKey])}/>
                 </View>
             </View>
         </ScrollView>)
