@@ -8,11 +8,12 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     holder: {
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: 'center'
     },
     imgMore: {
-        height: 14,
-        width: 14,
+        height: 10,
+        width: 10,
         paddingBottom:0,
         marginLeft: 1
     },
