@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ededed',
+        // borderTopWidth: 1,
+        borderTopColor: '#ededed',
         padding: 15,
         paddingLeft:0,
         marginLeft: 15

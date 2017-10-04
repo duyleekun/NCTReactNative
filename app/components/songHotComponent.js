@@ -5,12 +5,12 @@ import {View,FlatList, Image, Text, TouchableOpacity} from "react-native";
 import Styles from '../assets/styles/songHotStyles'
 
 export default class TopSongComponent extends Component{
-    _renderItem = ({item}) => (
+    _renderItem = ({item,index}) => (
         <TouchableOpacity style={Styles.row}>
             <Image
                 style={{width: Dimensions.get('window').width / 9, aspectRatio: 1}}
                 source={{uri: item.image}}/>
-            <View style={Styles.detailHolder}>
+            <View style={[Styles.detailHolder,{borderTopWidth: index === 0 ? 0 : 1}]}>
                 <View style={Styles.detail}>
                     <Text style={Styles.title}>
                         {item.songTitle}
