@@ -62,7 +62,7 @@ class HomeScreen extends React.Component {
                 <View style={{paddingBottom: 10,marginBottom: 15, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
                     <SongHot
-                        data={homeResponse.SongHot.map(songKey => entities.songs[songKey])}/>
+                        data={homeResponse.SongHot.map(songKey => entities.songs[songKey]).slice(0,5)}/>
                 </View>
             </View>
         </ScrollView>)
