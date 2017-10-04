@@ -22,6 +22,18 @@ const styles = StyleSheet.create({
         color: '#333333',
         marginBottom: 5,
     },
+    albumImageContainer:{
+        width: '100%',
+        aspectRatio: 1,
+        position: 'relative'
+    },
+    albumTitle:{
+        textAlign: 'center',
+        color: '#333333',
+        fontSize: 12,
+        margin: 10,
+        maxWidth: '100%'
+    }
 });
 
 export default styles;

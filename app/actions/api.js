@@ -24,9 +24,9 @@ export const API_REQUEST_HOME_QUERY = createAction('API/REQUEST/HOME/QUERY', () 
     schemaName: 'home'
 }))
 export const API_REQUEST_PLAYLIST_QUERY = createAction('API/REQUEST/PLAYLIST/QUERY', (...query) => ({
-    path: '/playlists',
+    path: '/playlists/genre/0?pageindex=1&pagesize=30&etype=tini&type=hottest&cached=0',
     query: query,
-    schemaName: 'playlist'
+    schemaName: 'playlistsScreen'
 }))
 export const API_REQUEST_PLAYLIST_GET = createAction('API/REQUEST/PLAYLIST/GET', (id, ...query) => ({
     path: `/playlists/${id}`,

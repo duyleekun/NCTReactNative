@@ -20,17 +20,9 @@ class PlaylistDetailScreen extends React.Component {
         props.loadPlaylist();
     }
 
-    _onPressItem = (id: string) => (
-        this.setState((state)=>{
-            const selected = new Map(state.selected);
-            selected.set(id, !selected.get(id));
-            return {selected};
-        })
-    );
-
     _renderItem = ({item}) => (
         <AlbumCell
-            onPressItem={this._onPressItem}
+            id = {item}
         />
     );
 
@@ -41,16 +33,18 @@ class PlaylistDetailScreen extends React.Component {
         let {entities} = props
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
         // console.log('json playlist: ' + JSON.stringify(playlists))
+        let playlists = entities["\"playlistsScreen\""]
         return (<View>
             <FlatList
-                data={['a','b']}
-                // keyExtractor={(item) => item.songKey}
+                data={playlists}
+                keyExtractor={(item) => item}
                 showsHorizontalScrollIndicator={false}
                 // getItemLayout={(data, index) => (
                 //     {length: 40, offset: 40 * index, index}
                 // )}
+                numColumns = {3}
                 renderItem = {this._renderItem}
-                horizontal={true}
+                horizontal = {false}
             />
         </View>)
     }
@@ -65,7 +59,8 @@ export default connect(
     },
     (dispatch, ownProps) => {
         return {
-            loadPlaylist: (playlistId = '') => {
+            loadPlaylist: () => {
+                console.log('request playlist')
                 dispatch(API_REQUEST_PLAYLIST_QUERY())
             },
             gotoSong: (item) => {

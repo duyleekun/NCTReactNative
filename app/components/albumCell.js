@@ -1,25 +1,42 @@
 /**
  * Created by nguyenphuc on 9/28/17.
  */
+import {connect} from "react-redux";
 import {Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
 import Dimensions from 'Dimensions';
+import styles from '../config/styles'
 
-export default class AlbumCell extends React.PureComponent{
-
-    _onPress = () => {
-        // this.props._onPressItem(this.props.id)
-    }
+class AlbumCell extends React.PureComponent{
 
     render(){
         let props = this.props
-        return (<View>
-            <View style={{width: Dimensions.get('window').width/3, aspectRatio: 1}}>
-            <Image source={{uri: 'http://avatar.nct.nixcdn.com/playlist/2017/05/10/b/d/4/4/1494409311789.jpg'}} style={{width: '100%', height: '100%'}}/>
+        let {entities} = props
+        // let {playlists: {[entities.id]: playlist}} = entities
+        let {playlists} = entities
+        let playlist = playlists[props.id]
+        return (<View style={{width: Dimensions.get('window').width/3, position: 'relative'}}>
+            <View style={styles.albumImageContainer}>
+            <Image source={{uri: playlist.playlistImage}} style={{width: '100%', height: '100%'}}/>
             </View>
             <View>
-                <Text>nguyen Huu Phuc</Text>
+                <Text style={styles.albumTitle}>{playlist.playlistTitle}</Text>
             </View>
         </View>)
     }
 }
+
+export default connect(
+    (state, ownProps) => {
+        return {
+            entities: state.entities
+        }
+    },
+    (dispatch, ownProps) => {
+        return {
+            // gotoSong: (item) => {
+            //     let {navigate} = ownProps.navigation
+            //     navigate('SongDetail',{id: item.songKey, title: item.songTitle})
+            // }
+        }
+    })(AlbumCell);

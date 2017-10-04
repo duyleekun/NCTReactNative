@@ -14,3 +14,5 @@ export const home = new schema.Entity('home',{
     Relax: [video],
     PlayListByTime: [playlist],
 },{ idAttribute: () => 0 });
+
+export const playlistsScreen = new schema.Array(playlist);
