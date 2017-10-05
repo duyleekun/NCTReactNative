@@ -19,7 +19,8 @@ export default class HomeRankingComponent extends Component{
                     </View>
                 </View>
 
-                <TouchableOpacity style={Styles.holder}>
+                <TouchableOpacity style={Styles.holder}
+                                  onPress={()=>this.props.onClick(data[1].key)}>
                     <Image
                         style={Styles.thumb}
                         source={{uri: data[1].image}}
@@ -40,7 +41,8 @@ export default class HomeRankingComponent extends Component{
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={Styles.holderFirst}>
+                <TouchableOpacity style={Styles.holderFirst}
+                                  onPress={()=>this.props.onClick(data[0].key)}>
                     <Image
                         style={Styles.thumb}
                         source={{uri: data[0].image}}
@@ -61,7 +63,8 @@ export default class HomeRankingComponent extends Component{
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={Styles.holder}>
+                <TouchableOpacity style={Styles.holder}
+                                  onPress={()=>this.props.onClick(data[1].key)}>
                     <Image
                         style={Styles.thumb}
                         source={{uri: data[2].image}}

@@ -15,6 +15,7 @@ class HomeScreen extends React.Component {
 
         return (<View style={{marginTop: props.marginTop}}>
             <Text>Home</Text>
+            <Text>{JSON.stringify(props.navigation.state.params)}</Text>
             <Button title="Nest Navigate" onPress={() => props.navigate('PlaylistDetail')}/>
             <Button title="Test" onPress={() => props.loadHomePage()}/>
         </View>)
