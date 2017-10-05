@@ -17,10 +17,18 @@ class AlbumCell extends React.PureComponent{
         let playlist = playlists[props.id]
         return (<View style={{width: Dimensions.get('window').width/3, position: 'relative'}}>
             <View style={styles.albumImageContainer}>
-            <Image source={{uri: playlist.playlistImage}} style={{width: '100%', height: '100%'}}/>
+                <View>
+                    <Image source={{uri: playlist.playlistImage}} style={{width: '100%', height: '100%'}}/>
+                </View>
+                <View>
+                    <Image source={require('../tempResPlaylist/bt_playpage_button_play_normal.png')} style={{width: '100%', aspectRatio: 1, position: 'absolute', marginBottom: 2, marginRight: 2}}/>
+                </View>
             </View>
             <View>
-                <Text style={styles.albumTitle}>{playlist.playlistTitle}</Text>
+                <Text style={styles.albumTitle} numberOfLines={2} ellipsizeMode={'tail'}>{playlist.playlistTitle}</Text>
+            </View>
+            <View>
+                <Text style={styles.artist} numberOfLines={1} ellipsizeMode={'tail'}>{playlist.artistName}</Text>
             </View>
         </View>)
     }

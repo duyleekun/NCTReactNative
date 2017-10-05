@@ -28,11 +28,18 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     albumTitle:{
-        textAlign: 'center',
+        textAlign: 'left',
         color: '#333333',
         fontSize: 12,
-        margin: 10,
-        maxWidth: '100%'
+        margin: 2,
+        maxWidth: '100%',
+    },
+    artist:{
+        textAlign: 'left',
+        color: '#5b5b5b',
+        fontSize: 10,
+        maxWidth: '100%',
+        margin: 2
     }
 });
 
