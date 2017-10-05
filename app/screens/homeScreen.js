@@ -6,14 +6,17 @@ import Dimensions from 'Dimensions';
 import {API_REQUEST_HOME_QUERY} from "../actions/api";
 import Feature from "../components/featureComponent"
 
-import {SECTION_HEADER_ALBUM,SECTION_HEADER_TODAY,SECTION_HEADER_TOPIC,SECTION_HEADER_RANKING,SECTION_HEADER_SONG,SECTION_HEADER_VIDEO} from "../config/constants"
+import {
+    SECTION_HEADER_ALBUM, SECTION_HEADER_TODAY, SECTION_HEADER_TOPIC, SECTION_HEADER_RANKING, SECTION_HEADER_SONG,
+    SECTION_HEADER_VIDEO, SECTION_HEADER_FUNNY
+} from "../config/constants"
 import SectionHeader from "../components/sectionHeaderComponent"
 import HotTopic from "../components/hotTopicComponent"
 import HomeRanking from "../components/homeRankingComponent"
 import HomeRankingMV from "../components/homeRankingMVComponent"
 import SongHot from "../components/songHotComponent"
 import HomeAlbum from "../components/homeAlbumComponent"
-
+import HomeVideo from "../components/homeVideoComponent"
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
@@ -27,7 +30,7 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [], TopicHot: [], BXH: [], SongHot: [], BXHVideo: [], AlbumHot: [], PlayListByTime: []}}}} = this.props;
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [], TopicHot: [], BXH: [], SongHot: [], BXHVideo: [], AlbumHot: [], PlayListByTime: [], VideoHot: [], Relax: []}}}} = this.props;
         return (<ScrollView style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
@@ -81,6 +84,14 @@ class HomeScreen extends React.Component {
                             entities.rankingVideos === undefined ?
                                 [] :
                                 entities.rankingVideos[homeResponse.BXHVideo].items.map(item => entities.rankingItems[item])}/>
+                </View>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"MV Hot"} icon={SECTION_HEADER_VIDEO}/>
+                    <HomeVideo data={homeResponse.VideoHot.map(videoKey => entities.videos[videoKey]).slice(0,4)}/>
+                </View>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"Clip Vui & Hài Kịch"} icon={SECTION_HEADER_FUNNY}/>
+                    <HomeVideo data={homeResponse.Relax.map(videoKey => entities.videos[videoKey]).slice(0,4)}/>
                 </View>
             </View>
         </ScrollView>)

@@ -2,28 +2,27 @@ import {Component} from 'react'
 import React from 'react';
 import {FlatList, Image, Text, View, TouchableOpacity} from "react-native";
 import Dimensions from 'Dimensions';
-import Styles from '../assets/styles/homeAlbumStyles'
+import Styles from '../assets/styles/homeVideoStyles'
 
-const separatorWidth = 6; // should be even number
+const separatorWidth = 8; // should be even number
 export default class HomeAlbumComponent extends Component{
     _renderItem = ({item,index}) => (
-        <TouchableOpacity style={{width: Dimensions.get('window').width/3 - separatorWidth*2, position: 'relative',
+        <TouchableOpacity style={{width: (Dimensions.get('window').width -30)/2, position: 'relative',
             marginTop: 5,
-            marginLeft: index % 3 ===0 ? 0 : index % 3 === 1 ? separatorWidth/2 : separatorWidth,
-            marginRight:index % 3 ===0 ? separatorWidth : index % 3 === 1 ? separatorWidth/2 : 0
+            marginLeft: index % 2 ===0 ? 0 : separatorWidth,
         }}>
             <View style={Styles.albumImageContainer}>
                 <View>
                     <Image
-                        source={{uri: item.playlistImage}}
-                        style={{width: '100%', height: '100%'}}/>
+                        source={{uri: item.videoImage}}
+                        style={{width: '100%', aspectRatio: 16/9}}/>
                 </View>
             </View>
             <View>
                 <Text style={Styles.albumTitle}
                       numberOfLines={2}
                       ellipsizeMode={'tail'}>
-                    {item.playlistTitle}
+                    {item.videoTitle}
                 </Text>
             </View>
             <View>
@@ -39,8 +38,8 @@ export default class HomeAlbumComponent extends Component{
         return(
             <FlatList
                 data={this.props.data}
-                numColumns={3}
-                keyExtractor={item=>item.playlistKey}
+                numColumns={2}
+                keyExtractor={item=>item.videoKey}
                 renderItem={this._renderItem}
             />
         )

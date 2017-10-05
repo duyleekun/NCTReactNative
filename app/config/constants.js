@@ -4,3 +4,4 @@ export const SECTION_HEADER_TOPIC = "topic";
 export const SECTION_HEADER_RANKING = "ranking";
 export const SECTION_HEADER_SONG = "song";
 export const SECTION_HEADER_VIDEO = "video";
+export const SECTION_HEADER_FUNNY = "funny";
