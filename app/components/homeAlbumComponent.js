@@ -7,11 +7,12 @@ import Styles from '../assets/styles/homeAlbumStyles'
 const separatorWidth = 6; // should be even number
 export default class HomeAlbumComponent extends Component{
     _renderItem = ({item,index}) => (
-        <TouchableOpacity style={{width: Dimensions.get('window').width/3 - separatorWidth*2, position: 'relative',
-            marginTop: 5,
+        <TouchableOpacity
+            style={{width: (Dimensions.get('window').width-30)/3 - separatorWidth*2, position: 'relative',marginTop: 5,
             marginLeft: index % 3 ===0 ? 0 : index % 3 === 1 ? separatorWidth/2 : separatorWidth,
-            marginRight:index % 3 ===0 ? separatorWidth : index % 3 === 1 ? separatorWidth/2 : 0
-        }}>
+            marginRight:index % 3 ===0 ? separatorWidth : index % 3 === 1 ? separatorWidth/2 : 0}}
+            onPress={() => this.props.onClick(item.playlistKey)}
+        >
             <View style={Styles.albumImageContainer}>
                 <View>
                     <Image
