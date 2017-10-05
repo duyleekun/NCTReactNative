@@ -4,6 +4,10 @@ import * as React from "react";
 import AlbumCell from '../components/albumCell'
 import {API_REQUEST_PLAYLIST_QUERY} from "../actions/api";
 
+export const singleHeight = 50
+export const doubleHeight = 98
+
+
 class PlaylistDetailScreen extends React.Component {
 
     static navigationOptions = ({navigation}) => {
@@ -29,13 +33,12 @@ class PlaylistDetailScreen extends React.Component {
 
 
     render() {
-        let {props} = this;
         // let {state: {params: {id: playlistId}}} = props.navigation;
-        let {entities} = props
+        let {entities, marginTop} = this.props
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
         // console.log('json playlist: ' + JSON.stringify(playlists))
         let playlists = entities["\"playlistsScreen\""]
-        return (<View style = {{margin: 15}}>
+        return (<View style = {{margin: 15, marginTop: marginTop + 15, backgroundColor: 'white'}}>
             <FlatList
                 data={playlists}
                 keyExtractor={(item) => item}

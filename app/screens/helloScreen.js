@@ -12,7 +12,8 @@ class HomeScreen extends React.Component {
 
     render() {
         let props = this.props;
-        return (<View>
+
+        return (<View style={{marginTop: props.marginTop}}>
             <Text>Home</Text>
             <Button title="Nest Navigate" onPress={() => props.navigate('PlaylistDetail')}/>
             <Button title="Test" onPress={() => props.loadHomePage()}/>

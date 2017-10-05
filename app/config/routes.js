@@ -2,9 +2,16 @@ import {StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
 import HelloScreen from "../screens/helloScreen";
 import HomeScreen from "../screens/homeScreen";
 import SongDetailScreen from "../screens/songDetailScreen";
-import PlaylistDetailScreen from "../screens/playlistDetailScreen";
+import PlaylistDetailScreen, {doubleHeight, singleHeight} from "../screens/playlistDetailScreen";
 import * as React from "react";
 import {MainTabBar} from "../components/mainTabBar";
+
+const componentWithPaddingAdded = (component : React.Component,marginTop) => (props) => {
+    //FUN FACT, *C* const name must be UpperCased
+    // https://stackoverflow.com/a/33471928/861451
+    const C = component
+    return (<C {...props} {...{marginTop}}  />)
+}
 
 export default StackNavigator({
     ArtistListDetail: {screen: HelloScreen},
@@ -17,31 +24,32 @@ export default StackNavigator({
     MainTabBar: {
         screen: TabNavigator({
             ["ME/HOME"]: {
-                screen: HelloScreen,
+                screen: componentWithPaddingAdded(HelloScreen, singleHeight),
                 navigationOptions: {
                     tabBarLabel: "Của Tui",
                 }
             },
             ["ONLINE/HOME"]: {
-                screen: HomeScreen,
+                // screen: HomeScreen,
+                screen: componentWithPaddingAdded(HomeScreen, doubleHeight),
                 navigationOptions: {
                     tabBarLabel: "Trang Chủ",
                 }
             },
             ["ONLINE/PLAYLIST"]: {
-                screen: PlaylistDetailScreen,
+                screen: componentWithPaddingAdded(PlaylistDetailScreen, doubleHeight),
                 navigationOptions: {
                     tabBarLabel: "Playlist",
                 }
             },
             ["ONLINE/BXH"]: {
-                screen: HelloScreen,
+                screen: componentWithPaddingAdded(HelloScreen, doubleHeight),
                 navigationOptions: {
                     tabBarLabel: "BXH",
                 }
             },
             ["ONLINE/TOPIC"]: {
-                screen: HelloScreen,
+                screen: componentWithPaddingAdded(HelloScreen, doubleHeight),
                 navigationOptions: {
                     tabBarLabel: "Chủ Đề",
                 }
