@@ -40,6 +40,19 @@ const styles = StyleSheet.create({
         fontSize: 10,
         maxWidth: '100%',
         margin: 2
+    },
+    listened:{
+        textAlign: 'left',
+        color: '#ffffff',
+        fontSize: 8,
+        marginLeft: 2
+    },
+    playImage: {
+        width: '18%',
+        height: '18%',
+        position: 'absolute',
+        bottom: 2,
+        right: 2
     }
 });
 

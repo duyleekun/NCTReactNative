@@ -7,6 +7,8 @@ import * as React from "react";
 import Dimensions from 'Dimensions';
 import styles from '../config/styles'
 
+const separatorWidth = 6; // should be even number
+
 class AlbumCell extends React.PureComponent{
 
     render(){
@@ -15,14 +17,16 @@ class AlbumCell extends React.PureComponent{
         // let {playlists: {[entities.id]: playlist}} = entities
         let {playlists} = entities
         let playlist = playlists[props.id]
-        return (<View style={{width: Dimensions.get('window').width/3, position: 'relative'}}>
+        let {index} = props
+        return (
+            <View style={{width: (Dimensions.get('window').width - 30 - separatorWidth*2)/3, position: 'relative'}}>
             <View style={styles.albumImageContainer}>
-                <View>
-                    <Image source={{uri: playlist.playlistImage}} style={{width: '100%', height: '100%'}}/>
+                <Image source={{uri: playlist.playlistImage}} style={{width: '100%', height: '100%'}}/>
+                <View style={{width: '100%', height: '12%',backgroundColor: '#00000050', position: 'absolute', bottom: 0, alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
+                    <Image source={require('../tempResPlaylist/ic_listen_count.png')} style={{height: 10, width: 10 , marginLeft: 2}}/>
+                    <Text style={styles.listened}>{playlist.listened}</Text>
                 </View>
-                <View>
-                    <Image source={require('../tempResPlaylist/bt_playpage_button_play_normal.png')} style={{width: '100%', aspectRatio: 1, position: 'absolute', marginBottom: 2, marginRight: 2}}/>
-                </View>
+                <Image source={require('../tempResPlaylist/bt_playpage_button_play_normal.png')} style={styles.playImage}/>
             </View>
             <View>
                 <Text style={styles.albumTitle} numberOfLines={2} ellipsizeMode={'tail'}>{playlist.playlistTitle}</Text>

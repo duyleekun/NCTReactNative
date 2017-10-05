@@ -20,9 +20,10 @@ class PlaylistDetailScreen extends React.Component {
         props.loadPlaylist();
     }
 
-    _renderItem = ({item}) => (
+    _renderItem = ({item, index}) => (
         <AlbumCell
             id = {item}
+            index = {index}
         />
     );
 
@@ -34,7 +35,7 @@ class PlaylistDetailScreen extends React.Component {
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
         // console.log('json playlist: ' + JSON.stringify(playlists))
         let playlists = entities["\"playlistsScreen\""]
-        return (<View>
+        return (<View style = {{margin: 15}}>
             <FlatList
                 data={playlists}
                 keyExtractor={(item) => item}
