@@ -12,8 +12,10 @@ export default StackNavigator({
     SongDetail: {screen: SongDetailScreen},
     SongListDetail: {screen: HelloScreen},
     Top100Detail: {screen: HelloScreen},
+    TopicDetail: {screen: HelloScreen},
     VideoDetail: {screen: HelloScreen},
     VideoListDetail: {screen: HelloScreen},
+    MockScreen: {screen: HelloScreen},
     MainTabBar: {
         screen: TabNavigator({
             ["ME/HOME"]: {

@@ -5,7 +5,10 @@ import Styles from '../assets/styles/hotTopicStyle'
 
 export default class HotTopicComponent extends Component{
     _renderItem = ({item}) => (
-        <TouchableOpacity style={Styles.holder}>
+        <TouchableOpacity
+            style={Styles.holder}
+            onPress={()=>this.props.onClick(item.topicId)}
+        >
             <Image
                 style={Styles.icon}
                 source={{uri: item.iconUrl}}

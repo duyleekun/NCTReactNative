@@ -47,20 +47,29 @@ class HomeScreen extends React.Component {
             />
             <View style={{margin: 15, paddingBottom: 10}}>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
-                    <Feature onClick={(route) => this.props.gotoFeatureItem(route)} />
+                    <Feature
+                        onClick={this.props.gotoFeatureItem}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Album Hot"} icon={SECTION_HEADER_ALBUM}/>
-                    <HomeAlbum data={homeResponse.AlbumHot.map(playlistKey => entities.playlists[playlistKey]).slice(0,6)}/>
+                    <HomeAlbum
+                        data={homeResponse.AlbumHot.map(playlistKey => entities.playlists[playlistKey]).slice(0,6)}
+                        onClick={this.props.gotoPlayList}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Nghe gì hôm nay"} icon={SECTION_HEADER_TODAY}/>
-                    <HomeAlbum data={homeResponse.PlayListByTime.map(playlistKey => entities.playlists[playlistKey]).slice(0,3)}/>
+                    <HomeAlbum
+                        data={homeResponse.PlayListByTime.map(playlistKey => entities.playlists[playlistKey]).slice(0,3)}
+                        onClick={this.props.gotoPlayList}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Chủ Đề"} icon={SECTION_HEADER_TOPIC}/>
                     <HotTopic
-                        data={homeResponse.TopicHot.map((id) => entities.topics[id])}
+                        data={homeResponse.TopicHot.map(topicId => entities.topics[topicId])}
+                        onClick={this.props.gotoTopic}
                     />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA", position: 'relative'}}>
@@ -70,6 +79,7 @@ class HomeScreen extends React.Component {
                             entities.rankingMusics === undefined ?
                                 [] :
                                 entities.rankingMusics[homeResponse.BXH].items.map(item => entities.rankingItems[item])}
+                        onClick={this.props.playSelectedList}
                     />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
@@ -130,6 +140,16 @@ export default connect(
                 console.log(route);
                 let {navigate} = ownProps.navigation;
                 navigate(route)
+            },
+            gotoPlayList: (playlistKey) =>{
+                ownProps.navigation.navigate('PlaylistDetail',{playlistKey})
+            },
+            gotoTopic: (topicId) =>{
+                ownProps.navigation.navigate('TopicDetail',{topicId})
+            },
+            playSelectedList: (playlistKey) =>{
+                // ownProps.navigation.navigate('SongDetail',{playlistKey})
+                ownProps.navigation.navigate('MockScreen',{playlistKey})
             }
         }
     })(HomeScreen);
