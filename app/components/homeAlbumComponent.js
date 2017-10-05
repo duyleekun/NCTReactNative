@@ -2,7 +2,7 @@ import {Component} from 'react'
 import React from 'react';
 import {FlatList, Image, Text, View, TouchableOpacity} from "react-native";
 import Dimensions from 'Dimensions';
-import styles from '../assets/styles/homeAlbumComponent'
+import Styles from '../assets/styles/homeAlbumComponent'
 
 const separatorWidth = 6; // should be even number
 export default class HomeAlbumComponent extends Component{
@@ -12,9 +12,7 @@ export default class HomeAlbumComponent extends Component{
             marginLeft: index % 3 ===0 ? 0 : index % 3 === 1 ? separatorWidth/2 : separatorWidth,
             marginRight:index % 3 ===0 ? separatorWidth : index % 3 === 1 ? separatorWidth/2 : 0
         }}>
-            <View style={{width: '100%',
-                aspectRatio: 1,
-                position: 'relative'}}>
+            <View style={Styles.albumImageContainer}>
                 <View>
                     <Image
                         source={{uri: item.playlistImage}}
@@ -22,22 +20,14 @@ export default class HomeAlbumComponent extends Component{
                 </View>
             </View>
             <View>
-                <Text style={{ textAlign: 'left',
-                    color: '#333333',
-                    fontSize: 12,
-                    margin: 2,
-                    maxWidth: '100%',}}
+                <Text style={Styles.albumTitle}
                       numberOfLines={2}
                       ellipsizeMode={'tail'}>
                     {item.playlistTitle}
                 </Text>
             </View>
             <View>
-                <Text style={{textAlign: 'left',
-                    color: '#5b5b5b',
-                    fontSize: 10,
-                    maxWidth: '100%',
-                    margin: 2}}
+                <Text style={Styles.artist}
                       numberOfLines={1}
                       ellipsizeMode={'tail'}>
                     {item.artistName}
