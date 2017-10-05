@@ -12,6 +12,7 @@ import HotTopic from "../components/hotTopicComponent"
 import HomeRanking from "../components/homeRankingComponent"
 import HomeRankingMV from "../components/homeRankingMVComponent"
 import SongHot from "../components/songHotComponent"
+import HomeAlbum from "../components/homeAlbumComponent"
 
 
 class HomeScreen extends React.Component {
@@ -26,7 +27,7 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [],TopicHot: [],BXH: [],SongHot: [],BXHVideo: []}}}} = this.props;
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [], TopicHot: [], BXH: [], SongHot: [], BXHVideo: [], AlbumHot: [], PlayListByTime: []}}}} = this.props;
         return (<ScrollView style={{backgroundColor: "white"}}>
             <FlatList
                 data={homeResponse.Showcase}
@@ -44,6 +45,14 @@ class HomeScreen extends React.Component {
             <View style={{margin: 15, paddingBottom: 10}}>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <Feature onClick={(route) => this.props.gotoFeatureItem(route)} />
+                </View>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"Album Hot"} icon={SECTION_HEADER_ALBUM}/>
+                    <HomeAlbum data={homeResponse.AlbumHot.map(playlistKey => entities.playlists[playlistKey]).slice(0,6)}/>
+                </View>
+                <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
+                    <SectionHeader title={"Nghe gì hôm nay"} icon={SECTION_HEADER_TODAY}/>
+                    <HomeAlbum data={homeResponse.PlayListByTime.map(playlistKey => entities.playlists[playlistKey]).slice(0,3)}/>
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Chủ Đề"} icon={SECTION_HEADER_TOPIC}/>
