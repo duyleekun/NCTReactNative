@@ -3,10 +3,12 @@ import {isResponse, isResponseOk} from "../actions/api";
 
 export default (state, action) => {
     const {type} = action;
+    let newState = state
     if (isResponse(type)) {
         if (isResponseOk(type)) {
-            return state.merge(action.payload.response.entities,{deep: true})
+            newState = newState.merge(action.payload.response.entities,{deep: true})
+            newState = newState.merge({[JSON.stringify(action.payload.request.schemaName)]: action.payload.response.result})
         }
     }
-    return state || Immutable({})
+    return newState || Immutable({})
 }

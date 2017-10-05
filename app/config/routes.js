@@ -7,61 +7,51 @@ import * as React from "react";
 import {MainTabBar} from "../components/mainTabBar";
 
 export default StackNavigator({
-    SongDetail: { screen: SongDetailScreen},
-    PlaylistDetail: { screen: PlaylistDetailScreen},
-    VideoDetail: { screen: HelloScreen},
+    ArtistListDetail: {screen: HelloScreen},
+    PlaylistDetail: {screen: PlaylistDetailScreen},
+    SongDetail: {screen: SongDetailScreen},
+    SongListDetail: {screen: HelloScreen},
+    Top100Detail: {screen: HelloScreen},
+    VideoDetail: {screen: HelloScreen},
+    VideoListDetail: {screen: HelloScreen},
     MainTabBar: {
         screen: TabNavigator({
-            TabItem1: {
+            ["ME/HOME"]: {
                 screen: HelloScreen,
                 navigationOptions: {
                     tabBarLabel: "Của Tui",
                 }
             },
-            TabItem2: {
-                screen: TabNavigator({
-                    TabItem21: {
-                        screen: HomeScreen,
-                        navigationOptions: {
-                            tabBarLabel: "Trang Chủ",
-                        }
-                    },
-                    TabItem22: {
-                        screen: HelloScreen,
-                        navigationOptions: {
-                            tabBarLabel: "Playlist",
-                        }
-                    },
-                    TabItem23: {
-                        screen: HelloScreen,
-                        navigationOptions: {
-                            tabBarLabel: "BXH",
-                        }
-                    },
-                    TabItem24: {
-                        screen: HelloScreen,
-                        navigationOptions: {
-                            tabBarLabel: "Chủ Đề",
-                        }
-                    }
-                }, {
-                    tabBarOptions: {
-                        activeTintColor: '#222'
-                    },
-                    swipeEnabled: true,
-                    tabBarPosition: 'top',
-                    tabBarComponent: TabBarTop,
-                }),
+            ["ONLINE/HOME"]: {
+                screen: HomeScreen,
                 navigationOptions: {
-                    tabBarLabel: "Online",
-                    // tabBarIcon: ({ tintColor }) => <Icon name={"glass"} size={30} color={tintColor} />
+                    tabBarLabel: "Trang Chủ",
+                }
+            },
+            ["ONLINE/PLAYLIST"]: {
+                screen: PlaylistDetailScreen,
+                navigationOptions: {
+                    tabBarLabel: "Playlist",
+                }
+            },
+            ["ONLINE/BXH"]: {
+                screen: HelloScreen,
+                navigationOptions: {
+                    tabBarLabel: "BXH",
+                }
+            },
+            ["ONLINE/TOPIC"]: {
+                screen: HelloScreen,
+                navigationOptions: {
+                    tabBarLabel: "Chủ Đề",
                 }
             }
         }, {
             tabBarComponent: MainTabBar,
-            initialRouteName: 'TabItem2',
+            initialRouteName: "ONLINE/HOME",
             tabBarPosition: 'top',
-            swipeEnabled: true
+            swipeEnabled: true,
+            animationEnabled: true,
         }),
         navigationOptions: {
             header: null
