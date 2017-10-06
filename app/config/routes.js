@@ -2,9 +2,9 @@ import {StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
 import HelloScreen from "../screens/helloScreen";
 import HomeScreen from "../screens/homeScreen";
 import SongDetailScreen from "../screens/songDetailScreen";
-import PlaylistDetailScreen, {doubleHeight, singleHeight} from "../screens/playlistDetailScreen";
+import PlaylistDetailScreen from "../screens/playlistDetailScreen";
 import * as React from "react";
-import {MainTabBar} from "../components/mainTabBar";
+import {doubleHeight, MainTabBar, singleHeight} from "../components/mainTabBar";
 
 const componentWithPaddingAdded = (component : React.Component,marginTop) => (props) => {
     //FUN FACT, *C* const name must be UpperCased

@@ -4,8 +4,6 @@ import * as React from "react";
 import AlbumCell from '../components/albumCell'
 import {API_REQUEST_PLAYLIST_QUERY} from "../actions/api";
 
-export const singleHeight = 50
-export const doubleHeight = 98
 
 
 class PlaylistDetailScreen extends React.Component {
