@@ -10,7 +10,7 @@ const componentWithPaddingAdded = (component : React.Component,marginTop) => (pr
     //FUN FACT, *C* const name must be UpperCased
     // https://stackoverflow.com/a/33471928/861451
     const C = component
-    return (<C {...props} {...{marginTop}}  />)
+    return (<C {...props} {...{}}  />)
 }
 
 export default StackNavigator({

@@ -17,14 +17,39 @@ export class MainTabBar extends Component {
         const {width: windowWidth} = Dimensions.get('window')
         const offset = position.interpolate({
             inputRange: [0, 1],
-            outputRange: [windowWidth, 0],
+            outputRange: [-secondRowHeight, 0],
             extrapolate: 'clamp',
             useNativeDriver: true
 
         });
+
+        const heightAnim = position.interpolate({
+            inputRange: [0, 1],
+            outputRange: [singleHeight, doubleHeight],
+            extrapolate: 'clamp',
+            useNativeDriver: true
+
+        });
+
+        const opacity = position.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
+            useNativeDriver: true
+
+        });
+
+        const leftIndicatorOffset = position.interpolate({
+            inputRange: [0, 1, 4],
+            outputRange: [0, 0, windowWidth / 4 * 3],
+            extrapolate: 'clamp',
+            useNativeDriver: true
+
+        });
+
         const {routes, index} = navigationState;
         return (
-            <View>
+            <Animated.View style={{height: heightAnim}}>
                 <View style={{
                     position: 'absolute',
                     width: windowWidth,
@@ -48,65 +73,104 @@ export class MainTabBar extends Component {
 
                 <View style={{
                     position: 'absolute',
-                    zIndex: 1,
+                    zIndex: 10,
                     width: windowWidth,
-                    top: 0,
+                    top: statusHeight,
                     left: 0,
                     backgroundColor: 'transparent',
-                    aspectRatio: 1
                 }}>
 
                     <View style={{
                         flexDirection: 'row',
                         height: firstRowHeight,
-                        position: 'absolute',
-                        top: statusHeight,
                         width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
                         paddingLeft: 25,
                         paddingRight: 25,
                     }}>
-                        {['Của Tui', 'Online'].map((currentTitle, currentId) => (
-                            <Text style={{
-                                flex: 1,
-                                height: '100%',
-                                textAlign: 'center',
-                                textAlignVertical: 'center',
-                                color: 'white',
-                                opacity: index === currentId ? 1 : 0.8,
-                            }}
-                                  onPress={() => navigation.navigate(routes[currentId].key)}>{currentTitle}</Text>))}
+                        {['Của Tui', 'Online'].map((currentTitle, i) => {
+                            const focused = index === i;
+
+                            const opacityAnim = position.interpolate({
+                                inputRange: [0,1],
+                                outputRange: i === 0 ? [1, 0.85] : [0.85, 1],
+                                extrapolate: 'clamp',
+                                useNativeDriver: true
+
+                            });
+                            return (
+                                <View style={{flex: 1}}>
+                                    <Animated.Text key={routes[i].key} style={{
+                                        color: 'white',
+                                        textAlign: 'center',
+                                        opacity: opacityAnim,
+                                    }}
+                                                   onPress={() => navigation.navigate(routes[i].key)}>{currentTitle}</Animated.Text>
+                                </View>)
+                        })}
                     </View>
                     <Animated.View style={{
-                        flexDirection: 'row',
-                        marginLeft: offset,
+                        opacity: opacity,
+                        marginTop: offset,
                         width: '100%',
-                        position: 'absolute',
-                        top: singleHeight,
                         height: secondRowHeight,
                         backgroundColor: 'white',
+
                     }}>
-                        {routes.map((route, i) => {
-                            const focused = index === i;
-                            const scene = {
-                                route,
-                                focused,
-                                index: i,
-                            };
-                            return (
-                                <Text style={{
-                                    color: focused ? '#279FEB' : 'black',
-                                    flex: 1,
-                                    height: '100%',
-                                    textAlign: 'center',
-                                    textAlignVertical: 'center'
-                                }}
-                                      onPress={() => navigation.navigate(route.key)}
-                                      key={route.key}>{getLabel(scene)}</Text>
-                            )
-                        }).splice(1)}
+                        <View style={{
+                            width: '100%',
+                            height: secondRowHeight,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}>
+                            {routes.map((route, i) => {
+                                const focused = index === i;
+
+                                const activeColor = focused ?
+                                    position.interpolate({
+                                        inputRange: [i - 1, i, i + 1],
+                                        outputRange: ['black', '#279FEB', 'black'],
+                                        extrapolate: 'clamp',
+                                        useNativeDriver: true
+
+                                    }) :
+                                    position.interpolate({
+                                        inputRange: [i - 1, i, i + 1],
+                                        outputRange: ['black', (i - 1 == index || i + 1 == index) ? '#279FEB' : 'black', 'black'],
+                                        extrapolate: 'clamp',
+                                        useNativeDriver: true
+
+                                    });
+                                const scene = {
+                                    route,
+                                    focused,
+                                    index: i,
+                                };
+                                return (
+                                    <View style={{flex: 1}}>
+                                        <Animated.Text style={{
+                                            color: activeColor,
+                                            textAlign: 'center',
+                                        }}
+                                                       onPress={() => navigation.navigate(route.key)}
+                                                       key={route.key}>{getLabel(scene)}</Animated.Text>
+                                    </View>
+                                )
+                            }).splice(1)}
+                        </View>
+                        <Animated.View style={{
+                            width: windowWidth / 4,
+                            height: 3,
+                            backgroundColor: '#36AAEB',
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            marginLeft: leftIndicatorOffset
+                        }}></Animated.View>
                     </Animated.View>
                 </View>
-            </View>
+            </Animated.View>
         )
     }
 }
