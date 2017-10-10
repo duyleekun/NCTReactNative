@@ -8,6 +8,7 @@ import {addNavigationHelpers} from "react-navigation";
 import {connect, Provider} from "react-redux";
 import AppNavigator from "./config/routes";
 import Player from "./components/player"
+import VideoPlayer from "./components/videoPlayer"
 import {View} from "react-native";
 
 const store = createStore(
@@ -31,6 +32,7 @@ const AppWithNavigationState = connect(
             style: {flex: 1}
         })}/>
         <Player style={{width: '100%'}} />
+        <VideoPlayer style={{width: '100%'}} />
     </View>));
 
 export default class extends React.Component {

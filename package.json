@@ -13,6 +13,7 @@
 		"react-native": "0.48.3",
 		"react-native-music-control": "^0.4.12",
 		"react-native-sound": "^0.10.4",
+		"react-native-video": "^2.0.0",
 		"react-navigation": "^1.0.0-beta.12",
 		"react-redux": "^5.0.6",
 		"redux": "^3.7.2",
