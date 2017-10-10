@@ -93,15 +93,15 @@ export class MainTabBar extends Component {
                             const focused = index === i;
 
                             const opacityAnim = position.interpolate({
-                                inputRange: [0,1],
+                                inputRange: [0, 1],
                                 outputRange: i === 0 ? [1, 0.85] : [0.85, 1],
                                 extrapolate: 'clamp',
                                 useNativeDriver: true
 
                             });
                             return (
-                                <View style={{flex: 1}}>
-                                    <Animated.Text key={routes[i].key} style={{
+                                <View key={routes[i].key} style={{flex: 1}}>
+                                    <Animated.Text  style={{
                                         color: 'white',
                                         textAlign: 'center',
                                         opacity: opacityAnim,
@@ -148,13 +148,12 @@ export class MainTabBar extends Component {
                                     index: i,
                                 };
                                 return (
-                                    <View style={{flex: 1}}>
+                                    <View key={route.key} style={{flex: 1}}>
                                         <Animated.Text style={{
                                             color: activeColor,
                                             textAlign: 'center',
                                         }}
-                                                       onPress={() => navigation.navigate(route.key)}
-                                                       key={route.key}>{getLabel(scene)}</Animated.Text>
+                                                       onPress={() => navigation.navigate(route.key)}>{getLabel(scene)}</Animated.Text>
                                     </View>
                                 )
                             }).splice(1)}
