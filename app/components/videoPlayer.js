@@ -66,6 +66,7 @@ class Player extends React.Component {
         const inputRange = [-windowHeight / 2,0]
         const aspectRatio = 16/9
         const videoComponentMaxHeight = windowWidth/aspectRatio
+        const videoComponentMinHeight = windowWidth/2/aspectRatio
         let widthAnim = translateY.interpolate({
             inputRange: inputRange,
             outputRange: ['100%', '50%'],
@@ -83,7 +84,12 @@ class Player extends React.Component {
         });
         let translateAnim = translateY.interpolate({
             inputRange: inputRange,
-            outputRange: [-(windowHeight - bottomMargin - videoComponentMaxHeight), 0],
+            outputRange: [bottomMargin, 0],
+            extrapolate: 'clamp'
+        })
+        let aspectRatioAnim = translateY.interpolate({
+            inputRange: inputRange,
+            outputRange: [windowWidth/windowHeight,aspectRatio],
             extrapolate: 'clamp'
         })
         return (
@@ -94,12 +100,12 @@ class Player extends React.Component {
                 right: rightAnim,
                 bottom: bottomMargin,
                 width: widthAnim,
-                aspectRatio: aspectRatio,
-                backgroundColor: 'blue'
+                aspectRatio: aspectRatioAnim,
+                backgroundColor: 'green'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
-                <Video source={{uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}}
-                style={{width: '100%', height: '100%'}}/>
-                <Animated.View style={{width: windowWidth, height: windowHeight - (videoComponentMaxHeight), opacity: opacityAnim, backgroundColor: 'blue'}}>
+                <Video resizeMode='cover' source={{uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}}
+                style={{width: '100%', aspectRatio: aspectRatio}}/>
+                <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'blue'}}>
                     <Text>Lau xanh hen tai player</Text>
                 </Animated.View>
             </Animated.View>
