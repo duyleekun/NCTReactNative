@@ -15,7 +15,7 @@ const componentWithPaddingAdded = (component : React.Component,marginTop) => (pr
 
 export default StackNavigator({
     ArtistListDetail: {screen: HelloScreen},
-    PlaylistDetail: {screen: PlaylistScreen},
+    PlaylistScreen: {screen: PlaylistScreen},
     SongDetail: {screen: SongDetailScreen},
     SongListDetail: {screen: HelloScreen},
     Top100Detail: {screen: HelloScreen},

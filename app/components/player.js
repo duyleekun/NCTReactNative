@@ -1,7 +1,7 @@
 import {connect} from "react-redux"
 import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE} from "../actions/player";
 import React from "react";
-import {Button, Image, Text, View, Animated, PanResponder} from "react-native";
+import {Button, Image, Text, View, Animated, PanResponder, FlatList} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 
@@ -93,10 +93,17 @@ class Player extends React.Component {
                 <View style={{
                     height: Dimensions.get('window').height,
                     width: '100%',
-                    backgroundColor: 'red'
+                    backgroundColor: 'black'
                 }}>
                     {/*Detail view of the song*/}
-                    <Text>Lau Xanh</Text>
+                    <View style={{height:'60%', width: '100%', backgroundColor: 'green'}}>
+                        <Text>Mot con vit</Text>
+                    </View>
+                    <View>
+                        <FlatList>
+
+                        </FlatList>
+                    </View>
                 </View>
             </Animated.View>
         )
