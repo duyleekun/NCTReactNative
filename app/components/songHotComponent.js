@@ -6,7 +6,10 @@ import Styles from '../assets/styles/songHotStyles'
 
 export default class TopSongComponent extends Component{
     _renderItem = ({item,index}) => (
-        <TouchableOpacity style={Styles.row}>
+        <TouchableOpacity
+            style={Styles.row}
+            onPress={()=>this.props.onclick(item.songKey)}
+        >
             <Image
                 style={{width: Dimensions.get('window').width / 9, aspectRatio: 1}}
                 source={{uri: item.image}}/>

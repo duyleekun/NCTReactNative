@@ -7,10 +7,12 @@ import Styles from '../assets/styles/homeVideoStyles'
 const separatorWidth = 8; // should be even number
 export default class HomeAlbumComponent extends Component{
     _renderItem = ({item,index}) => (
-        <TouchableOpacity style={{width: (Dimensions.get('window').width -30)/2, position: 'relative',
+        <TouchableOpacity
+            style={{width: (Dimensions.get('window').width -30)/2, position: 'relative',
             marginTop: 5,
-            marginLeft: index % 2 ===0 ? 0 : separatorWidth,
-        }}>
+            marginLeft: index % 2 ===0 ? 0 : separatorWidth,}}
+            onPress={()=>this.props.onclick(item.videoKey)}
+        >
             <View style={Styles.albumImageContainer}>
                 <View>
                     <Image

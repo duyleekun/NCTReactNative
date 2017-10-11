@@ -85,7 +85,9 @@ class HomeScreen extends React.Component {
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
                     <SongHot
-                        data={homeResponse.SongHot.map(songKey => entities.songs[songKey]).slice(0,5)}/>
+                        data={homeResponse.SongHot.map(songKey => entities.songs[songKey]).slice(0,5)}
+                        onClick={this.props.playSelectedSong}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
@@ -93,15 +95,23 @@ class HomeScreen extends React.Component {
                         data={
                             entities.rankingVideos === undefined ?
                                 [] :
-                                entities.rankingVideos[homeResponse.BXHVideo].items.map(item => entities.rankingItems[item])}/>
+                                entities.rankingVideos[homeResponse.BXHVideo].items.map(item => entities.rankingItems[item])}
+                        onClick={this.props.playSelectedMV}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"MV Hot"} icon={SECTION_HEADER_VIDEO}/>
-                    <HomeVideo data={homeResponse.VideoHot.map(videoKey => entities.videos[videoKey]).slice(0,4)}/>
+                    <HomeVideo
+                        data={homeResponse.VideoHot.map(videoKey => entities.videos[videoKey]).slice(0,4)}
+                        onClick={this.props.playSelectedMV}
+                    />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
                     <SectionHeader title={"Clip Vui & Hài Kịch"} icon={SECTION_HEADER_FUNNY}/>
-                    <HomeVideo data={homeResponse.Relax.map(videoKey => entities.videos[videoKey]).slice(0,4)}/>
+                    <HomeVideo
+                        data={homeResponse.Relax.map(videoKey => entities.videos[videoKey]).slice(0,4)}
+                        onClick={this.props.playSelectedMV}
+                    />
                 </View>
             </View>
         </ScrollView>)
@@ -150,6 +160,12 @@ export default connect(
             playSelectedList: (playlistKey) =>{
                 // ownProps.navigation.navigate('SongDetail',{playlistKey})
                 ownProps.navigation.navigate('MockScreen',{playlistKey})
+            },
+            playSelectedSong: (songKey) =>{
+                ownProps.navigation.navigate('MockScreen',{songKey})
+            },
+            playSelectedMV: (videoKey)=>{
+                ownProps.navigation.navigate('MockScreen',{videoKey})
             }
         }
     })(HomeScreen);
