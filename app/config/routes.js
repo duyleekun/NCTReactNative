@@ -2,7 +2,7 @@ import {StackNavigator, TabBarTop, TabNavigator} from "react-navigation";
 import HelloScreen from "../screens/helloScreen";
 import HomeScreen from "../screens/homeScreen";
 import SongDetailScreen from "../screens/songDetailScreen";
-import PlaylistDetailScreen from "../screens/playlistDetailScreen";
+import PlaylistScreen from "../screens/playlistScreen";
 import * as React from "react";
 import {doubleHeight, MainTabBar, singleHeight} from "../components/mainTabBar";
 
@@ -15,7 +15,7 @@ const componentWithPaddingAdded = (component : React.Component,marginTop) => (pr
 
 export default StackNavigator({
     ArtistListDetail: {screen: HelloScreen},
-    PlaylistDetail: {screen: PlaylistDetailScreen},
+    PlaylistDetail: {screen: PlaylistScreen},
     SongDetail: {screen: SongDetailScreen},
     SongListDetail: {screen: HelloScreen},
     Top100Detail: {screen: HelloScreen},
@@ -39,7 +39,7 @@ export default StackNavigator({
                 }
             },
             ["ONLINE/PLAYLIST"]: {
-                screen: componentWithPaddingAdded(PlaylistDetailScreen, doubleHeight),
+                screen: componentWithPaddingAdded(PlaylistScreen, doubleHeight),
                 navigationOptions: {
                     tabBarLabel: "Playlist",
                 }
