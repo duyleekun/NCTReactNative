@@ -3,6 +3,8 @@ package com.mynct;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.palette.RNPalettePackage;
+import com.cmcewen.blurview.BlurViewPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.tanguyantoine.react.MusicControl;
@@ -27,6 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNPalettePackage(),
+            new BlurViewPackage(),
             new ReactVideoPackage(),
                     new RNSoundPackage(),
                     new MusicControl()
