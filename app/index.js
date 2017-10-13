@@ -32,7 +32,7 @@ const AppWithNavigationState = connect(
             style: {flex: 1}
         })}/>
         <Player style={{width: '100%'}} />
-        <VideoPlayer style={{width: '100%'}} />
+        {/*<VideoPlayer style={{width: '100%'}} />*/}
     </View>));
 
 export default class extends React.Component {
