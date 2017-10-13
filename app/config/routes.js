@@ -3,6 +3,7 @@ import HelloScreen from "../screens/helloScreen";
 import HomeScreen from "../screens/homeScreen";
 import SongDetailScreen from "../screens/songDetailScreen";
 import PlaylistScreen from "../screens/playlistScreen";
+import PlaylistDetailScreen from "../screens/playlistDetailScreen";
 import * as React from "react";
 import {doubleHeight, MainTabBar, singleHeight} from "../components/mainTabBar";
 
@@ -16,6 +17,7 @@ const componentWithPaddingAdded = (component : React.Component,marginTop) => (pr
 export default StackNavigator({
     ArtistListDetail: {screen: HelloScreen},
     PlaylistScreen: {screen: PlaylistScreen},
+    PlaylistDetail: {screen: PlaylistDetailScreen},
     SongDetail: {screen: SongDetailScreen},
     SongListDetail: {screen: HelloScreen},
     Top100Detail: {screen: HelloScreen},
