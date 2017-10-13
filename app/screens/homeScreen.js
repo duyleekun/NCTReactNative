@@ -90,7 +90,7 @@ class HomeScreen extends React.Component {
                     />
                 </View>
                 <View style={{paddingBottom: 15,marginBottom: 20, borderBottomWidth: 1, borderColor: "#EAEAEA"}}>
-                    <SectionHeader title={"Bài Hát Hot"} icon={SECTION_HEADER_SONG}/>
+                    <SectionHeader title={"BXH MV Việt Nam"} icon={SECTION_HEADER_SONG}/>
                     <HomeRankingMV
                         data={
                             entities.rankingVideos === undefined ?
