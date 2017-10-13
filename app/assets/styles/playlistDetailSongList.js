@@ -26,17 +26,12 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
         color: '#3F3F3F',
-        fontSize: 15,
+        fontSize: 13,
     },
     artist: {
         textAlign: 'center',
-        color: '#5E5E5E',
+        color: '#8E8E8E',
         fontSize: 13
-    },
-    itemStatus: {
-        width: 16,
-        aspectRatio: 33/22,
-        marginRight: 3
     }
 });
 

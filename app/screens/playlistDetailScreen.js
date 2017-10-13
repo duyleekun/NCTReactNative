@@ -1,12 +1,15 @@
 import {connect} from "react-redux";
-import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View, ScrollView} from "react-native";
+import {Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
+import {IndicatorViewPager,PagerTitleIndicator} from 'rn-viewpager';
 
 import Dimensions from 'Dimensions';
 import {API_REQUEST_PLAYLIST_GET} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
+import PlaylistDetailSongList from "../components/playlistDetailSongListComponent"
+import {displayListenTime} from "../config/utils"
 
-class playlistDetailScreen extends React.Component {
+class PlaylistDetailScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
         title: 'playListDetailScreen', header: null
     });
@@ -27,6 +30,22 @@ class playlistDetailScreen extends React.Component {
 
     toggle(){
 
+    }
+    _renderTitleIndicator() {
+        return <PagerTitleIndicator
+            titles={['Bài hát', 'Liên quan']}
+            style= {{
+                height: 50,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: 'white',
+                borderBottomWidth: 1,
+                borderBottomColor: '#eaeaea'
+            }}
+            selectedBorderStyle={{backgroundColor: '#32AAEA'}}
+            selectedItemTextStyle={{color: '#32AAEA'}} />;
     }
 
     componentDidMount() {
@@ -52,7 +71,6 @@ class playlistDetailScreen extends React.Component {
                 <View style={{position: 'relative'}}>
                     <Image
                         source={{uri: [img.slice(0, position), '_500', img.slice(position)].join('') }}
-                        // style={{width: '100%', aspectRatio: 529/257, overflow: 'visible', resizeMode: Image.resizeMode.cover, backgroundColor: 'green'}}/>
                         style={{width: '100%', aspectRatio: 1, resizeMode: 'contain', marginTop: -20}}/>
                     <Text
                         style={{margin: 15, color: 'white'}}
@@ -60,8 +78,6 @@ class playlistDetailScreen extends React.Component {
                         {playlistResponse.description}
                     </Text>
                 </View>
-                {/*<Text>{JSON.stringify(this.props.navigation.state.params)}</Text>*/}
-                {/*<Text>{JSON.stringify(playlistResponse)}</Text>*/}
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
                     <View style={{backgroundColor: 'transparent', height: 200, alignItems: 'flex-end', flexDirection: 'row', padding: 15, paddingBottom: 20}}>
                         <View style={{flex: 1}}>
@@ -72,7 +88,7 @@ class playlistDetailScreen extends React.Component {
                                 {playlistResponse.playlistTitle}
                             </Text>
                             <View style={{ flexDirection: 'row', alignItems: 'flex-end', paddingRight: 20}}>
-                                <Text style={{color: 'white',fontSize: 18, flex: 1}}
+                                <Text style={{color: 'white',fontSize: 18}}
                                       numberOfLines={1}
                                       ellipsizeMode={"tail"}
                                 >
@@ -83,7 +99,7 @@ class playlistDetailScreen extends React.Component {
                                     source={require('../assets/images/ic_listen_count.png')}
                                 />
                                 <Text style={{color: 'white', alignSelf: 'flex-end', fontSize: 17, paddingLeft: 5}}>
-                                    {playlistResponse.listened > 1000 ? `${Math.floor(playlistResponse.listened / 100)/10}k`: playlistResponse.listened}
+                                    {displayListenTime(playlistResponse.listened)}
                                 </Text>
                             </View>
                         </View>
@@ -115,7 +131,22 @@ class playlistDetailScreen extends React.Component {
                             <PlaylistTouchableBtn name={'Tải về'} img={'download'} />
                             <PlaylistTouchableBtn name={'Chia sẻ'} img={'share'} />
                         </View>
-
+                        <View style={{flex:1, marginBottom: 50}}>
+                            <IndicatorViewPager
+                                style={{flex:1, paddingTop:20, backgroundColor:'white'}}
+                                indicator={this._renderTitleIndicator()}
+                            >
+                                <View style={{paddingTop: 20}}>
+                                    <PlaylistDetailSongList
+                                        data={playlistResponse.listSong.map(songKey => entities.songs[songKey])}
+                                        onClick={this.props.playSelectedSong}
+                                    />
+                                </View>
+                                <View style={{}}>
+                                    <Text>page two</Text>
+                                </View>
+                            </IndicatorViewPager>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -134,6 +165,9 @@ export default connect(
         return {
             loadPlaylistDetail: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_GET(playlistKey))
+            },
+            playSelectedSong: (songKey) =>{
+                ownProps.navigation.navigate('MockScreen',{songKey})
             }
         }
-    })(playlistDetailScreen);
+    })(PlaylistDetailScreen);
