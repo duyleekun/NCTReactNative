@@ -22,6 +22,14 @@ class Player extends React.Component {
 
         this.state = {
             pan: new Animated.ValueXY(),
+            currentTime: 0,
+            pager: [
+                {name: 'Nghệ sĩ - PLaylist', header: true},
+                {name: 'Test 1', header: false},
+                {name: 'Mọi người cùng nghe', header: true},
+                {name: 'Test 2', header: false}
+            ],
+            stickyHeaderIndices: []
         };
     }
 
@@ -29,7 +37,7 @@ class Player extends React.Component {
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-                return gestureState.dx != 0 && gestureState.dy != 0;
+                return gestureState.dy != 0;
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -64,23 +72,54 @@ class Player extends React.Component {
         });
     }
 
-    _renderItem = ({index, item}) => {
+    _renderItemPager = ({item}) => {
+        if (item.header) {
+            return (
+                <ListItem itemDivider>
+                    <Left />
+                    <Body style={{ marginRight: 40 }}>
+                    <Text style={{ fontWeight: "bold" }}>
+                        {item.name}
+                    </Text>
+                    </Body>
+                    <Right />
+                </ListItem>
+            );
+        } else {
+            return (
+                <ListItem style={{ marginLeft: 0 }}>
+                    <Body>
+                    <Text>{item.name}</Text>
+                    </Body>
+                </ListItem>
+            );
+        }
+    }
+
+    _renderItem = ({item, index}) => {
         switch (index){
         case 0:
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width/3, backgroundColor: '#222222'}}>
-                    <Text> page: {index}</Text>
+                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: '#333333'}}>
+                    {/*<FlatList*/}
+                        {/*data={this.state.pager}*/}
+                        {/*renderItem={this._renderItemPager}*/}
+                        {/*keyExtractor={item => item.name}*/}
+                        {/*stickyHeaderIndices = {this.state.stickyHeaderIndices}*/}
+                    {/*/>*/}
                 </View>
             )
         case 1:
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width/3, backgroundColor: '#333333'}}>
-                    <Text> page: {index}</Text>
+                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignItems: 'center'}}>
+                    <View style={{width: '100%', height: '50%', backgroundColor: '#00000060', position: 'absolute', top: 0}}></View>
+                    <View style={{width: '100%', height: '50%', position: 'absolute', bottom: 0}}></View>
+                    <Image source={{uri:'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504_300.jpg'}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
                 </View>
             )
         default:
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width/3, backgroundColor: '#444444'}}>
+                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: '#444444'}}>
                     <Text> page: {index}</Text>
                 </View>
             )
@@ -98,7 +137,6 @@ class Player extends React.Component {
 
         // Calculate the transform property and set it as a value for our style which we add below to the Animated.View component
         let imageStyle = {transform: [{translateX}, {translateY}]};
-
         // let song = props.entities.songs['']
         let imageSong = 'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504.jpg'
         let imageSongExpand = imageSong.split('.').pop()
@@ -108,7 +146,6 @@ class Player extends React.Component {
                 sound.getCurrentTime((seconds)=>console.log('at'+seconds))
             }
         }
-
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
@@ -149,7 +186,7 @@ class Player extends React.Component {
                         <FlatList
                             data={['a','b','c']}
                             pagingEnabled={true}
-                            keyExtractor={(item) => item.itemId}
+                            keyExtractor={(item) => item}
                             showsHorizontalScrollIndicator={false}
                             renderItem={this._renderItem}
                             horizontal={true}
@@ -175,8 +212,8 @@ class Player extends React.Component {
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
-                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}/>
-                            <Text style={{color:'white'}}>03:00</Text>
+                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/300}/>
+                            <Text style={{color:'white'}}>{this.state.currentTime}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
                             <TouchableHighlight>
@@ -185,11 +222,15 @@ class Player extends React.Component {
                             <TouchableHighlight>
                                 <Image source={require('../assets/images/bt_lockscreen_prev_press.png')} style={{width:46, height: 46, marginLeft: 8}}/>
                             </TouchableHighlight>
-                            <TouchableHighlight
+                            { props.isPlaying ? (<TouchableHighlight
+                                onPress={()=>this.props.tempPause()}
+                            >
+                                <Image source={require('../assets/images/bt_playpage_button_pause_press_new.png')} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}/>
+                            </TouchableHighlight>): (<TouchableHighlight
                                 onPress={()=>this.props.loadSong('6DHBZXxtNIKG')}
                             >
-                                <Image source={require('../assets/images/bt_lockscreen_play_press.png')} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}/>
-                            </TouchableHighlight>
+                                <Image source={require('../assets/images/bt_playpage_button_play_press_new.png')} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}/>
+                            </TouchableHighlight>)}
                             <TouchableHighlight>
                                 <Image source={require('../assets/images/bt_lockscreen_next_press.png')} style={{width:46, height: 46, marginRight: 8}}/>
                             </TouchableHighlight>
@@ -208,7 +249,7 @@ export default connect((state, ownProps) => {
     const {player: {isPlaying, nowList, nowAt, collapsed}, entities} = state
     const song = nowList.map((songKey) => entities.songs[songKey])[nowAt] || {
         songTitle: 'Tên',
-        artistNamze: 'Artist',
+        artistName: 'Artist',
         streamURL: []
     }
     if (song.streamURL.length > 0) {
@@ -220,7 +261,10 @@ export default connect((state, ownProps) => {
                 if (error) {
                     console.log(error)
                 }
-                sound.play()
+                // debugger
+                sound.play((msg) => {
+                    console.log(msg)
+                })
             })
         }
     }
@@ -241,10 +285,13 @@ export default connect((state, ownProps) => {
     next: () => dispatch(PLAYER_NOWLIST_NEXT()),
     toggleView: () => dispatch(PLAYER_TOGGLE()),
     loadSong: (songId) => {
-        console.log('load api song')
         dispatch(API_REQUEST_SONG_GET(songId));
         dispatch(PLAYER_NOWLIST_CLEAR());
         dispatch(PLAYER_NOWLIST_ADD(songId));
         dispatch(PLAYER_PLAY());
+    },
+    tempPause: ()=>{
+        debugger
+        dispatch(PLAYER_PAUSE())
     }
 }))(Player)
