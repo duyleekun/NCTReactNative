@@ -8,6 +8,7 @@ export default (state, action) => {
         if (isResponseOk(type)) {
             newState = newState.merge(action.payload.response.entities,{deep: true});
             newState = newState["\"playlistRelation\""] !== undefined ? [] : newState;
+            // newState = newState["\"songRelation\""] !== undefined ? [] : newState;
             newState = newState.merge({[JSON.stringify(action.payload.request.schemaName)]: action.payload.response.result})
         }
     }

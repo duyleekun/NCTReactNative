@@ -5,8 +5,10 @@ import {Button, Image, Text, View, Animated, PanResponder, TouchableHighlight, S
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 import { BlurView, VibrancyView } from 'react-native-blur';
+import {ListItem, Left, Body, Icon, Right, Title } from "native-base";
 import styles from '../config/styles'
-import {API_REQUEST_SONG_GET} from "../actions/api";
+import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION} from "../actions/api";
+import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 
 
 // Enable playback in silence mode (iOS only)
@@ -15,6 +17,9 @@ Sound.setCategory('Playback');
 let sound = null;
 
 const template = []
+const pager = [
+        {name: 'Nghệ sĩ - PLaylist', header: true, data:''}
+        ]
 
 class Player extends React.Component {
     constructor(props) {
@@ -23,16 +28,12 @@ class Player extends React.Component {
         this.state = {
             pan: new Animated.ValueXY(),
             currentTime: 0,
-            pager: [
-                {name: 'Nghệ sĩ - PLaylist', header: true},
-                {name: 'Test 1', header: false},
-                {name: 'Mọi người cùng nghe', header: true},
-                {name: 'Test 2', header: false}
-            ],
             stickyHeaderIndices: []
         };
     }
-
+    componentDidMount(){
+        this.props.loadRelationSong('6DHBZXxtNIKG');
+    }
     componentWillMount() {
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
@@ -75,21 +76,25 @@ class Player extends React.Component {
     _renderItemPager = ({item}) => {
         if (item.header) {
             return (
-                <ListItem itemDivider>
-                    <Left />
-                    <Body style={{ marginRight: 40 }}>
-                    <Text style={{ fontWeight: "bold" }}>
+                <ListItem itemDivide>
+                    <Body>
+                    <View style={{backgroundColor:'#ffffff50', position: 'absolute', width: '100%', height: '100%'}}/>
+                    <Text style={{ marginLeft: 16, fontWeight: "bold", color: '#666666', position: 'absolute', backgroundColor:'transparent'}}>
                         {item.name}
                     </Text>
                     </Body>
-                    <Right />
                 </ListItem>
             );
         } else {
+            let playlistRelate = this.props.entities.playlists[item.data]
             return (
-                <ListItem style={{ marginLeft: 0 }}>
-                    <Body>
-                    <Text>{item.name}</Text>
+                <ListItem style={{ marginLeft: 4,  backgroundColor: 'transparent'}}>
+                    <Body style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                    <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
+                    <View style={{marginLeft: 4}}>
+                        <Text>{playlistRelate.playlistTitle}</Text>
+                        <Text>{playlistRelate.artistName}</Text>
+                    </View>
                     </Body>
                 </ListItem>
             );
@@ -97,16 +102,23 @@ class Player extends React.Component {
     }
 
     _renderItem = ({item, index}) => {
+
         switch (index){
         case 0:
+            var dataRelation = pager.slice()
+            let {"\"songRelation\"" : playlistRelatedResponse = []} = this.props.entities
+            playlistRelatedResponse.map((value, index)=>{
+                dataRelation.push({name: '', header: false, data: value})
+            })
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: '#333333'}}>
-                    {/*<FlatList*/}
-                        {/*data={this.state.pager}*/}
-                        {/*renderItem={this._renderItemPager}*/}
-                        {/*keyExtractor={item => item.name}*/}
-                        {/*stickyHeaderIndices = {this.state.stickyHeaderIndices}*/}
-                    {/*/>*/}
+                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
+                    <FlatList
+                        data={dataRelation}
+                        renderItem={this._renderItemPager.bind(this)}
+                        keyExtractor={item => item.data}
+                        stickyHeaderIndices = {this.state.stickyHeaderIndices}
+                        style={{backgroundColor: 'transparent'}}
+                    />
                 </View>
             )
         case 1:
@@ -129,7 +141,7 @@ class Player extends React.Component {
 
     render() {
         let props = this.props;
-
+        let {entities} = props
         let {pan} = this.state;
 
         // Calculate the x and y transform from the pan value
@@ -142,10 +154,11 @@ class Player extends React.Component {
         let imageSongExpand = imageSong.split('.').pop()
         imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
         if (sound){
-            if(isPlaying){
+            if(props.isPlaying){
                 sound.getCurrentTime((seconds)=>console.log('at'+seconds))
             }
         }
+        // let {"\"songRelation\"" : playlistRelatedResponse = []} = entities;
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
@@ -188,7 +201,7 @@ class Player extends React.Component {
                             pagingEnabled={true}
                             keyExtractor={(item) => item}
                             showsHorizontalScrollIndicator={false}
-                            renderItem={this._renderItem}
+                            renderItem={this._renderItem.bind(this)}
                             horizontal={true}
                         />
                     </View>
@@ -261,9 +274,13 @@ export default connect((state, ownProps) => {
                 if (error) {
                     console.log(error)
                 }
-                // debugger
                 sound.play((msg) => {
                     console.log(msg)
+                    sound.getCurrentTime((seconds) => {
+                        this.setState({
+                            currentTime: seconds
+                        })
+                    });
                 })
             })
         }
@@ -273,12 +290,17 @@ export default connect((state, ownProps) => {
         if (isPlaying) {
             sound.play((msg) => {
                 console.log(msg)
+                sound.getCurrentTime((seconds) => {
+                    this.setState({
+                        currentTime: seconds
+                    })
+                });
             })
         } else {
             sound.pause()
         }
     }
-    return {isPlaying, nowAt, song, collapsed}
+    return {isPlaying, nowAt, song, collapsed, entities}
 }, (dispatch, ownProps) => ({
     play: () => dispatch(PLAYER_PLAY()),
     pause: () => dispatch(PLAYER_PAUSE()),
@@ -290,8 +312,10 @@ export default connect((state, ownProps) => {
         dispatch(PLAYER_NOWLIST_ADD(songId));
         dispatch(PLAYER_PLAY());
     },
+    loadRelationSong:(songId)=>{
+        dispatch(API_REQUEST_SONG_RELATION(songId));
+    },
     tempPause: ()=>{
-        debugger
         dispatch(PLAYER_PAUSE())
     }
 }))(Player)

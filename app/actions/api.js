@@ -43,6 +43,11 @@ export const API_REQUEST_SONG_QUERY = createAction('API/REQUEST/SONG/QUERY', (..
     query: query,
     schemaName: 'song'
 }))
+export  const API_REQUEST_SONG_RELATION = createAction('API/REQUEST/SONG/RELATION', (id,...query)=>({
+    path: `/songs/playlist-relation/${id}`,
+    query: query,
+    schemaName: 'songRelation'
+}))
 export const API_REQUEST_SONG_GET = createAction('API/REQUEST/SONG/GET', (id, ...query) => ({
     path: `/songs/${id}`,
     query: query,
