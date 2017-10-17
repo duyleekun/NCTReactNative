@@ -4,9 +4,10 @@ import * as React from "react";
 import {IndicatorViewPager,PagerTitleIndicator} from 'rn-viewpager';
 
 import Dimensions from 'Dimensions';
-import {API_REQUEST_PLAYLIST_GET} from "../actions/api";
+import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import PlaylistDetailSongList from "../components/playlistDetailSongListComponent"
+import PlaylistDetailRelatedList from "../components/playlistDetailRelatedListComponent"
 import {displayListenTime} from "../config/utils"
 
 class PlaylistDetailScreen extends React.Component {
@@ -51,7 +52,8 @@ class PlaylistDetailScreen extends React.Component {
     componentDidMount() {
         let props = this.props;
         let {state: {params: {playlistKey}}} = props.navigation;
-        props.loadPlaylistDetail(playlistKey)
+        props.loadPlaylistDetail(playlistKey);
+        props.loadPlaylistRelation(playlistKey)
     }
 
     render() {
@@ -59,6 +61,7 @@ class PlaylistDetailScreen extends React.Component {
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
+        let {"\"playlistRelation\"" : playlistRelatedResponse = []} = entities;
         let img = playlistResponse.playlistImage;
         let position = img.length - 4;
         let icon = this.icons['down'];
@@ -142,8 +145,11 @@ class PlaylistDetailScreen extends React.Component {
                                         onClick={this.props.playSelectedSong}
                                     />
                                 </View>
-                                <View style={{}}>
-                                    <Text>page two</Text>
+                                <View style={{paddingTop: 20}}>
+                                    <PlaylistDetailRelatedList
+                                        data={playlistRelatedResponse.map(playListKey => entities.playlists[playListKey])}
+                                        onClick={()=>{}}
+                                    />
                                 </View>
                             </IndicatorViewPager>
                         </View>
@@ -165,6 +171,9 @@ export default connect(
         return {
             loadPlaylistDetail: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_GET(playlistKey))
+            },
+            loadPlaylistRelation: (playlistKey) => {
+                dispatch(API_REQUEST_PLAYLIST_RELATION(playlistKey))
             },
             playSelectedSong: (songKey) =>{
                 ownProps.navigation.navigate('MockScreen',{songKey})

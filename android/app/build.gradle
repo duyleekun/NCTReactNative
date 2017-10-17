@@ -91,9 +91,10 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
 
     defaultConfig {
+        renderscriptTargetApi 21
+        renderscriptSupportModeEnabled true
         applicationId "com.mynct"
         minSdkVersion 16
         targetSdkVersion 22
@@ -133,7 +134,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-palette')
     compile project(':react-native-blur')
     compile project(':react-native-video')
     compile project(':react-native-sound')

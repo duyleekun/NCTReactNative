@@ -33,6 +33,11 @@ export const API_REQUEST_PLAYLIST_GET = createAction('API/REQUEST/PLAYLIST/GET',
     query: query,
     schemaName: 'playlist'
 }))
+export const API_REQUEST_PLAYLIST_RELATION = createAction('API/REQUEST/PLAYLIST/RELATION', (id, ...query) => ({
+    path: `/playlists/related/${id}`,
+    query: query,
+    schemaName: 'playlistRelation'
+}))
 export const API_REQUEST_SONG_QUERY = createAction('API/REQUEST/SONG/QUERY', (...query) => ({
     path: '/songs',
     query: query,
