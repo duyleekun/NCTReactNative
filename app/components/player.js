@@ -77,25 +77,23 @@ class Player extends React.Component {
         if (item.header) {
             return (
                 <ListItem itemDivide>
-                    <Body>
                     <View style={{backgroundColor:'#ffffff50', position: 'absolute', width: '100%', height: '100%'}}/>
                     <Text style={{ marginLeft: 16, fontWeight: "bold", color: '#666666', position: 'absolute', backgroundColor:'transparent'}}>
                         {item.name}
                     </Text>
-                    </Body>
                 </ListItem>
             );
         } else {
             let playlistRelate = this.props.entities.playlists[item.data]
             return (
-                <ListItem style={{ marginLeft: 4,  backgroundColor: 'transparent'}}>
-                    <Body style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                <ListItem style={{ marginLeft: 8,  backgroundColor: 'transparent'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                     <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
-                    <View style={{marginLeft: 4}}>
+                    <View style={{marginLeft: 8}}>
                         <Text>{playlistRelate.playlistTitle}</Text>
                         <Text>{playlistRelate.artistName}</Text>
                     </View>
-                    </Body>
+                    </View>
                 </ListItem>
             );
         }
@@ -247,6 +245,7 @@ class Player extends React.Component {
                             <TouchableHighlight>
                                 <Image source={require('../assets/images/bt_lockscreen_next_press.png')} style={{width:46, height: 46, marginRight: 8}}/>
                             </TouchableHighlight>
+                            <PlaylistTouchableBtn />
                             <TouchableHighlight>
                                 <Image source={require('../assets/images/bt_playpage_button_list_normal_new.png')} style={{width:46, height: 46}}/>
                             </TouchableHighlight>
