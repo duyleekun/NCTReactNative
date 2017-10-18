@@ -1,7 +1,6 @@
 import {connect} from "react-redux";
 import {FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
 import * as React from "react";
-import {IndicatorViewPager,PagerTitleIndicator} from 'rn-viewpager';
 
 import Dimensions from 'Dimensions';
 import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION} from "../actions/api";
