@@ -5,7 +5,7 @@ import * as React from "react";
 import Dimensions from 'Dimensions';
 import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
-import PlaylistDetailSongList from "../components/playlistDetailSongListComponent"
+import PlaylistDetailSongItem from "../components/playlistDetailSongItemComponent"
 import PlaylistDetailRelatedList from "../components/playlistDetailRelatedListComponent"
 import {displayListenTime} from "../config/utils"
 
@@ -35,8 +35,6 @@ class PlaylistDetailScreen extends React.Component {
             stickyHeaderIndices: [0,0]
         };
     }
-
-
 
     componentDidMount() {
         let props = this.props;
@@ -116,54 +114,73 @@ class PlaylistDetailScreen extends React.Component {
                 )
             }
         }else{
-            const {width: windowWidth} = Dimensions.get('window');
-            const leftIndicatorOffset = position.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, windowWidth / 2],
-                extrapolate: 'clamp',
-                useNativeDriver: true
+            if (item.name === 'detail') {
+                const {width: windowWidth} = Dimensions.get('window');
+                const leftIndicatorOffset = position.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, windowWidth / 2],
+                    extrapolate: 'clamp',
+                    useNativeDriver: true
+                });
+                return (
+                    <View style={{backgroundColor: 'white'}}>
+                        <View style={{margin: 15, flexDirection: 'row', alignItems: 'center'}}>
+                            <Text style={{flex: 1}}>
+                                {`${playlistResponse.listSong.length} bài hát`}
+                            </Text>
+                            <PlaylistTouchableBtn name={'Thêm vào'} img={'fav'}/>
+                            <PlaylistTouchableBtn name={'Tải về'} img={'download'}/>
+                            <PlaylistTouchableBtn name={'Chia sẻ'} img={'share'}/>
+                        </View>
+                        <View style={{
+                            flexDirection: 'row',
+                            borderBottomWidth: 1,
+                            borderColor: '#eaeaea',
+                            alignItems: 'center'
+                        }}>
+                            {['Bài hát', 'Liên quan'].map((currentTitle, i) => {
 
-            });
+                                const activeColor =
+                                    position.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: i === 0 ? ['#36AAEB', 'black'] : ['black', '#36AAEB'],
+                                        extrapolate: 'clamp',
+                                        useNativeDriver: true
+                                    });
 
-            return (
-                <View style={{backgroundColor: 'white', height: Dimensions.get('window').height -100}}>
-                    <View style={{margin: 15, flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{flex: 1}}>
-                            {`${playlistResponse.listSong.length} bài hát`}
-                        </Text>
-                        <PlaylistTouchableBtn name={'Thêm vào'} img={'fav'} />
-                        <PlaylistTouchableBtn name={'Tải về'} img={'download'} />
-                        <PlaylistTouchableBtn name={'Chia sẻ'} img={'share'} />
+                                return (
+                                    <Animated.Text key={currentTitle} style={{
+                                        textAlign: 'center',
+                                        height: 50,
+                                        lineHeight: 30,
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        color: activeColor
+                                    }} onPress={() => this.changeTab(i)}>
+                                        {currentTitle}
+                                    </Animated.Text>
+                                )
+                            })}
+                            <Animated.View style={{
+                                width: windowWidth / 2,
+                                height: 3,
+                                backgroundColor: '#36AAEB',
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                marginLeft: leftIndicatorOffset
+                            }}/>
+                        </View>
                     </View>
-                    <View style={{flexDirection: 'row', borderBottomWidth: 1, borderColor: '#eaeaea', alignItems: 'center'}}>
-                        {['Bài hát', 'Liên quan'].map((currentTitle, i) => {
-
-                            const activeColor =
-                                position.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: i === 0 ? ['#36AAEB', 'black'] : ['black', '#36AAEB'],
-                                extrapolate: 'clamp',
-                                useNativeDriver: true});
-
-                            return (
-                                <Animated.Text key={currentTitle}style={{textAlign:'center',height: 50, lineHeight: 30,flex: 1, justifyContent: 'center', color: activeColor}} onPress={() => this.changeTab(i)}>
-                                    {currentTitle}
-                                </Animated.Text>
-                            )
-                        })}
-                        <Animated.View style={{
-                            width: windowWidth / 2,
-                            height: 3,
-                            backgroundColor: '#36AAEB',
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            marginLeft: leftIndicatorOffset
-                        }}/>
-
-                    </View>
-                </View>
-            )
+                )
+            }
+            else{
+                return(
+                    <PlaylistDetailSongItem data={item}/>
+                )
+            }
+            //TODO add fake view to cover the rest of the screen if there are not enough items on screen
+            //Use window height and other items' height
         }
     };
 
@@ -175,12 +192,7 @@ class PlaylistDetailScreen extends React.Component {
         let {"\"playlistRelation\"" : playlistRelatedResponse = []} = entities;
         let img = playlistResponse.playlistImage;
         let position = img.length - 4;
-
-        let icon = this.icons['down'];
-
-        if(this.state.expanded){
-            icon = this.icons['up'];
-        }
+        let data = this.state.data.concat(playlistResponse.listSong.map(songKey => entities.songs[songKey]));
         return(
             <View style={{position: 'relative', height: '100%'}}>
                 <View style={{position: 'relative'}}>
@@ -188,19 +200,17 @@ class PlaylistDetailScreen extends React.Component {
                         source={{uri: [img.slice(0, position), '_500', img.slice(position)].join('') }}
                         style={{width: '100%', aspectRatio: 1, resizeMode: 'contain', marginTop: -20}}/>
                     <Text
-                        style={{margin: 15, color: 'white'}}
-                    >
+                        style={{margin: 15, color: 'white'}}>
                         {playlistResponse.description}
                     </Text>
                 </View>
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
                     <FlatList
                         style={{flex: 1, marginBottom: 50}}
-                        data={this.state.data}
+                        data={data}
                         renderItem={this.renderItem}
                         keyExtractor={item => item.name}
-                        stickyHeaderIndices={this.state.stickyHeaderIndices}
-                    />
+                        stickyHeaderIndices={this.state.stickyHeaderIndices}/>
                 </View>
             </View>
         )
@@ -209,7 +219,7 @@ class PlaylistDetailScreen extends React.Component {
     changeTab(idx: number) {
         console.log('state ' + this.state.position._value);
         console.log('idx '+idx);
-        if (this.state.position._value !== idx) {
+        if (this.state.index !== idx) {
             this.state.index = idx;
             Animated.timing(
                 this.state.position,
