@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import {FlatList, Image, Text, TouchableWithoutFeedback, View} from "react-native";
+import {FlatList, Image, Text, TouchableWithoutFeedback, View, Animated} from "react-native";
 import * as React from "react";
 
 import Dimensions from 'Dimensions';
@@ -23,6 +23,8 @@ class PlaylistDetailScreen extends React.Component {
         };
 
         this.state = {
+            index       : 0,
+            position    : new Animated.Value(0),
             title       : props.title,
             expanded    : false,
             data : [
@@ -34,8 +36,18 @@ class PlaylistDetailScreen extends React.Component {
         };
     }
 
+
+
+    componentDidMount() {
+        let props = this.props;
+        let {state: {params: {playlistKey}}} = props.navigation;
+        props.loadPlaylistDetail(playlistKey);
+        props.loadPlaylistRelation(playlistKey)
+    }
+
     renderItem = ({ item }) => {
         let {props} = this;
+        let {position,index} = this.state;
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
@@ -104,6 +116,15 @@ class PlaylistDetailScreen extends React.Component {
                 )
             }
         }else{
+            const {width: windowWidth} = Dimensions.get('window');
+            const leftIndicatorOffset = position.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, windowWidth / 2],
+                extrapolate: 'clamp',
+                useNativeDriver: true
+
+            });
+
             return (
                 <View style={{backgroundColor: 'white', height: Dimensions.get('window').height -100}}>
                     <View style={{margin: 15, flexDirection: 'row', alignItems: 'center'}}>
@@ -114,53 +135,37 @@ class PlaylistDetailScreen extends React.Component {
                         <PlaylistTouchableBtn name={'Tải về'} img={'download'} />
                         <PlaylistTouchableBtn name={'Chia sẻ'} img={'share'} />
                     </View>
-                    <View style={{flex:1, marginBottom: 50}}>
-                        <IndicatorViewPager
-                            style={{flex:1, paddingTop:20, backgroundColor:'white'}}
-                            indicator={this._renderTitleIndicator()}
-                        >
-                            <View style={{paddingTop: 20}}>
-                                <PlaylistDetailSongList
-                                    data={playlistResponse.listSong.map(songKey => entities.songs[songKey])}
-                                    onClick={this.props.playSelectedSong}
-                                />
-                            </View>
-                            <View style={{paddingTop: 20}}>
-                                <PlaylistDetailRelatedList
-                                    data={playlistRelatedResponse.map(playListKey => entities.playlists[playListKey])}
-                                    onClick={()=>{}}
-                                />
-                            </View>
-                        </IndicatorViewPager>
+                    <View style={{flexDirection: 'row', borderBottomWidth: 1, borderColor: '#eaeaea', alignItems: 'center'}}>
+                        {['Bài hát', 'Liên quan'].map((currentTitle, i) => {
+
+                            const activeColor =
+                                position.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: i === 0 ? ['#36AAEB', 'black'] : ['black', '#36AAEB'],
+                                extrapolate: 'clamp',
+                                useNativeDriver: true});
+
+                            return (
+                                <Animated.Text key={currentTitle}style={{textAlign:'center',height: 50, lineHeight: 30,flex: 1, justifyContent: 'center', color: activeColor}} onPress={() => this.changeTab(i)}>
+                                    {currentTitle}
+                                </Animated.Text>
+                            )
+                        })}
+                        <Animated.View style={{
+                            width: windowWidth / 2,
+                            height: 3,
+                            backgroundColor: '#36AAEB',
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            marginLeft: leftIndicatorOffset
+                        }}/>
+
                     </View>
                 </View>
             )
         }
     };
-
-    _renderTitleIndicator() {
-        return <PagerTitleIndicator
-            titles={['Bài hát', 'Liên quan']}
-            style= {{
-                height: 50,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                backgroundColor: 'white',
-                borderBottomWidth: 1,
-                borderBottomColor: '#eaeaea'
-            }}
-            selectedBorderStyle={{backgroundColor: '#32AAEA'}}
-            selectedItemTextStyle={{color: '#32AAEA'}} />;
-    }
-
-    componentDidMount() {
-        let props = this.props;
-        let {state: {params: {playlistKey}}} = props.navigation;
-        props.loadPlaylistDetail(playlistKey);
-        props.loadPlaylistRelation(playlistKey)
-    }
 
     render() {
         let {props} = this;
@@ -190,7 +195,7 @@ class PlaylistDetailScreen extends React.Component {
                 </View>
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
                     <FlatList
-                        style={{flex: 1}}
+                        style={{flex: 1, marginBottom: 50}}
                         data={this.state.data}
                         renderItem={this.renderItem}
                         keyExtractor={item => item.name}
@@ -199,6 +204,22 @@ class PlaylistDetailScreen extends React.Component {
                 </View>
             </View>
         )
+    }
+
+    changeTab(idx: number) {
+        console.log('state ' + this.state.position._value);
+        console.log('idx '+idx);
+        if (this.state.position._value !== idx) {
+            this.state.index = idx;
+            Animated.timing(
+                this.state.position,
+                {
+                    toValue: idx,
+                    duration: 300,
+                    userNativeDiver: true
+                }
+            ).start()
+        }
     }
 }
 
