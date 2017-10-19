@@ -205,18 +205,11 @@ class Player extends React.Component {
                     </View>
                     <View style={{position:'absolute', bottom: 0, width: '100%', height: '24%'}}>
                         <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/ic_button_like_normal.png')} style={{width:36, height: 36}}/>
-                            </TouchableHighlight>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/ic_button_like_normal.png')} style={{width:36, height: 36, marginLeft: 16}}/>
-                            </TouchableHighlight>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/ic_button_like_normal.png')} style={{width:36, height: 36, marginRight: 16, marginLeft: 16}}/>
-                            </TouchableHighlight>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/ic_button_like_normal.png')} style={{width:36, height: 36, marginRight: 16}}/>
-                            </TouchableHighlight>
+                            <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
+                            <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
+                            <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
+                            <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
+
                             <TouchableHighlight>
                                 <Image source={require('../assets/images/bs_ic_more_light.png')} style={{width:36, height: 36}}/>
                             </TouchableHighlight>

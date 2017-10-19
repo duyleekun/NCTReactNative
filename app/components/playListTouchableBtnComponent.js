@@ -7,6 +7,9 @@ const thumbnails = {
     fav: require("../assets/images/ic_fav_normal.png"),
     download: require("../assets/images/ic_btn_download_normal.png"),
     share: require("../assets/images/ic_btn_share_normal.png"),
+    like: require('../assets/images/ic_button_like_normal.png'),
+    play: require('../assets/images/bt_playpage_button_play_press_new.png'),
+    pause: require('../assets/images/bt_playpage_button_pause_press_new.png'),
 };
 export default class PlayListTouchableBtn extends Component {
 
