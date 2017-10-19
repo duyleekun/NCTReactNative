@@ -27,11 +27,14 @@ class PlaylistDetailScreen extends React.Component {
             position    : new Animated.Value(0),
             title       : props.title,
             expanded    : false,
-            data : [
+            headers : [
                 {header: true,  name: 'blank'},
                 {header: true,  name: 'intro'},
                 {header: false, name: 'detail'}
             ],
+            songList: [],
+            relatedList: [],
+            showingList: [],
             stickyHeaderIndices: [0,0]
         };
     }
@@ -43,7 +46,7 @@ class PlaylistDetailScreen extends React.Component {
         props.loadPlaylistRelation(playlistKey)
     }
 
-    renderItem = ({ item }) => {
+    renderItem = ({ item , idx}) => {
         let {props} = this;
         let {position,index} = this.state;
         let {state: {params: {playlistKey}}} = props.navigation;
@@ -52,16 +55,16 @@ class PlaylistDetailScreen extends React.Component {
         let {"\"playlistRelation\"" : playlistRelatedResponse = []} = entities;
         if (item.header) {
             if (item.name ==='blank') {
-                return (<View style={{height: 100}}/>);
+                return (<View key={"blank"} style={{height: 100}}/>);
             }else {
                 return (
-                    <View style={{
+                    <View key={"intro"}
+                        style={{
                         backgroundColor: 'transparent',
                         alignItems: 'flex-end',
                         flexDirection: 'row',
                         padding: 15,
-                        paddingBottom: 20
-                    }}>
+                        paddingBottom: 20}}>
                         <View style={{flex: 1}}>
                             <Text style={{color: 'white', fontSize: 20}}
                                   numberOfLines={1}
@@ -123,7 +126,7 @@ class PlaylistDetailScreen extends React.Component {
                     useNativeDriver: true
                 });
                 return (
-                    <View style={{backgroundColor: 'white'}}>
+                    <View key={"detail"} style={{backgroundColor: 'white'}}>
                         <View style={{margin: 15, flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={{flex: 1}}>
                                 {`${playlistResponse.listSong.length} bài hát`}
@@ -176,13 +179,17 @@ class PlaylistDetailScreen extends React.Component {
             }
             else{
                 return(
-                    <PlaylistDetailSongItem data={item}/>
+                    <PlaylistDetailSongItem data={item} key={idx}/>
                 )
             }
             //TODO add fake view to cover the rest of the screen if there are not enough items on screen
             //Use window height and other items' height
         }
     };
+
+    componentWillMount(){
+        this.state.showingList = this.state.headers.concat(this.state.songList)
+    }
 
     render() {
         let {props} = this;
@@ -192,7 +199,18 @@ class PlaylistDetailScreen extends React.Component {
         let {"\"playlistRelation\"" : playlistRelatedResponse = []} = entities;
         let img = playlistResponse.playlistImage;
         let position = img.length - 4;
-        let data = this.state.data.concat(playlistResponse.listSong.map(songKey => entities.songs[songKey]));
+        this.state.songList = playlistResponse.listSong.map(songKey => entities.songs[songKey]);
+        this.state.relatedList = playlistRelatedResponse.map(playListKey => entities.playlists[playListKey]);
+
+        console.log(this.state.showingList);
+        // this.state.showingList = this.state.headers.concat(this.state.songList);
+        // console.log(this.state.showingList);
+        // this.setState({
+        //     songList: playlistResponse.listSong.map(songKey => entities.songs[songKey]),
+        //     relatedList: playlistRelatedResponse.map(playListKey => entities.playlists[playListKey]),
+        //     showingList: this.state.headers.concat( this.state.idx === 0 ? this.state.songList : this.state.relatedList)
+        //     });
+
         return(
             <View style={{position: 'relative', height: '100%'}}>
                 <View style={{position: 'relative'}}>
@@ -207,7 +225,7 @@ class PlaylistDetailScreen extends React.Component {
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
                     <FlatList
                         style={{flex: 1, marginBottom: 50}}
-                        data={data}
+                        data={this.state.showingList}
                         renderItem={this.renderItem}
                         keyExtractor={item => item.name}
                         stickyHeaderIndices={this.state.stickyHeaderIndices}/>
@@ -217,10 +235,8 @@ class PlaylistDetailScreen extends React.Component {
     }
 
     changeTab(idx: number) {
-        console.log('state ' + this.state.position._value);
-        console.log('idx '+idx);
         if (this.state.index !== idx) {
-            this.state.index = idx;
+
             Animated.timing(
                 this.state.position,
                 {
@@ -228,8 +244,15 @@ class PlaylistDetailScreen extends React.Component {
                     duration: 300,
                     userNativeDiver: true
                 }
-            ).start()
+            ).start(this.updateState(idx))
         }
+    }
+
+    updateState(idx) {
+        this.setState({
+            index: idx,
+            showingList: this.state.headers.concat( idx === 0 ? this.state.songList: this.state.relatedList)
+        });
     }
 }
 
