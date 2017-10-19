@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
     row: {
         display: 'flex',
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        backgroundColor: 'white'
     },
     detailHolder: {
         flexDirection: 'row',
