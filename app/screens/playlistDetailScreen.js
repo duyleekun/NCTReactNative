@@ -6,7 +6,7 @@ import Dimensions from 'Dimensions';
 import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import PlaylistDetailSongItem from "../components/playlistDetailSongItemComponent"
-import PlaylistDetailRelatedList from "../components/playlistDetailRelatedListComponent"
+import PlaylistDetailRelatedItem from "../components/playlistDetailRelatedItemComponent"
 import {displayListenTime} from "../config/utils"
 
 class PlaylistDetailScreen extends React.Component {
@@ -32,11 +32,11 @@ class PlaylistDetailScreen extends React.Component {
 
     renderItem = ({item, idx}) => {
         let {props} = this;
-        let {position,index} = this.state;
+        let {position, index} = this.state;
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
-        let {"\"playlistRelation\"" : playlistRelatedResponse = []} = entities;
+        let {"\"playlistRelation\"": playlistRelatedResponse = []} = entities;
 
         if (item.blank === true) {
             return (<View style={{height: item.height, backgroundColor: item.backgroundColor}}/>);
@@ -57,13 +57,13 @@ class PlaylistDetailScreen extends React.Component {
             return (
                 <View>
                     <View
-                          style={{
-                              backgroundColor: 'transparent',
-                              alignItems: 'flex-end',
-                              flexDirection: 'row',
-                              padding: 15,
-                              paddingBottom: 20
-                          }}>
+                        style={{
+                            backgroundColor: 'transparent',
+                            alignItems: 'flex-end',
+                            flexDirection: 'row',
+                            padding: 15,
+                            paddingBottom: 20
+                        }}>
                         <View style={{flex: 1}}>
                             <Text style={{color: 'white', fontSize: 20}}
                                   numberOfLines={1}
@@ -165,14 +165,15 @@ class PlaylistDetailScreen extends React.Component {
                 </View>
             )
         }
-
-
-        //TODO: Có 1 loại view cho 2 tab "Bài hát' với "liên quan" thôi à?
-        return (
-            <PlaylistDetailSongItem data={item} key={idx}/>
-        )
-
-
+        if (this.state.index === 0) {
+            return (
+                <PlaylistDetailSongItem data={item} key={idx}/>
+            )
+        } else {
+            return (
+                <PlaylistDetailRelatedItem data={item} key={idx}/>
+            )
+        }
     };
 
     render() {

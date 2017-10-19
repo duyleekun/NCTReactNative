@@ -6,6 +6,7 @@ export default (state, action) => {
     let newState = state
     if (isResponse(type)) {
         if (isResponseOk(type)) {
+            console.log('new state is null:'+newState === null);
             newState = newState.merge(action.payload.response.entities,{deep: true});
             newState = newState["\"playlistRelation\""] !== undefined ? [] : newState;
             // newState = newState["\"songRelation\""] !== undefined ? [] : newState;

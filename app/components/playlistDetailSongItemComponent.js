@@ -7,9 +7,10 @@ import {displayListenTime} from "../config/utils"
 
 export default class PlayListDetailSongItemComponent extends Component{
     render(){
-        let {data} = this.props;
+        let {data,key} = this.props;
         return (
             <TouchableOpacity
+                key={key}
                 style={Styles.row}
                 onPress={()=>this.props.onclick(data.songKey)}
             >
