@@ -10,6 +10,11 @@ const thumbnails = {
     like: require('../assets/images/ic_button_like_normal.png'),
     play: require('../assets/images/bt_playpage_button_play_press_new.png'),
     pause: require('../assets/images/bt_playpage_button_pause_press_new.png'),
+    more: require('../assets/images/bs_ic_more_light.png'),
+    next: require('../assets/images/bt_lockscreen_next_press.png'),
+    prev: require('../assets/images/bt_lockscreen_prev_press.png'),
+    list: require('../assets/images/bt_playpage_button_list_normal_new.png'),
+    order: require('../assets/images/bt_playpage_order_normal_new.png'),
 };
 export default class PlayListTouchableBtn extends Component {
 
@@ -27,7 +32,7 @@ export default class PlayListTouchableBtn extends Component {
     render() {
         let {props} = this;
         return (
-            <TouchableHighlight onPress={()=>{}}
+            <TouchableHighlight onPress={()=>{this.props.onClick()}}
                                 underlayColor={'white'}
                                 style={Styles.btn}
                                 onHideUnderlay={()=>{this.setState({pressed: false})}}

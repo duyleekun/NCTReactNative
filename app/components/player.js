@@ -209,10 +209,7 @@ class Player extends React.Component {
                             <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
                             <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
                             <PlaylistTouchableBtn img={'like'} style={{width:36, height: 36}}/>
-
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/bs_ic_more_light.png')} style={{width:36, height: 36}}/>
-                            </TouchableHighlight>
+                            <PlaylistTouchableBtn img={'more'} style={{width:36, height: 36}}/>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
@@ -220,28 +217,21 @@ class Player extends React.Component {
                             <Text style={{color:'white'}}>{this.state.currentTime}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/bt_playpage_order_normal_new.png')} style={{width:46, height: 46}}/>
-                            </TouchableHighlight>
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/bt_lockscreen_prev_press.png')} style={{width:46, height: 46, marginLeft: 8}}/>
-                            </TouchableHighlight>
-                            { props.isPlaying ? (<TouchableHighlight
-                                onPress={()=>this.props.tempPause()}
-                            >
-                                <Image source={require('../assets/images/bt_playpage_button_pause_press_new.png')} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}/>
-                            </TouchableHighlight>): (<TouchableHighlight
-                                onPress={()=>this.props.loadSong('6DHBZXxtNIKG')}
-                            >
-                                <Image source={require('../assets/images/bt_playpage_button_play_press_new.png')} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}/>
-                            </TouchableHighlight>)}
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/bt_lockscreen_next_press.png')} style={{width:46, height: 46, marginRight: 8}}/>
-                            </TouchableHighlight>
-                            <PlaylistTouchableBtn />
-                            <TouchableHighlight>
-                                <Image source={require('../assets/images/bt_playpage_button_list_normal_new.png')} style={{width:46, height: 46}}/>
-                            </TouchableHighlight>
+                            <PlaylistTouchableBtn img={'order'} style={{width:46, height: 46}}/>
+                            <PlaylistTouchableBtn img={'prev'} style={{width:46, height: 46, marginLeft: 8}}/>
+                            { props.isPlaying ? (
+                                <PlaylistTouchableBtn
+                                    img={'pause'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
+                                    onClick={()=>this.props.tempPause()}/>
+                            ): (
+                                <PlaylistTouchableBtn
+                                    img={'play'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
+                                    onClick={()=>{
+                                        debugger
+                                        this.props.loadSong('6DHBZXxtNIKG')}}/>
+                            )}
+                            <PlaylistTouchableBtn img={'next'} style={{width:46, height: 46, marginRight: 8}}/>
+                            <PlaylistTouchableBtn img={'list'} style={{width:46, height: 46}}/>
                         </View>
                     </View>
                 </View>
