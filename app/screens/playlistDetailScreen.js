@@ -262,7 +262,7 @@ export default connect(
             loadPlaylistRelation: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_RELATION(playlistKey))
             },
-            playSelectedSong: (songKey) => {
+            playSelectedSong: (songKey) => {//TODO: navigate to player screen
                 ownProps.navigation.navigate('MockScreen', {songKey})
             }
         }

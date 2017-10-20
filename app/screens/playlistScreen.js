@@ -27,6 +27,7 @@ class PlaylistDetailScreen extends React.Component {
         <AlbumCell
             id = {item}
             index = {index}
+            onClick={this.props.gotoPlayList}
         />
     );
 
@@ -37,7 +38,7 @@ class PlaylistDetailScreen extends React.Component {
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
         // console.log('json playlist: ' + JSON.stringify(playlists))
         let playlists = entities[keyFromAction(API_REQUEST_PLAYLIST_QUERY())];
-        return (<View style = {{margin: 15, marginTop: marginTop + 15, backgroundColor: 'white'}}>
+        return (<View style = {{padding: 15, paddingTop: marginTop + 15, backgroundColor: 'white'}}>
             <FlatList
                 data={playlists}
                 keyExtractor={(item) => item}
@@ -66,9 +67,8 @@ export default connect(
                 console.log('request playlist')
                 dispatch(API_REQUEST_PLAYLIST_QUERY())
             },
-            gotoSong: (item) => {
-                let {navigate} = ownProps.navigation
-                navigate('SongDetail',{id: item.songKey, title: item.songTitle})
+            gotoPlayList: (playlistKey) => {
+                ownProps.navigation.navigate('PlaylistDetail',{playlistKey})
             }
         }
     })(PlaylistDetailScreen);

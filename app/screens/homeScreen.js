@@ -161,7 +161,7 @@ export default connect(
                 // ownProps.navigation.navigate('SongDetail',{playlistKey})
                 ownProps.navigation.navigate('MockScreen',{playlistKey})
             },
-            playSelectedSong: (songKey) =>{
+            playSelectedSong: (songKey) =>{ //TODO: navigate to player screen
                 ownProps.navigation.navigate('MockScreen',{songKey})
             },
             playSelectedMV: (videoKey)=>{
