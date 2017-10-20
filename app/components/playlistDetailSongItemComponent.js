@@ -1,15 +1,16 @@
-import {Component} from 'react'
+import {PureComponent} from 'react'
 import React from 'react';
 import Dimensions from 'Dimensions';
 import {View,FlatList, Image, Text, TouchableOpacity} from "react-native";
 import Styles from '../assets/styles/playlistDetailSongList'
 import {displayListenTime} from "../config/utils"
 
-export default class PlayListDetailSongItemComponent extends Component{
+export default class PlayListDetailSongItemComponent extends PureComponent{
     render(){
-        let {data} = this.props;
+        let {data,key} = this.props;
         return (
             <TouchableOpacity
+                key={key}
                 style={Styles.row}
                 onPress={()=>this.props.onclick(data.songKey)}
             >
