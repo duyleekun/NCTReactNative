@@ -26,7 +26,7 @@ export const API_REQUEST_HOME_QUERY = createAction('API/REQUEST/HOME/QUERY', () 
 export const API_REQUEST_PLAYLIST_QUERY = createAction('API/REQUEST/PLAYLIST/QUERY', (...query) => ({
     path: '/playlists/genre/0?pageindex=1&pagesize=30&etype=tini&type=hottest&cached=0',
     query: query,
-    schemaName: 'playlistsScreen'
+    schemaName: 'playlists'
 }))
 export const API_REQUEST_PLAYLIST_GET = createAction('API/REQUEST/PLAYLIST/GET', (id, ...query) => ({
     path: `/playlists/${id}`,
@@ -36,17 +36,17 @@ export const API_REQUEST_PLAYLIST_GET = createAction('API/REQUEST/PLAYLIST/GET',
 export const API_REQUEST_PLAYLIST_RELATION = createAction('API/REQUEST/PLAYLIST/RELATION', (id, ...query) => ({
     path: `/playlists/related/${id}`,
     query: query,
-    schemaName: 'playlistRelation'
+    schemaName: 'playlists'
 }))
 export const API_REQUEST_SONG_QUERY = createAction('API/REQUEST/SONG/QUERY', (...query) => ({
     path: '/songs',
     query: query,
     schemaName: 'song'
 }))
-export  const API_REQUEST_SONG_RELATION = createAction('API/REQUEST/SONG/RELATION', (id,...query)=>({
+export const API_REQUEST_SONG_RELATION = createAction('API/REQUEST/SONG/RELATION', (id, ...query) => ({
     path: `/songs/playlist-relation/${id}`,
     query: query,
-    schemaName: 'songRelation'
+    schemaName: 'playlists'
 }))
 export const API_REQUEST_SONG_GET = createAction('API/REQUEST/SONG/GET', (id, ...query) => ({
     path: `/songs/${id}`,

@@ -8,6 +8,7 @@ import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import PlaylistDetailSongItem from "../components/playlistDetailSongItemComponent"
 import PlaylistDetailRelatedItem from "../components/playlistDetailRelatedItemComponent"
 import {displayListenTime} from "../config/utils"
+import {keyFromAction} from "../lib/action_utilities";
 
 class PlaylistDetailScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
@@ -36,8 +37,8 @@ class PlaylistDetailScreen extends React.Component {
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
-        let {"\"playlistRelation\"": playlistRelatedResponse = []} = entities;
 
+        let {[keyFromAction(API_REQUEST_PLAYLIST_RELATION(playlistKey))]: playlistRelatedResponse = []} = entities;
         if (item.blank === true) {
             return (<View style={{height: item.height, backgroundColor: item.backgroundColor}}/>);
         }
@@ -184,7 +185,8 @@ class PlaylistDetailScreen extends React.Component {
 
 
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
-        let {"\"playlistRelation\"": playlistRelatedResponse = []} = entities;
+        let {[keyFromAction(API_REQUEST_PLAYLIST_RELATION(playlistKey))]: playlistRelatedResponse = []} = entities;
+
         let img = playlistResponse.playlistImage;
         const songList = (playlistResponse.listSong || []).map(songKey => entities.songs[songKey]);
         const relatedList = (playlistRelatedResponse || []).map(playListKey => entities.playlists[playListKey]);
