@@ -1,11 +1,11 @@
-import {Component} from 'react'
+import {PureComponent} from 'react'
 import React from 'react';
 
 import {View,FlatList, Image, Text, TouchableOpacity} from "react-native";
 import Styles from '../assets/styles/playlistDetailRelatedListStyles'
 import {displayListenTime} from '../config/utils'
 
-export default class PlaylistDetailRelatedListComponent extends Component{
+export default class PlaylistDetailRelatedListComponent extends PureComponent{
     render(){
         let {data,key} = this.props;
         return (
