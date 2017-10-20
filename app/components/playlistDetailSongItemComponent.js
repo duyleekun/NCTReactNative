@@ -19,7 +19,7 @@ export default class PlayListDetailSongItemComponent extends PureComponent{
             <TouchableHighlight
                 key={key}
                 style={Styles.row}
-                onPress={()=>{}}
+                onPress={()=>this.props.onClick(data.songKey)}
                 onHideUnderlay={()=>{this.setState({pressed: false})}}
                 onShowUnderlay={()=>{this.setState({pressed: true})}}
                 underlayColor={'white'}>
