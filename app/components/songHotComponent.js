@@ -15,7 +15,10 @@ export default class TopSongComponent extends Component{
                 source={{uri: item.image}}/>
             <View style={[Styles.detailHolder,{borderTopWidth: index === 0 ? 0 : 1}]}>
                 <View style={Styles.detail}>
-                    <Text style={Styles.title}>
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode={'tail'}
+                        style={Styles.title}>
                         {item.songTitle}
                     </Text>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
