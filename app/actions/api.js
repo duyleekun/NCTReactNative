@@ -53,6 +53,11 @@ export const API_REQUEST_SONG_GET = createAction('API/REQUEST/SONG/GET', (id, ..
     query: query,
     schemaName: 'song'
 }))
+export const API_REQUEST_SONG_LYRIC = createAction('API/REQUEST/SONG/LYRIC', (id, ...query) => ({
+    path: `/songs/lyric/${id}`,
+    query: query,
+    schemaName: 'lyric'
+}))
 export const API_REQUEST_VIDEO_QUERY = createAction('API/REQUEST/VIDEO/QUERY', (...query) => ({
     path: '/videos',
     query: query

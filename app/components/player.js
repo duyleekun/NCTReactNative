@@ -1,13 +1,12 @@
 import {connect} from "react-redux"
 import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD} from "../actions/player";
 import React from "react";
-import {Button, Image, Text, View, Animated, PanResponder, TouchableHighlight, Slider, FlatList, TouchableWithoutFeedback} from "react-native";
+import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
-import { BlurView, VibrancyView } from 'react-native-blur';
-import {ListItem, Left, Body, Icon, Right, Title } from "native-base";
-import styles from '../config/styles'
-import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION} from "../actions/api";
+import { BlurView } from 'react-native-blur';
+import {ListItem, Left, Icon, Right, Title } from "native-base";
+import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 
 
@@ -102,7 +101,7 @@ class Player extends React.Component {
     _renderItem = ({item, index}) => {
 
         switch (index){
-        case 0:
+        case 3:
             var dataRelation = pager.slice()
             let {"\"songRelation\"" : playlistRelatedResponse = []} = this.props.entities
             playlistRelatedResponse.map((value, index)=>{
@@ -119,18 +118,20 @@ class Player extends React.Component {
                     />
                 </View>
             )
-        case 1:
+        case 4:
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignItems: 'center'}}>
                     <View style={{width: '100%', height: '50%', backgroundColor: '#00000060', position: 'absolute', top: 0}}></View>
                     <View style={{width: '100%', height: '50%', position: 'absolute', bottom: 0}}></View>
-                    <Image source={{uri:'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504_300.jpg'}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
+                    <Image source={{uri:this.props.song.image}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
                 </View>
             )
         default:
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: '#444444'}}>
-                    <Text> page: {index}</Text>
+                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
+                    <ScrollView>
+                        <Text>{this.props.song.content}</Text>
+                    </ScrollView>
                 </View>
             )
         }
@@ -148,14 +149,19 @@ class Player extends React.Component {
         // Calculate the transform property and set it as a value for our style which we add below to the Animated.View component
         let imageStyle = {transform: [{translateX}, {translateY}]};
         // let song = props.entities.songs['']
-        let imageSong = 'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504.jpg'
-        let imageSongExpand = imageSong.split('.').pop()
-        imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
+        let imageSong = (props.song.image != null) ? props.song.image: 'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504.jpg'
+        // if (imageSong != null){
+        //     let imageSongExpand = imageSong.split('.').pop()
+        //     imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
+        // }
         if (sound){
             if(props.isPlaying){
                 sound.getCurrentTime((seconds)=>console.log('at'+seconds))
             }
         }
+        console.log('song: ' + props.song.songTitle)
+        console.log('song image: ' + imageSong)
+
         // let {"\"songRelation\"" : playlistRelatedResponse = []} = entities;
         return (
             <Animated.View style={{
@@ -166,15 +172,17 @@ class Player extends React.Component {
                     height: 50,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    backgroundColor: 'yellow'
+                    backgroundColor: 'white'
                 }}>
-                    <Image style={{height: '100%', aspectRatio: 1, backgroundColor: 'red'}}/>
-                    {props.isPlaying ? (<Button title="Playing" onPress={props.pause}/>) : (
-                        <Button title="Paused" onPress={props.play}/>)}
-                    <Button title="Next" onPress={props.next}/>
-                    <View style={{flex: 1}}>
+                    <Image source={{uri:this.props.song.image}} style={{height: '100%', aspectRatio: 1}}/>
+                    <View style={{flex: 1, left: 0}}>
                         <Text>{props.song.songTitle}</Text>
                         <Text>{props.song.artistName}</Text>
+                    </View>
+                    <View style={{right: 8, justifyContent: 'center', flexDirection: 'row', }}>
+                        {props.isPlaying ? (<PlaylistTouchableBtn img={'play'} onClick={props.pause}/>) : (
+                            <PlaylistTouchableBtn img={'pause'} onClick={props.play}/>)}
+                        <PlaylistTouchableBtn img={'next'} onClick={props.next} style={{left: 8}}/>
                     </View>
                 </View>
 
@@ -183,7 +191,7 @@ class Player extends React.Component {
                     width: '100%',
                     backgroundColor: 'transparent'
                 }}>
-                    <Image source={{uri:imageSong}} resizeMode={'cover'} style={{
+                    <Image source={{uri:this.props.song.image}} resizeMode={'cover'} style={{
                         position: 'absolute',
                         left: 0,
                         right: 0,
@@ -191,7 +199,8 @@ class Player extends React.Component {
                         bottom: 0,
                         height: null,
                         width: null,
-                    }}/>
+                    }}
+                    />
                     <BlurView viewRef={this.state.viewRef} blurType={'light'} blurAmount={10} style={[{position: 'absolute', left: 0, right: 0, top: 0, bottom: 0}]}/>
                     <View style={{height:'76%', width: '100%', backgroundColor: 'transparent', position: 'absolute'}}>
                         <FlatList
@@ -214,7 +223,7 @@ class Player extends React.Component {
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
                             <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/300}/>
-                            <Text style={{color:'white'}}>{this.state.currentTime}</Text>
+                            <Text style={{color:'white'}}>{this.props.song.songTitle}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
                             <PlaylistTouchableBtn img={'order'} style={{width:46, height: 46}}/>
@@ -222,12 +231,11 @@ class Player extends React.Component {
                             { props.isPlaying ? (
                                 <PlaylistTouchableBtn
                                     img={'pause'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
-                                    onClick={()=>this.props.tempPause()}/>
+                                    onClick={()=>this.props.pause()}/>
                             ): (
                                 <PlaylistTouchableBtn
                                     img={'play'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
                                     onClick={()=>{
-                                        debugger
                                         this.props.loadSong('6DHBZXxtNIKG')}}/>
                             )}
                             <PlaylistTouchableBtn img={'next'} style={{width:46, height: 46, marginRight: 8}}/>
@@ -245,7 +253,9 @@ export default connect((state, ownProps) => {
     const song = nowList.map((songKey) => entities.songs[songKey])[nowAt] || {
         songTitle: 'Tên',
         artistName: 'Artist',
-        streamURL: []
+        streamURL: [],
+            image: '',
+            content: ''
     }
     if (song.streamURL.length > 0) {
         if (sound === null || (sound._filename !== song.streamURL[0].stream)) {
@@ -282,13 +292,14 @@ export default connect((state, ownProps) => {
             sound.pause()
         }
     }
-    return {isPlaying, nowAt, song, collapsed, entities}
+    return {isPlaying, nowAt, song, collapsed}
 }, (dispatch, ownProps) => ({
     play: () => dispatch(PLAYER_PLAY()),
     pause: () => dispatch(PLAYER_PAUSE()),
     next: () => dispatch(PLAYER_NOWLIST_NEXT()),
     toggleView: () => dispatch(PLAYER_TOGGLE()),
     loadSong: (songId) => {
+        dispatch(API_REQUEST_SONG_LYRIC(songId));
         dispatch(API_REQUEST_SONG_GET(songId));
         dispatch(PLAYER_NOWLIST_CLEAR());
         dispatch(PLAYER_NOWLIST_ADD(songId));
@@ -296,8 +307,5 @@ export default connect((state, ownProps) => {
     },
     loadRelationSong:(songId)=>{
         dispatch(API_REQUEST_SONG_RELATION(songId));
-    },
-    tempPause: ()=>{
-        dispatch(PLAYER_PAUSE())
     }
 }))(Player)
