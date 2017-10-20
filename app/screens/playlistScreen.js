@@ -3,6 +3,7 @@ import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View} from "rea
 import * as React from "react";
 import AlbumCell from '../components/albumCell'
 import {API_REQUEST_PLAYLIST_QUERY} from "../actions/api";
+import {keyFromAction} from "../lib/action_utilities";
 
 
 
@@ -35,7 +36,7 @@ class PlaylistDetailScreen extends React.Component {
         let {entities, marginTop} = this.props
         // let {playlists: {[playlistId]: playlistResponse = {listSong: []}} = {[playlistId]: {}}} = entities
         // console.log('json playlist: ' + JSON.stringify(playlists))
-        let playlists = entities["\"playlistsScreen\""]
+        let playlists = entities[keyFromAction(API_REQUEST_PLAYLIST_QUERY())];
         return (<View style = {{margin: 15, marginTop: marginTop + 15, backgroundColor: 'white'}}>
             <FlatList
                 data={playlists}

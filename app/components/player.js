@@ -8,6 +8,7 @@ import { BlurView } from 'react-native-blur';
 import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
+import {keyFromAction} from "../lib/action_utilities";
 
 
 // Enable playback in silence mode (iOS only)
@@ -103,7 +104,7 @@ class Player extends React.Component {
         switch (index){
         case 3:
             var dataRelation = pager.slice()
-            let {"\"songRelation\"" : playlistRelatedResponse = []} = this.props.entities
+            let {[keyFromAction(API_REQUEST_SONG_RELATION('6DHBZXxtNIKG'))] : playlistRelatedResponse = []} = this.props.entities
             playlistRelatedResponse.map((value, index)=>{
                 dataRelation.push({name: '', header: false, data: value})
             })
@@ -163,7 +164,6 @@ class Player extends React.Component {
         console.log('song: ' + props.song.songTitle)
         console.log('song image: ' + imageSong)
 
-        // let {"\"songRelation\"" : playlistRelatedResponse = []} = entities;
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
