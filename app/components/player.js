@@ -127,10 +127,11 @@ class Player extends React.Component {
                 </View>
             )
         default:
+            let {"\"lyric\"" : lyricResponse = {}} = this.props.entities
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
-                        <Text>{this.props.song.content}</Text>
+                        <Text>{lyricResponse.content}</Text>
                     </ScrollView>
                 </View>
             )
@@ -292,7 +293,7 @@ export default connect((state, ownProps) => {
             sound.pause()
         }
     }
-    return {isPlaying, nowAt, song, collapsed}
+    return {isPlaying, nowAt, song, collapsed, entities}
 }, (dispatch, ownProps) => ({
     play: () => dispatch(PLAYER_PLAY()),
     pause: () => dispatch(PLAYER_PAUSE()),
