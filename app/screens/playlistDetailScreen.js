@@ -95,7 +95,7 @@ class PlaylistDetailScreen extends React.Component {
                             style={{width: Dimensions.get('window').width / 7, aspectRatio: 1, padding: 5}}
                             source={require('../assets/images/ic_btn_online_topic_detail_playall_normal.png')}
                         />
-                        <View style={{position: 'absolute', width: '100%', alignItems: 'center'}}>
+                        <View style={{position: 'absolute', alignItems: 'center', right: 0, left: 0}}>
                             <View
                                 style={{
                                     backgroundColor: 'white',

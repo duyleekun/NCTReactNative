@@ -1,5 +1,8 @@
 import {Component} from 'react'
-import {Button, Text, View, Animated, Image, Platform} from "react-native";
+import {
+    Button, Text, View, Animated, Image, Platform, TouchableHighlight,
+    TouchableWithoutFeedback
+} from "react-native";
 import * as React from "react";
 import Dimensions from "Dimensions"
 
@@ -85,10 +88,12 @@ export class MainTabBar extends Component {
                         height: firstRowHeight,
                         width: '100%',
                         alignItems: 'center',
-                        justifyContent: 'space-around',
-                        paddingLeft: 25,
-                        paddingRight: 25,
+                        justifyContent: 'space-between',
                     }}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate("SideBar")}>
+                            <Image resizeMode="contain" style={{height: 20}}
+                                   source={require('../assets/images/ic_gengduo_normal.png')}/>
+                        </TouchableWithoutFeedback>
                         {['Của Tui', 'Online'].map((currentTitle, i) => {
                             const focused = index === i;
 
@@ -101,7 +106,7 @@ export class MainTabBar extends Component {
                             });
                             return (
                                 <View key={routes[i].key} style={{flex: 1}}>
-                                    <Animated.Text  style={{
+                                    <Animated.Text style={{
                                         color: 'white',
                                         textAlign: 'center',
                                         opacity: opacityAnim,
@@ -109,6 +114,10 @@ export class MainTabBar extends Component {
                                                    onPress={() => navigation.navigate(routes[i].key)}>{currentTitle}</Animated.Text>
                                 </View>)
                         })}
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate(routes[0].key)}>
+                            <Image resizeMode="contain" style={{height: 30}}
+                                   source={require('../assets/images/bt_titlebar_new_search_normal.png')}/>
+                        </TouchableWithoutFeedback>
                     </View>
                     <Animated.View style={{
                         opacity: opacity,
