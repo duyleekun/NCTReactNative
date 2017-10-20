@@ -6,8 +6,9 @@ import PlaylistScreen from "../screens/playlistScreen";
 import PlaylistDetailScreen from "../screens/playlistDetailScreen";
 import * as React from "react";
 import {doubleHeight, MainTabBar, singleHeight} from "../components/mainTabBar";
+import {Text, View} from "react-native";
 
-const componentWithPaddingAdded = (component : React.Component,marginTop) => (props) => {
+const componentWithPaddingAdded = (component: React.Component, marginTop) => (props) => {
     //FUN FACT, *C* const name must be UpperCased
     // https://stackoverflow.com/a/33471928/861451
     const C = component
@@ -25,6 +26,7 @@ export default StackNavigator({
     VideoDetail: {screen: HelloScreen},
     VideoListDetail: {screen: HelloScreen},
     MockScreen: {screen: HelloScreen},
+    SideBar: {screen: HelloScreen},
     MainTabBar: {
         screen: TabNavigator({
             ["ME/HOME"]: {
@@ -65,14 +67,16 @@ export default StackNavigator({
             swipeEnabled: true,
             animationEnabled: true,
         }),
-        navigationOptions: {
-            header: null
-        }
     }
 }, {
-    // headerMode: () => {
-    //     debugger
-    //     return 'none'
-    // },
-    initialRouteName: 'MainTabBar'
+    headerMode: 'screen',
+    initialRouteName: 'MainTabBar',
+    navigationOptions: {
+        header: (({progress, position}) => {
+            // progress.addListener(({value}) => console.log(value))
+            return null
+            // position.addListener(({value}) => console.log(value))
+            return (<View style={{backgroundColor: 'red'}}><Text>LxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLxLx</Text></View>)
+        })
+    }
 })
