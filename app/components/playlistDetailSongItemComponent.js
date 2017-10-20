@@ -1,20 +1,29 @@
 import {PureComponent} from 'react'
 import React from 'react';
 import Dimensions from 'Dimensions';
-import {View,FlatList, Image, Text, TouchableOpacity} from "react-native";
+import {View,FlatList, Image, Text, TouchableOpacity,TouchableHighlight} from "react-native";
 import Styles from '../assets/styles/playlistDetailSongList'
 import {displayListenTime} from "../config/utils"
 
 export default class PlayListDetailSongItemComponent extends PureComponent{
+    constructor(props) {
+        super(props);
+        this.state = {
+            pressed: false
+        }
+    }
+
     render(){
         let {data,key} = this.props;
         return (
-            <TouchableOpacity
+            <TouchableHighlight
                 key={key}
                 style={Styles.row}
-                onPress={()=>this.props.onclick(data.songKey)}
-            >
-                <View style={Styles.detailHolder}>
+                onPress={()=>{}}
+                onHideUnderlay={()=>{this.setState({pressed: false})}}
+                onShowUnderlay={()=>{this.setState({pressed: true})}}
+                underlayColor={'white'}>
+                <View style={[Styles.detailHolder,{backgroundColor: this.state.pressed ? 'gainsboro' : 'white'}]}>
                     <View style={Styles.detail}>
                         <Text style={Styles.title}>
                             {data.songTitle}
@@ -39,7 +48,10 @@ export default class PlayListDetailSongItemComponent extends PureComponent{
                                 :
                                 null
                             }
-                            <Text style={Styles.artist}>
+                            <Text
+                                numberOfLines={1}
+                                ellipsizeMode={'tail'}
+                                style={Styles.artist}>
                                 {data.artistName}
                             </Text>
                             <Image
@@ -56,7 +68,7 @@ export default class PlayListDetailSongItemComponent extends PureComponent{
                             source={require('../assets/images/ic_btn_recsong_more.png')}/>
                     </TouchableOpacity>
                 </View>
-            </TouchableOpacity>
+            </TouchableHighlight>
         )
     }
 }

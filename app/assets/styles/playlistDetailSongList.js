@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
         // borderTopWidth: 1,
         borderTopColor: '#ededed',
         padding: 15,
-        paddingLeft:0,
-        marginLeft: 15
     },
     detail: {
         flex: 1,
