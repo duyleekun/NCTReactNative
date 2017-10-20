@@ -188,7 +188,7 @@ class PlaylistDetailScreen extends React.Component {
         let img = playlistResponse.playlistImage;
         const songList = (playlistResponse.listSong || []).map(songKey => entities.songs[songKey]);
         const relatedList = (playlistRelatedResponse || []).map(playListKey => entities.playlists[playListKey]);
-        const data = this.state.index === 0 ? songList : relatedList
+        const data = this.state.index === 0 ? songList : relatedList;
 
         return (
             <View style={{position: 'relative', height: '100%'}}>
@@ -204,12 +204,14 @@ class PlaylistDetailScreen extends React.Component {
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
                     {/*TODO add fake view to cover the rest of the screen if there are not enough items on screen*/}
                     {/*Use window height and other items' height*/}
-                    {/*TODO: Add key to remove warning*/}
                     <FlatList
                         style={{flex: 1, marginBottom: 50}}
                         data={[{blank: true, height: 100, backgroundColor: 'transparent'},{header: true}, ...data, {blank: true, height: 9000,backgroundColor: 'white'}]}
                         renderItem={this.renderItem}
+                        keyExtractor={(item, index) => this.keyExtraction(item,index)}
                         stickyHeaderIndices={[1]}
+                        extraData={data}
+                        initialNumToRender={5}
                     />
                 </View>
             </View>
@@ -222,14 +224,24 @@ class PlaylistDetailScreen extends React.Component {
                 this.state.position,
                 {
                     toValue: idx,
-                    duration: 100
+                    duration: 200,
+                    delay: 50
                 }
             ).start()
         }
-        //TODO: Investigate anim for better UX
         this.setState({
             index: idx
         });
+    }
+
+    keyExtraction(item, index) {
+        if (index < 2)
+            return index;
+        if (item.songKey !== undefined)
+            return item.songKey;
+        if (item.playlistKey !== undefined)
+            return item.playlistKey;
+        return index;
     }
 }
 
