@@ -5,11 +5,12 @@ import {
 } from "react-native";
 import * as React from "react";
 import Dimensions from "Dimensions"
+import {StatusBar} from "react-native";
 
 const firstRowHeight = 45;
 const secondRowHeight = 40;
 
-export const statusHeight = (Platform.OS === 'ios') ? 20 : 0
+export const statusHeight = (Platform.OS === 'ios') ? 20 : StatusBar.currentHeight
 
 export const singleHeight = statusHeight + firstRowHeight
 export const doubleHeight = singleHeight + secondRowHeight
