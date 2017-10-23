@@ -64,6 +64,7 @@ class PlaylistDetailScreen extends React.Component {
                             alignItems: 'flex-end',
                             flexDirection: 'row',
                             padding: 15,
+                            paddingTop: 0,
                             paddingBottom: 20
                         }}>
                         <View style={{flex: 1}}>
@@ -216,6 +217,21 @@ class PlaylistDetailScreen extends React.Component {
                         extraData={data}
                         initialNumToRender={5}
                     />
+                    <View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: '#00ffffaa', height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                        <TouchableWithoutFeedback
+                            onPress={this.props.goBack}>
+                            <Image
+                                source={require('../assets/images/ic_btn_return_nor.png')}
+                                style={{width: 20, height: 20}}/>
+                        </TouchableWithoutFeedback>
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode={'tail'}
+                            style={{ color: 'white', fontSize: 22, flex: 1, textAlign: 'center'}} >
+                            {playlistResponse.playlistTitle}
+                        </Text>
+                        <View style={{width: 30, height: 30}}/>
+                    </View>
                 </View>
             </View>
         )
@@ -263,10 +279,13 @@ export default connect(
             loadPlaylistRelation: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_RELATION(playlistKey))
             },
-            playSelectedSong: (songKey) => {//TODO: navigate to player screen
-                // ownProps.navigation.navigate('MockScreen', {songKey})
+            playSelectedSong: (songKey) => {
                 dispatch(PLAYER_NOWLIST_ADD(songKey));
                 dispatch(PLAYER_TOGGLE());
+            },
+            goBack: () =>{
+                console.log('pressed back');
+                ownProps.navigation.goBack(null);
             }
         }
     })(PlaylistDetailScreen);
