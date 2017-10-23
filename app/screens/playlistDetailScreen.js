@@ -9,6 +9,7 @@ import PlaylistDetailSongItem from "../components/playlistDetailSongItemComponen
 import PlaylistDetailRelatedItem from "../components/playlistDetailRelatedItemComponent"
 import {displayListenTime} from "../config/utils"
 import {keyFromAction} from "../lib/action_utilities";
+import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
 
 class PlaylistDetailScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
@@ -168,7 +169,7 @@ class PlaylistDetailScreen extends React.Component {
         }
         if (this.state.index === 0) {
             return (
-                <PlaylistDetailSongItem data={item} key={idx}/>
+                <PlaylistDetailSongItem data={item} key={idx} onClick={this.props.playSelectedSong}/>
             )
         } else {
             return (
@@ -262,8 +263,10 @@ export default connect(
             loadPlaylistRelation: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_RELATION(playlistKey))
             },
-            playSelectedSong: (songKey) => {
-                ownProps.navigation.navigate('MockScreen', {songKey})
+            playSelectedSong: (songKey) => {//TODO: navigate to player screen
+                // ownProps.navigation.navigate('MockScreen', {songKey})
+                dispatch(PLAYER_NOWLIST_ADD(songKey));
+                dispatch(PLAYER_TOGGLE());
             }
         }
     })(PlaylistDetailScreen);

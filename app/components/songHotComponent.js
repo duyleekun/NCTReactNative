@@ -8,14 +8,17 @@ export default class TopSongComponent extends Component{
     _renderItem = ({item,index}) => (
         <TouchableOpacity
             style={Styles.row}
-            onPress={()=>this.props.onclick(item.songKey)}
+            onPress={()=>this.props.onClick(item.songKey)}
         >
             <Image
                 style={{width: Dimensions.get('window').width / 9, aspectRatio: 1}}
                 source={{uri: item.image}}/>
             <View style={[Styles.detailHolder,{borderTopWidth: index === 0 ? 0 : 1}]}>
                 <View style={Styles.detail}>
-                    <Text style={Styles.title}>
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode={'tail'}
+                        style={Styles.title}>
                         {item.songTitle}
                     </Text>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

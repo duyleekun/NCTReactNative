@@ -17,6 +17,7 @@ import HomeRankingMV from "../components/homeRankingMVComponent"
 import SongHot from "../components/songHotComponent"
 import HomeAlbum from "../components/homeAlbumComponent"
 import HomeVideo from "../components/homeVideoComponent"
+import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
@@ -162,8 +163,11 @@ export default connect(
                 // ownProps.navigation.navigate('SongDetail',{playlistKey})
                 ownProps.navigation.navigate('MockScreen',{playlistKey})
             },
-            playSelectedSong: (songKey) =>{
-                ownProps.navigation.navigate('MockScreen',{songKey})
+            playSelectedSong: (songKey) =>{ //TODO: navigate to player screen
+                // ownProps.navigation.navigate('MockScreen',{songKey})
+                console.log('aaa');
+                dispatch(PLAYER_NOWLIST_ADD(songKey));
+                dispatch(PLAYER_TOGGLE());
             },
             playSelectedMV: (videoKey)=>{
                 ownProps.navigation.navigate('MockScreen',{videoKey})
