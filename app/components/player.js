@@ -1,14 +1,15 @@
 import {connect} from "react-redux"
 import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD} from "../actions/player";
 import React from "react";
-import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList} from "react-native";
+import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList, TouchableHighlight} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 import { BlurView } from 'react-native-blur';
-import {ListItem, Left, Icon, Right, Title } from "native-base";
+import {ListItem, Left, Icon, Right, Title, Body } from "native-base";
 import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
+import TouchableItem from "../../node_modules/react-navigation/lib-rn/views/TouchableItem";
 
 
 // Enable playback in silence mode (iOS only)
@@ -77,8 +78,8 @@ class Player extends React.Component {
     _renderItemPager = ({item}) => {
         if (item.header) {
             return (
-                <ListItem itemDivide>
-                    <View style={{backgroundColor:'#ffffff50', position: 'absolute', width: '100%', height: '100%'}}/>
+                <ListItem itemDivide style={{marginLeft: 0}}>
+                    <View style={{ backgroundColor:'#ffffff50', position: 'absolute'}}/>
                     <Text style={{ marginLeft: 16, fontWeight: "bold", color: '#666666', position: 'absolute', backgroundColor:'transparent'}}>
                         {item.name}
                     </Text>
@@ -87,8 +88,8 @@ class Player extends React.Component {
         } else {
             let playlistRelate = this.props.entities.playlists[item.data]
             return (
-                <ListItem style={{ marginLeft: 8,  backgroundColor: 'transparent'}}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                <ListItem style={{marginLeft: 0, backgroundColor: 'transparent'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginLeft: 8}}>
                     <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
                     <View style={{marginLeft: 8}}>
                         <Text>{playlistRelate.playlistTitle}</Text>
@@ -103,14 +104,14 @@ class Player extends React.Component {
     _renderItem = ({item, index}) => {
 
         switch (index){
-        case 3:
+        case 0:
             var dataRelation = pager.slice()
-            let {[keyFromAction(API_REQUEST_SONG_RELATION('6DHBZXxtNIKG'))] : playlistRelatedResponse = []} = this.props.entities
+            let {[keyFromAction(API_REQUEST_SONG_RELATION(this.props.song.songKey))] : playlistRelatedResponse = []} = this.props.entities
             playlistRelatedResponse.map((value, index)=>{
                 dataRelation.push({name: '', header: false, data: value})
             })
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
+                <View style={{top: 20,height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <FlatList
                         data={dataRelation}
                         renderItem={this._renderItemPager.bind(this)}
@@ -120,16 +121,16 @@ class Player extends React.Component {
                     />
                 </View>
             )
-        case 4:
+        case 1:
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignItems: 'center'}}>
+                <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignItems: 'center'}}>
                     <View style={{width: '100%', height: '50%', backgroundColor: '#00000060', position: 'absolute', top: 0}}></View>
                     <View style={{width: '100%', height: '50%', position: 'absolute', bottom: 0}}></View>
                     <Image source={{uri:this.props.song.image}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
                 </View>
             )
-            default:
-            let {[keyFromAction(API_REQUEST_SONG_LYRIC('6DHBZXxtNIKG'))] : lyricKey = {}} = this.props.entities
+        default:
+            let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
                 let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
@@ -267,6 +268,7 @@ export default connect((state, ownProps) => {
     const {player: {isPlaying, nowList, nowAt, collapsed}, entities} = state
     const song = nowList.map((songKey) => entities.songs[songKey])[nowAt] || {
         songTitle: 'Tên',
+            songKey: '',
         artistName: 'Artist',
         streamURL: [],
             image: 'https://www.google.com.vn'
