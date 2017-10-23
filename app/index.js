@@ -9,7 +9,7 @@ import {connect, Provider} from "react-redux";
 import AppNavigator from "./config/routes";
 import Player from "./components/player"
 import VideoPlayer from "./components/videoPlayer"
-import {View} from "react-native";
+import {StatusBar, View} from "react-native";
 
 const store = createStore(
     rootReducer,
@@ -26,6 +26,11 @@ const AppWithNavigationState = connect(
     })
 )((props) => (
     <View style={{flex: 1}}>
+        <StatusBar
+            backgroundColor="transparent"
+            barStyle="light-content"
+            translucent={true}
+        />
         <AppNavigator navigation={addNavigationHelpers({
             dispatch: props.dispatch,
             state: props.nav,
