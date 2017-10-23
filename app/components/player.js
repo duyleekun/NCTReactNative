@@ -127,12 +127,13 @@ class Player extends React.Component {
                     <Image source={{uri:this.props.song.image}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
                 </View>
             )
-        default:
-            let {"\"lyric\"" : lyricResponse = {}} = this.props.entities
+            default:
+            let {[keyFromAction(API_REQUEST_SONG_LYRIC('6DHBZXxtNIKG'))] : lyricKey = {}} = this.props.entities
+                let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
-                        <Text>{lyricResponse.content}</Text>
+                        <Text style={{top: 32, textAlign: 'center'}}>{lyricResponse.content}</Text>
                     </ScrollView>
                 </View>
             )
@@ -223,7 +224,7 @@ class Player extends React.Component {
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
-                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/300}/>
+                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={0.5}/>
                             <Text style={{color:'white'}}>{this.props.song.songTitle}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
@@ -255,8 +256,7 @@ export default connect((state, ownProps) => {
         songTitle: 'Tên',
         artistName: 'Artist',
         streamURL: [],
-            image: '',
-            content: ''
+            image: 'https://www.google.com.vn'
     }
     if (song.streamURL.length > 0) {
         if (sound === null || (sound._filename !== song.streamURL[0].stream)) {

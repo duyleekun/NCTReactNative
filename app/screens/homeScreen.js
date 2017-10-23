@@ -30,7 +30,8 @@ class HomeScreen extends React.Component {
 
     render() {
         let {entities, marginTop} = this.props;
-        let {entities: {home: {0: homeResponse} = {0: {Showcase: [], TopicHot: [], BXH: [], SongHot: [], BXHVideo: [], AlbumHot: [], PlayListByTime: [], VideoHot: [], Relax: []}}}} = this.props;
+        let {entities: {home: {0: homeResponse} = {0: {Showcase: [], TopicHot: [],
+            BXH: [], SongHot: [], BXHVideo: [], AlbumHot: [], PlayListByTime: [], VideoHot: [], Relax: []}}}} = this.props;
         return (<ScrollView style={{backgroundColor: "white", marginTop}}>
             <FlatList
                 data={homeResponse.Showcase}
