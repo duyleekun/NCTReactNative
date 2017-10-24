@@ -12,12 +12,11 @@ export default class PlayListDetailSongItemComponent extends PureComponent{
             pressed: false
         }
     }
-
     render(){
-        let {data,key} = this.props;
+        let {data,idx} = this.props;
         return (
             <TouchableHighlight
-                key={key}
+                onLayout={idx===2?this.props.onLayout: null}// call parent only once
                 style={Styles.row}
                 onPress={()=>this.props.onClick(data.songKey)}
                 onHideUnderlay={()=>{this.setState({pressed: false})}}

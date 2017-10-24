@@ -14,10 +14,10 @@ export default class PlaylistDetailRelatedListComponent extends PureComponent{
     }
 
     render(){
-        let {data,key} = this.props;
+        let {data,idx} = this.props;
         return (
             <TouchableHighlight
-                key={key}
+                onLayout={idx===2?this.props.onLayout: null}
                 style={Styles.row}
                 onPress={()=>this.props.onclick(data.playlistKey)}
                 onHideUnderlay={()=>{this.setState({pressed: false})}}

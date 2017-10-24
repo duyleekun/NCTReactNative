@@ -15,13 +15,30 @@ class PlaylistDetailScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
         title: 'playListDetailScreen', header: null
     });
+    hHeight = 0;
+    // iHeight = 0;
+    dHeight = 0;
+
+    headerHeight= (event) => {
+        let {x, y, width, height} = event.nativeEvent.layout;
+        console.log('header x='+x+',y='+y+',w='+width+',h='+height);
+        // console.log(Dimensions.get('window').height);
+        this.hHeight= height;
+    };
+    itemHeight= (event) => {
+        let {x, y, width, height} = event.nativeEvent.layout;
+        console.log('item x='+x+',y='+y+',w='+width+',h='+height);
+        // console.log(Dimensions.get('window').height);
+        this.setState({iHeight: height});// force render to adjust fake height when item height is calculated
+    };
 
     constructor(props) {
         super(props);
         this.state = {
             index: 0,
             position: new Animated.Value(0),
-            expanded: false
+            expanded: false,
+            iHeight: 0
         };
     }
 
@@ -31,17 +48,30 @@ class PlaylistDetailScreen extends React.Component {
         props.loadPlaylistDetail(playlistKey);
         props.loadPlaylistRelation(playlistKey)
     }
-
-    renderItem = ({item, idx}) => {
-        let {props} = this;
-        let {position, index} = this.state;
+    renderItem = ({item, index}) => {
+        let {props,dHeight,hHeight} = this;
+        let {position} = this.state;
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
 
         let {[keyFromAction(API_REQUEST_PLAYLIST_RELATION(playlistKey))]: playlistRelatedResponse = []} = entities;
+        const songList = (playlistResponse.listSong || []).map(songKey => entities.songs[songKey]);
+        const relatedList = (playlistRelatedResponse || []).map(playListKey => entities.playlists[playListKey]);
+        let number = this.state.index === 0 ? songList.length : relatedList.length;
+
         if (item.blank === true) {
-            return (<View style={{height: item.height, backgroundColor: item.backgroundColor}}/>);
+            if (item.height !==0)
+                return (<View style={{height: item.height, backgroundColor: item.backgroundColor}}/>);
+            else {
+                if (dHeight === 0)
+                    dHeight= Dimensions.get('window').height;
+                this.state.fakeHeight=  dHeight - hHeight - number * this.state.iHeight - 50;
+                // if (this.state.iHeight!==0)
+                //     debugger
+                console.log("D="+dHeight+",H="+hHeight+",I="+this.state.iHeight+",F="+this.state.fakeHeight);
+                return (<View style={{height: this.state.fakeHeight, backgroundColor: 'white'}}/>)
+            }
         }
 
         if (item.header === true) {
@@ -57,7 +87,7 @@ class PlaylistDetailScreen extends React.Component {
                 useNativeDriver: true
             });
             return (
-                <View>
+                <View onLayout={this.headerHeight}>
                     <View
                         style={{
                             backgroundColor: 'transparent',
@@ -170,11 +200,11 @@ class PlaylistDetailScreen extends React.Component {
         }
         if (this.state.index === 0) {
             return (
-                <PlaylistDetailSongItem data={item} key={idx} onClick={this.props.playSelectedSong}/>
+                <PlaylistDetailSongItem data={item} idx={index} onClick={this.props.playSelectedSong} onLayout={this.itemHeight}/>
             )
         } else {
             return (
-                <PlaylistDetailRelatedItem data={item} key={idx}/>
+                <PlaylistDetailRelatedItem data={item} idx={index} onLayout={this.itemHeight}/>
             )
         }
     };
@@ -206,16 +236,13 @@ class PlaylistDetailScreen extends React.Component {
                     </Text>
                 </View>
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 1018}}>
-                    {/*TODO add fake view to cover the rest of the screen if there are not enough items on screen*/}
-                    {/*Use window height and other items' height*/}
                     <FlatList
                         style={{flex: 1, marginBottom: 50}}
-                        data={[{blank: true, height: 100, backgroundColor: 'transparent'},{header: true}, ...data, {blank: true, height: 9000,backgroundColor: 'white'}]}
-                        renderItem={this.renderItem}
+                        data={[{blank: true, height: 100, backgroundColor: 'transparent'},{header: true}, ...data, {blank: true, height: 0}]}
+                        renderItem={this.renderItem.bind(this)}
                         keyExtractor={(item, index) => this.keyExtraction(item,index)}
                         stickyHeaderIndices={[1]}
                         extraData={data}
-                        initialNumToRender={5}
                     />
                     <View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: '#00ffffaa', height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                         <TouchableWithoutFeedback
