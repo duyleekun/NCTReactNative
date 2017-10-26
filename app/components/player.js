@@ -1,5 +1,5 @@
 import {connect} from "react-redux"
-import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD} from "../actions/player";
+import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD, PLAYER_UPDATE_TIME} from "../actions/player";
 import React from "react";
 import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList, TouchableHighlight} from "react-native";
 import Sound from 'react-native-sound';
@@ -23,13 +23,16 @@ const pager = [
         ]
 
 class Player extends React.Component {
+
+    timer = null
+
     constructor(props) {
         super(props);
 
         this.state = {
             pan: new Animated.ValueXY(),
             currentTime: 0,
-            stickyHeaderIndices: []
+            stickyHeaderIndices: [],
         };
     }
     componentDidMount(){
@@ -165,20 +168,16 @@ class Player extends React.Component {
 
         // Calculate the transform property and set it as a value for our style which we add below to the Animated.View component
         let imageStyle = {transform: [{translateX}, {translateY}]};
-        // let song = props.entities.songs['']
-        let imageSong = (props.song.image != null) ? props.song.image: 'http://avatar.nct.nixcdn.com/playlist/2017/10/05/1/c/3/8/1507185683504.jpg'
         // if (imageSong != null){
         //     let imageSongExpand = imageSong.split('.').pop()
         //     imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
         // }
-        if (sound){
-            if(props.isPlaying){
-                sound.getCurrentTime((seconds)=>console.log('at'+seconds))
-            }
-        }
-        console.log('song: ' + props.song.songTitle)
-        console.log('song image: ' + imageSong)
-
+       if (sound){
+           if (this.state.timer == null){
+               this.addTimer()
+               console.log('current time: ' + this.state.currentTime)
+           }
+       }
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
@@ -238,8 +237,8 @@ class Player extends React.Component {
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
-                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={0.5}/>
-                            <Text style={{color:'white'}}>{this.props.song.songTitle}</Text>
+                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/this.props.song.duration}/>
+                            <Text style={{color:'white'}}>00:00</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
                             <PlaylistTouchableBtn img={'order'} style={{width:46, height: 46}}/>
@@ -262,17 +261,31 @@ class Player extends React.Component {
             </Animated.View>
         )
     }
+    tick() {
+        sound.getCurrentTime((seconds)=>{
+            this.setState({
+                currentTime: seconds
+            });
+        })
+    }
+
+    addTimer(){
+        this.timer = setInterval(this.tick.bind(this), 1000)
+    }
 }
 
 export default connect((state, ownProps) => {
     const {player: {isPlaying, nowList, nowAt, collapsed}, entities} = state
+
     const song = nowList.map((songKey) => entities.songs[songKey])[nowAt] || {
         songTitle: 'Tên',
             songKey: '',
         artistName: 'Artist',
         streamURL: [],
-            image: 'https://www.google.com.vn'
+            image: 'https://www.google.com.vn',
+            duration: 0
     }
+
     if (song.streamURL.length > 0) {
         if (sound === null || (sound._filename !== song.streamURL[0].stream)) {
             if (sound) {
@@ -283,12 +296,7 @@ export default connect((state, ownProps) => {
                     console.log(error)
                 }
                 sound.play((msg) => {
-                    console.log(msg)
-                    sound.getCurrentTime((seconds) => {
-                        this.setState({
-                            currentTime: seconds
-                        })
-                    });
+                    console.log('time 1: ' + msg)
                 })
             })
         }
@@ -297,17 +305,13 @@ export default connect((state, ownProps) => {
     if (sound) {
         if (isPlaying) {
             sound.play((msg) => {
-                console.log(msg)
-                sound.getCurrentTime((seconds) => {
-                    this.setState({
-                        currentTime: seconds
-                    })
-                });
+                console.log('time 2 abc: ' + msg)
             })
         } else {
             sound.pause()
         }
     }
+
     return {isPlaying, nowAt, song, collapsed, entities}
 }, (dispatch, ownProps) => ({
     play: () => dispatch(PLAYER_PLAY()),
