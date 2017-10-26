@@ -9,6 +9,7 @@ import {ListItem, Left, Icon, Right, Title, Body } from "native-base";
 import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
+
 import TouchableItem from "../../node_modules/react-navigation/lib-rn/views/TouchableItem";
 
 
@@ -42,7 +43,7 @@ class Player extends React.Component {
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-                return gestureState.dy != 0;
+                return gestureState.dy < gestureState.dx
             },
 
             onPanResponderGrant: (e, gestureState) => {
