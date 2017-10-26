@@ -74,7 +74,14 @@ class PlaylistDetailScreen extends React.Component {
 
         if (item.blank === true) {
             if (item.height !==0)
-                return (<Animated.View style={{minHeight: item.height ,height: this.state.expandAnim, backgroundColor: item.backgroundColor}}/>);
+                return (
+                    <TouchableWithoutFeedback
+                        onPress={this.state.expanded? this.toggle.bind(this) : null}>
+                        <Animated.View
+                            style={{minHeight: item.height ,height: this.state.expandAnim, backgroundColor: item.backgroundColor}}>
+                        </Animated.View>
+                    </TouchableWithoutFeedback>
+                );
             else {
                 if (dHeight === 0)
                     dHeight= Dimensions.get('window').height;
