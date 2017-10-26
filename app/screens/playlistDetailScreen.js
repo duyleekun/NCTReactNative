@@ -42,6 +42,23 @@ class PlaylistDetailScreen extends React.Component {
         console.log(this.detailBarHeight)
     };
 
+    monitorScroll=(e)=>{
+        let offset = e.nativeEvent.contentOffset.y;
+        if(offset > fakeViewHeight && this.state.scrollTop._value === 0)
+            this.animateToolBar(1);
+        if(offset < fakeViewHeight && this.state.scrollTop._value === 1)
+            this.animateToolBar(0);
+    };
+    animateToolBar=(value: number)=>{
+        Animated.timing(
+            this.state.scrollTop,
+            {
+                toValue: value,
+                duration: 200,
+            }
+        ).start()
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -50,7 +67,8 @@ class PlaylistDetailScreen extends React.Component {
             expanded: false,
             expandAnim: new Animated.Value(),
             iHeight: 0,
-            detailOpacity: new Animated.Value(1)
+            detailOpacity: new Animated.Value(1),
+            scrollTop: new Animated.Value(0)
         };
     }
 
@@ -86,8 +104,6 @@ class PlaylistDetailScreen extends React.Component {
                 if (dHeight === 0)
                     dHeight= Dimensions.get('window').height;
                 this.state.fakeHeight=  dHeight - hHeight - number * this.state.iHeight - playerHeight;
-                // if (this.state.iHeight!==0)
-                //     debugger
                 console.log("D="+dHeight+",H="+hHeight+",I="+this.state.iHeight+",F="+this.state.fakeHeight);
                 return (<View style={{height: this.state.fakeHeight, backgroundColor: 'white'}}/>)
             }
@@ -110,7 +126,6 @@ class PlaylistDetailScreen extends React.Component {
                 outputRange: [0, 1],
                 extrapolate: 'clamp',
                 useNativeDriver: true
-
             });
 
             return (
@@ -244,7 +259,6 @@ class PlaylistDetailScreen extends React.Component {
         let {state: {params: {playlistKey}}} = props.navigation;
         let {entities} = props;
 
-
         let {playlists: {[playlistKey]: playlistResponse = {}} = {[playlistKey]: {}}} = entities;
         let {[keyFromAction(API_REQUEST_PLAYLIST_RELATION(playlistKey))]: playlistRelatedResponse = []} = entities;
 
@@ -253,6 +267,18 @@ class PlaylistDetailScreen extends React.Component {
         const relatedList = (playlistRelatedResponse || []).map(playListKey => entities.playlists[playListKey]);
         const data = this.state.index === 0 ? songList : relatedList;
 
+        const opacity = this.state.scrollTop.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
+            useNativeDriver: true
+        });
+        const backgroundColor = this.state.scrollTop.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['transparent', `#36AAEB`],
+            extrapolate: 'clamp',
+            useNativeDriver: true
+        });
         return (
             <View style={{position: 'relative', height: '100%'}}>
                 <View style={{position: 'relative'}}>
@@ -273,22 +299,23 @@ class PlaylistDetailScreen extends React.Component {
                         stickyHeaderIndices={[1]}
                         extraData={data}
                         scrollEnabled={!this.state.expanded}
+                        onScroll={this.monitorScroll}
                     />
-                    <View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: '#00ffffaa', height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                    <Animated.View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: backgroundColor, height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                         <TouchableWithoutFeedback
                             onPress={this.props.goBack}>
                             <Image
                                 source={require('../assets/images/ic_btn_return_nor.png')}
                                 style={{width: 20, height: 20}}/>
                         </TouchableWithoutFeedback>
-                        <Text
+                        <Animated.Text
                             numberOfLines={1}
                             ellipsizeMode={'tail'}
-                            style={{ color: 'white', fontSize: 22, flex: 1, textAlign: 'center'}} >
+                            style={{ color: 'white', fontSize: 22, flex: 1, textAlign: 'center', opacity: opacity}} >
                             {playlistResponse.playlistTitle}
-                        </Text>
+                        </Animated.Text>
                         <View style={{width: 30, height: 30}}/>
-                    </View>
+                    </Animated.View>
                 </View>
             </View>
         )
