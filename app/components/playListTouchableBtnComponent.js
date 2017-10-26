@@ -39,7 +39,7 @@ export default class PlayListTouchableBtn extends Component {
                                 onShowUnderlay={()=>{this.setState({pressed: true})}}>
                 <View style={Styles.btnContent}>
                     <Image
-                        style={[{tintColor: this.state.pressed ? '#32AAEA' : null}, Styles.btnImg]}
+                        style={[{tintColor: this.state.pressed ? '#32AAEA' : null}, props.size ? {width: props.size, height: props.size} :Styles.btnImg]}
                         source={this.getImage(props.img)}
                     />
                     <Text
