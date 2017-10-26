@@ -265,7 +265,7 @@ class PlaylistDetailScreen extends React.Component {
                         keyExtractor={(item, index) => this.keyExtraction(item,index)}
                         stickyHeaderIndices={[1]}
                         extraData={data}
-                        scrollEnable={!this.state.expanded}
+                        scrollEnabled={!this.state.expanded}
                     />
                     <View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: '#00ffffaa', height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                         <TouchableWithoutFeedback
