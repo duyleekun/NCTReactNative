@@ -23,31 +23,35 @@ class PlaylistDetailScreen extends React.Component {
 
     headerHeight= (event) => {
         let {x, y, width, height} = event.nativeEvent.layout;
-        console.log('header x='+x+',y='+y+',w='+width+',h='+height);
+        // console.log('header x='+x+',y='+y+',w='+width+',h='+height);
         // console.log(Dimensions.get('window').height);
         this.hHeight= height;
     };
     itemHeight= (event) => {
         let {x, y, width, height} = event.nativeEvent.layout;
-        console.log('item x='+x+',y='+y+',w='+width+',h='+height);
+        // console.log('item x='+x+',y='+y+',w='+width+',h='+height);
         // console.log(Dimensions.get('window').height);
         this.setState({iHeight: height});// force render to adjust fake height when item height is calculated
     };
     getBtnBarHeight= (event) => {
         this.btnBarHeight = event.nativeEvent.layout.height;
-        console.log(this.btnBarHeight)
+        // console.log(this.btnBarHeight)
     };
     getDetailBarHeight=(event) => {
         this.detailBarHeight = event.nativeEvent.layout.height;
-        console.log(this.detailBarHeight)
+        // console.log(this.detailBarHeight)
     };
 
     monitorScroll=(e)=>{
         let offset = e.nativeEvent.contentOffset.y;
-        if(offset > fakeViewHeight && this.state.scrollTop._value === 0)
+        if(offset > fakeViewHeight - 5 && this.state.scrollTop._value === 0) {
             this.animateToolBar(1);
-        if(offset < fakeViewHeight && this.state.scrollTop._value === 1)
+            // this.props.changeStatusBarColor();
+        }
+        if(offset < fakeViewHeight - 5&& this.state.scrollTop._value === 1) {
             this.animateToolBar(0);
+            // this.props.changeStatusBarTranslucent();
+        }
     };
     animateToolBar=(value: number)=>{
         Animated.timing(
@@ -104,7 +108,7 @@ class PlaylistDetailScreen extends React.Component {
                 if (dHeight === 0)
                     dHeight= Dimensions.get('window').height;
                 this.state.fakeHeight=  dHeight - hHeight - number * this.state.iHeight - playerHeight;
-                console.log("D="+dHeight+",H="+hHeight+",I="+this.state.iHeight+",F="+this.state.fakeHeight);
+                // console.log("D="+dHeight+",H="+hHeight+",I="+this.state.iHeight+",F="+this.state.fakeHeight);
                 return (<View style={{height: this.state.fakeHeight, backgroundColor: 'white'}}/>)
             }
         }
@@ -301,7 +305,7 @@ class PlaylistDetailScreen extends React.Component {
                         scrollEnabled={!this.state.expanded}
                         onScroll={this.monitorScroll}
                     />
-                    <Animated.View style={{position: 'absolute',width: '100%', top: 20, left: 0, right: 0, backgroundColor: backgroundColor, height: 60, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                    <Animated.View style={{position: 'absolute',width: '100%',paddingTop: 20, top: 0, left: 0, right: 0, backgroundColor: backgroundColor, height: 80, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                         <TouchableWithoutFeedback
                             onPress={this.props.goBack}>
                             <Image
@@ -347,7 +351,7 @@ class PlaylistDetailScreen extends React.Component {
         return index;
     }
     toggle(){
-        console.log('btn click');
+        // console.log('btn click');
         let initialValue    = this.state.expanded? Dimensions.get('window').height-playerHeight-this.btnBarHeight-this.detailBarHeight : fakeViewHeight,
             finalValue      = this.state.expanded? fakeViewHeight : Dimensions.get('window').height-playerHeight-this.btnBarHeight-this.detailBarHeight;
         this.state.expandAnim.setValue(initialValue);
@@ -394,7 +398,7 @@ export default connect(
                 dispatch(PLAYER_TOGGLE());
             },
             goBack: () =>{
-                console.log('pressed back');
+                // console.log('pressed back');
                 ownProps.navigation.goBack(null);
             }
         }
