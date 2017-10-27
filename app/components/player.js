@@ -1,5 +1,5 @@
 import {connect} from "react-redux"
-import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD, PLAYER_UPDATE_TIME} from "../actions/player";
+import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD, PLAYER_UPDATE_TIME, PLAYER_NOWLIST_PREVIOUS} from "../actions/player";
 import React from "react";
 import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList} from "react-native";
 import Sound from 'react-native-sound';
@@ -43,7 +43,9 @@ class Player extends React.Component {
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-                return gestureState.dy < gestureState.dx
+                console.log('dx : ' + gestureState.dx)
+                console.log('dy : ' + gestureState.dy)
+                return Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -196,9 +198,9 @@ class Player extends React.Component {
                         <Text>{props.song.artistName}</Text>
                     </View>
                     <View style={{right: 8, justifyContent: 'center', flexDirection: 'row', }}>
-                        {props.isPlaying ? (<PlaylistTouchableBtn size={46} img={'play'} onClick={props.pause}/>) : (
-                            <PlaylistTouchableBtn size={36} img={'pause'} onClick={props.play}/>)}
-                        <PlaylistTouchableBtn size={36} img={'next'} onClick={props.next} style={{left: 8}}/>
+                        {props.isPlaying ? (<PlaylistTouchableBtn size={26} img={'play'} onClick={props.pause}/>) : (
+                            <PlaylistTouchableBtn size={26} img={'pause'} onClick={props.play}/>)}
+                        <PlaylistTouchableBtn size={26} img={'next'} onClick={props.next} style={{left: 8}}/>
                     </View>
                 </View>
 
@@ -243,7 +245,7 @@ class Player extends React.Component {
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
                             <PlaylistTouchableBtn size={46} img={'order'} style={{width:46, height: 46}}/>
-                            <PlaylistTouchableBtn size={46} img={'prev'} style={{width:46, height: 46, marginLeft: 8}}/>
+                            <PlaylistTouchableBtn size={46} img={'prev'} style={{width:46, height: 46, marginLeft: 8}} onClick={this.props.prev()}/>
                             { props.isPlaying ? (
                                 <PlaylistTouchableBtn
                                     size={56}
@@ -256,7 +258,7 @@ class Player extends React.Component {
                                     onClick={()=>{
                                         this.props.loadSong('6DHBZXxtNIKG')}}/>
                             )}
-                            <PlaylistTouchableBtn size={46} img={'next'} style={{width:46, height: 46, marginRight: 8}}/>
+                            <PlaylistTouchableBtn size={46} img={'next'} style={{width:46, height: 46, marginRight: 8}} onClick={this.props.next()}/>
                             <PlaylistTouchableBtn size={46} img={'list'} style={{width:46, height: 46}}/>
                         </View>
                     </View>
@@ -320,6 +322,7 @@ export default connect((state, ownProps) => {
     play: () => dispatch(PLAYER_PLAY()),
     pause: () => dispatch(PLAYER_PAUSE()),
     next: () => dispatch(PLAYER_NOWLIST_NEXT()),
+    prev: () => dispatch(PLAYER_NOWLIST_PREVIOUS()),
     toggleView: () => dispatch(PLAYER_TOGGLE()),
     loadSong: (songId) => {
         dispatch(API_REQUEST_SONG_RELATION(songId));
