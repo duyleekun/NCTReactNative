@@ -9,10 +9,7 @@ import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
-
-import TouchableItem from "../../node_modules/react-navigation/lib-rn/views/TouchableItem";
-
-
+import RNFetchBlob from 'react-native-fetch-blob'
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
 
@@ -45,7 +42,7 @@ class Player extends React.Component {
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 console.log('dx : ' + gestureState.dx)
                 console.log('dy : ' + gestureState.dy)
-                return Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
+                return Math.abs(gestureState.dy) > Math.abs(gestureState.dx) //&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -58,7 +55,7 @@ class Player extends React.Component {
             ]),
 
             onPanResponderRelease: (e, {vx, vy}) => {
-                // Flatten the offset to avoid erratic behavior
+             // Flatten the offset to avoid erratic behavior
                 const {pan} = this.state
                 const {collapsed} = this.props
                 pan.flattenOffset();
@@ -79,6 +76,10 @@ class Player extends React.Component {
 
             }
         });
+    }
+
+    fancyTime(value) {
+    return Math.floor(value / 60) + ":" + (value % 60 ? value % 60 : '00')
     }
 
     _renderItemPager = ({item}) => {
@@ -137,7 +138,8 @@ class Player extends React.Component {
             )
         default:
             let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
-                let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
+            let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
+            this.loadLyrics(lyricResponse.timedLyric)
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
@@ -198,8 +200,9 @@ class Player extends React.Component {
                         <Text>{props.song.artistName}</Text>
                     </View>
                     <View style={{right: 8, justifyContent: 'center', flexDirection: 'row', }}>
-                        {props.isPlaying ? (<PlaylistTouchableBtn size={26} img={'play'} onClick={props.pause}/>) : (
-                            <PlaylistTouchableBtn size={26} img={'pause'} onClick={props.play}/>)}
+                        {props.isPlaying ? (<PlaylistTouchableBtn size={26} img={'pause'} onClick={()=>this.props.pause()}/>):
+                            (<PlaylistTouchableBtn size={26} img={'play'} onClick={()=>this.props.play()}/>)
+                        }
                         <PlaylistTouchableBtn size={26} img={'next'} onClick={props.next} style={{left: 8}}/>
                     </View>
                 </View>
@@ -241,11 +244,11 @@ class Player extends React.Component {
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>00:00</Text>
                             <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/this.props.song.duration}/>
-                            <Text style={{color:'white'}}>00:00</Text>
+                            <Text style={{color:'white'}}>{this.fancyTime(this.props.song.duration)}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
                             <PlaylistTouchableBtn size={46} img={'order'} style={{width:46, height: 46}}/>
-                            <PlaylistTouchableBtn size={46} img={'prev'} style={{width:46, height: 46, marginLeft: 8}} onClick={this.props.prev()}/>
+                            <PlaylistTouchableBtn size={46} img={'prev'} style={{width:46, height: 46, marginLeft: 8}} onClick={()=>this.props.prev()}/>
                             { props.isPlaying ? (
                                 <PlaylistTouchableBtn
                                     size={56}
@@ -256,9 +259,9 @@ class Player extends React.Component {
                                     size={56}
                                     img={'play'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
                                     onClick={()=>{
-                                        this.props.loadSong('6DHBZXxtNIKG')}}/>
+                                        this.props.loadSong('DR5OA6BswpEk')}}/> // 6DHBZXxtNIKG
                             )}
-                            <PlaylistTouchableBtn size={46} img={'next'} style={{width:46, height: 46, marginRight: 8}} onClick={this.props.next()}/>
+                            <PlaylistTouchableBtn size={46} img={'next'} style={{width:46, height: 46, marginRight: 8}} onClick={()=>this.props.next()}/>
                             <PlaylistTouchableBtn size={46} img={'list'} style={{width:46, height: 46}}/>
                         </View>
                     </View>
@@ -276,6 +279,32 @@ class Player extends React.Component {
 
     addTimer(){
         this.timer = setInterval(this.tick.bind(this), 1000)
+    }
+    loadLyrics(urlString){
+        // send http request in a new thread (using native code)
+        RNFetchBlob.fetch('GET', urlString, {
+            // Authorization : 'Bearer access-token...',
+            // more headers  ..
+        })
+        // when response status code is 200
+            .then((res) => {
+                // the conversion is done in native code
+                var CryptoJS = require("crypto-js");
+                let bytes = CryptoJS.RC4.decrypt(res.data.toString(),'Lyr1cjust4nct')
+                // var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+                // //
+                // console.log(plaintext);
+                debugger
+                let base64Str = res.base64()
+                // the following conversions are done in js, it's SYNC
+                let text = res.text()
+                let json = res.json()
+
+            })
+            // Status code is not 200
+            .catch((errorMessage, statusCode) => {
+                // error handling
+            })
     }
 }
 

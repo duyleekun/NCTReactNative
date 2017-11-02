@@ -132,6 +132,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-blur')
     compile project(':react-native-video')
     compile project(':react-native-sound')
