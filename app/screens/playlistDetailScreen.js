@@ -304,6 +304,7 @@ class PlaylistDetailScreen extends React.Component {
                         extraData={data}
                         scrollEnabled={!this.state.expanded}
                         onScroll={this.monitorScroll}
+                        alwaysBounceHorizontal={true}
                     />
                     <Animated.View style={{position: 'absolute',width: '100%',paddingTop: 20, top: 0, left: 0, right: 0, backgroundColor: backgroundColor, height: 80, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                         <TouchableWithoutFeedback
