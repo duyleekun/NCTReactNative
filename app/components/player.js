@@ -1,3 +1,5 @@
+'use trict';
+
 import {connect} from "react-redux"
 import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD, PLAYER_UPDATE_TIME, PLAYER_NOWLIST_PREVIOUS} from "../actions/player";
 import React from "react";
@@ -10,6 +12,7 @@ import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC}
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
 import RNFetchBlob from 'react-native-fetch-blob'
+
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
 
@@ -139,7 +142,7 @@ class Player extends React.Component {
         default:
             let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
             let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
-            this.loadLyrics(lyricResponse.timedLyric)
+            this.loadLyrics(lyricResponse.timedLyric, lyricResponse.keyDecryptLyric)
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
@@ -280,7 +283,7 @@ class Player extends React.Component {
     addTimer(){
         this.timer = setInterval(this.tick.bind(this), 1000)
     }
-    loadLyrics(urlString){
+    loadLyrics(urlString, decryptKey){
         // send http request in a new thread (using native code)
         RNFetchBlob.fetch('GET', urlString, {
             // Authorization : 'Bearer access-token...',
@@ -289,12 +292,13 @@ class Player extends React.Component {
         // when response status code is 200
             .then((res) => {
                 // the conversion is done in native code
-                var CryptoJS = require("crypto-js");
-                let bytes = CryptoJS.RC4.decrypt(res.data.toString(),'Lyr1cjust4nct')
-                // var plaintext = bytes.toString(CryptoJS.enc.Utf8);
-                // //
-                // console.log(plaintext);
                 debugger
+                var rc4 = require('arc4')
+                var cipher = rc4('arc4', decryptKey)
+                var lyricsTime = cipher.decodeString(res.data)
+
+                console.log(lyricsTime)
+
                 let base64Str = res.base64()
                 // the following conversions are done in js, it's SYNC
                 let text = res.text()
