@@ -5,6 +5,10 @@ export const isRequest = (type) => {
     return /^API\/REQUEST\/.*/.test(type)
 }
 
+export const isDownload = (type) =>{
+    return /^API\/DOWNLOAD\/.*/.test(type)
+}
+
 export const isResponse = (type) => {
     return /^API\/RESPONSE\/.*/.test(type)
 }
@@ -43,6 +47,14 @@ export const API_REQUEST_SONG_QUERY = createAction('API/REQUEST/SONG/QUERY', (..
     query: query,
     schemaName: 'song'
 }))
+
+export const API_LOAD_LYRICS = createAction('API/DOWNLOAD/API_LOAD_LYRICS', (url, ...query) => ({
+    path: `${url}`,
+    query: query,
+    schemaName: 'lyricsData'
+}))
+
+
 export const API_REQUEST_SONG_RELATION = createAction('API/REQUEST/SONG/RELATION', (id, ...query) => ({
     path: `/songs/playlist-relation/${id}`,
     query: query,

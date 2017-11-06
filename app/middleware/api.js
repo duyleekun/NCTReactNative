@@ -1,7 +1,7 @@
 import * as schemas from "../config/apiSchema";
 import {normalize, schema} from 'normalizr';
 
-import {API_RESPONSE_ERROR, API_RESPONSE_SUCCESS, isRequest} from "../actions/api";
+import {API_RESPONSE_ERROR, API_RESPONSE_SUCCESS, isRequest, isDownload} from "../actions/api";
 
 const API_ROOT = 'https://graph.nhaccuatui.com/v4';
 
@@ -21,6 +21,22 @@ export default ({dispatch, getState}) => next => action => {
                 dispatch(API_RESPONSE_SUCCESS({
                     request: payload,
                     response: normalize(responseJson.data, schemas[schemaName])
+                }))
+            })
+            .catch((error) => {
+                dispatch(API_RESPONSE_ERROR(error))
+            })
+    } else  if (isDownload(type)){
+        const {method = 'GET', path, query = {}, schemaName} = payload;
+        fetch(`${path}`, {
+            method: method
+        })
+            .then((response) => response.text())
+            .then((responseBlob) => {
+                console.log('response download: ' + responseBlob)
+                dispatch(API_RESPONSE_SUCCESS({
+                    request: payload,
+                    response: normalize({'id': `${path}`, 'data': responseBlob.toString()}, schemas[schemaName])
                 }))
             })
             .catch((error) => {

@@ -9,6 +9,7 @@ export const rankingItem = new schema.Entity('rankingItems',{},{ idAttribute: 'k
 export const rankingMusics = new schema.Entity('rankingMusics',{items: [rankingItem]},{ idAttribute: 'key' });
 export const rankingVideos = new schema.Entity('rankingVideos',{items: [rankingItem]},{ idAttribute: 'key' });
 export const lyric = new schema.Entity('lyric',{},{idAttribute: 'lyricId'})
+export const lyricsData = new schema.Entity('lyricsData',{}, {idAttribute: 'id'})
 export const home = new schema.Entity('home',{
     // ShowCase: [song],
     AlbumHot: [playlist],
