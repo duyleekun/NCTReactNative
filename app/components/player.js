@@ -11,6 +11,7 @@ import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC, API_LOAD_LYRICS} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
+import arc4 from '../lib/arc4'
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -140,12 +141,15 @@ class Player extends React.Component {
             )
         default:
             let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
-            let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: ''}}}} = this.props
+            let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: '', timedLyric: ''}}}} = this.props
             this.props.loadLyrics(lyricResponse.timedLyric) //             this.loadLyrics(lyricResponse.timedLyric, lyricResponse.keyDecryptLyric)
+            let {entities:{lyricsData:{[lyricResponse.timedLyric]: lyricsDataRes} = {[lyricResponse.timedLyric]: {data: ''}}}} = this.props
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
-                        <Text style={{top: 32, textAlign: 'center'}}>{lyricResponse.content}</Text>
+                        <Text style={{top: 32, textAlign: 'center'}}>{
+                            lyricsDataRes.data.length > 0 ? (new arc4(lyricResponse.keyDecryptLyric)).decodeString(lyricsDataRes.data) : ''
+                        }</Text>
                     </ScrollView>
                 </View>
             )
