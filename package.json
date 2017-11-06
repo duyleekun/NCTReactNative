@@ -7,7 +7,8 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"arc4": "^3.3.8",
+		"buffer": "^5.0.8",
+		"crypto-js": "^3.1.9-1",
 		"isomorphic-fetch": "^2.2.1",
 		"native-base": "^2.3.3",
 		"normalizr": "^3.2.4",
