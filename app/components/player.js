@@ -144,11 +144,19 @@ class Player extends React.Component {
             let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: '', timedLyric: ''}}}} = this.props
             this.props.loadLyrics(lyricResponse.timedLyric) //             this.loadLyrics(lyricResponse.timedLyric, lyricResponse.keyDecryptLyric)
             let {entities:{lyricsData:{[lyricResponse.timedLyric]: lyricsDataRes} = {[lyricResponse.timedLyric]: {data: ''}}}} = this.props
+            let lyricStr = ''
+            if (lyricsDataRes.data.length > 0){
+                let result = (new arc4(lyricResponse.keyDecryptLyric)).decodeString(lyricsDataRes.data)
+                let jsonLyric = this.parseLyrics(result)
+                for (object of jsonLyric){
+                    lyricStr = lyricStr + '\n' +object.lyric
+                }
+            }
             return (
                 <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
                         <Text style={{top: 32, textAlign: 'center'}}>{
-                            lyricsDataRes.data.length > 0 ? (new arc4(lyricResponse.keyDecryptLyric)).decodeString(lyricsDataRes.data) : ''
+                            lyricStr
                         }</Text>
                     </ScrollView>
                 </View>
@@ -169,9 +177,52 @@ class Player extends React.Component {
         ).start();
     }
 
+    convertDuration(string){
+        var minute = string.replace('[','').replace(']','').split(':')[0]
+        var seconds = string.replace('[','').replace(']','').split(':')[1]
+        return minute*60 + parseFloat(seconds)
+    }
+
+    getLyricStr(string){
+        return string.split(']').pop()
+    }
+
+    getDuration(string){
+        let durations = []
+        var newlines = string.split(']')
+        for (i = 0; i < newlines.length - 1; i++){
+            durations.push(this.convertDuration(newlines[i]))
+        }
+        return durations
+    }
+
+    // jsonLyric =
+
+    parseLyrics(lyric){
+        var lines = lyric.split(/\r\n|\r|\n/)
+        let jsonLyrics = []
+        for (var line of lines){
+            if (line.split('][').length > 1){
+                var clones = line.split('][')
+                let lyricStr = this.getLyricStr(clones.pop())
+                let durations = this.getDuration(line)
+                for (duration of durations){
+                    jsonLyrics.push({duration: duration, lyric: lyricStr})
+                }
+            } else {
+                var clones = line.split(']')
+                let lyricStr = this.getLyricStr(clones.pop())
+                let durations = this.getDuration(line)
+                for (duration of durations){
+                    jsonLyrics.push({duration: duration, lyric: lyricStr})
+                }
+            }
+        }
+        return jsonLyrics.sort((a,b)=>{ return parseFloat(a.duration) - parseFloat(b.duration) })
+    }
+
     render() {
         let props = this.props;
-        let {entities} = props
         let {pan} = this.state;
 
         // Calculate the x and y transform from the pan value
@@ -189,6 +240,8 @@ class Player extends React.Component {
                console.log('current time: ' + this.state.currentTime)
            }
        }
+       // let date = new Date(null)
+       //  date.setSeconds(SECONDS)
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
