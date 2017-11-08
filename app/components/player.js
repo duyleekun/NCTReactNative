@@ -82,13 +82,13 @@ class Player extends React.Component {
     }
 
     fancyTime(value) {
-    return Math.floor(value / 60) + ":" + (value % 60 ? value % 60 : '00')
+        return Math.floor(value / 60) + ":" + (value % 60 ? value % 60 : '00')
     }
 
     _renderItemPager = ({item}) => {
         if (item.header) {
             return (
-                <ListItem itemDivide style={{marginLeft: 0}}>
+                <ListItem itemDivide style={{marginLeft: 0, position:'relative'}}>
                     <View style={{ backgroundColor:'#ffffff50', position: 'absolute'}}/>
                     <Text style={{ marginLeft: 16, fontWeight: "bold", color: '#666666', position: 'absolute', backgroundColor:'transparent'}}>
                         {item.name}
@@ -101,9 +101,9 @@ class Player extends React.Component {
                 <ListItem style={{marginLeft: 0, backgroundColor: 'transparent'}}>
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginLeft: 8}}>
                     <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
-                    <View style={{marginLeft: 8}}>
-                        <Text>{playlistRelate.playlistTitle}</Text>
-                        <Text>{playlistRelate.artistName}</Text>
+                    <View style={{marginLeft: 8, display: 'flex', flexDirection: 'column', flex: 1}}>
+                        <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.playlistTitle}</Text>
+                        <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.artistName}</Text>
                     </View>
                     </View>
                 </ListItem>
@@ -306,7 +306,7 @@ class Player extends React.Component {
                             <PlaylistTouchableBtn size={36} img={'more'} style={{width:36, height: 36}}/>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
-                            <Text style={{color:'white'}}>00:00</Text>
+                            <Text style={{color:'white'}}>{this.fancyTime(parseInt(this.state.currentTime))}</Text>
                             <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/this.props.song.duration}/>
                             <Text style={{color:'white'}}>{this.fancyTime(this.props.song.duration)}</Text>
                         </View>
