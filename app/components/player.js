@@ -241,7 +241,7 @@ class Player extends React.Component {
         // }
        if (sound){
            if (this.timer == null){
-               this.addTimer()
+               // this.addTimer()
                console.log('current time: ' + this.state.currentTime)
            }
        }
@@ -307,7 +307,19 @@ class Player extends React.Component {
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center'}}>
                             <Text style={{color:'white'}}>{this.fancyTime(parseInt(this.state.currentTime))}</Text>
-                            <Slider style={{width:'72%'}} minimumTrackTintColor={'black'} maximumTrackTintColor={'#666666'} thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')} value={this.state.currentTime/this.props.song.duration}/>
+                            <Slider style={{width:'72%'}}
+                                    minimumTrackTintColor={'black'}
+                                    maximumTrackTintColor={'#666666'}
+                                    thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
+                                    value={this.state.currentTime/this.props.song.duration}
+                                    onValueChange={val => {
+                                        if (this.props.song.duration>0){
+                                            this.timer = null
+                                            sound.setCurrentTime(val*this.props.song.duration)
+                                            this.addTimer()
+                                        }
+                                    }}
+                            />
                             <Text style={{color:'white'}}>{this.fancyTime(this.props.song.duration)}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
