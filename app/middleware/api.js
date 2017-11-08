@@ -33,7 +33,6 @@ export default ({dispatch, getState}) => next => action => {
         })
             .then((response) => response.text())
             .then((responseBlob) => {
-                console.log('response download: ' + responseBlob)
                 dispatch(API_RESPONSE_SUCCESS({
                     request: payload,
                     response: normalize({'id': `${path}`, 'data': responseBlob.toString()}, schemas[schemaName])

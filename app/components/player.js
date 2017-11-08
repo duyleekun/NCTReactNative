@@ -142,7 +142,7 @@ class Player extends React.Component {
         default:
             let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
             let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: '', timedLyric: ''}}}} = this.props
-            this.props.loadLyrics(lyricResponse.timedLyric) //             this.loadLyrics(lyricResponse.timedLyric, lyricResponse.keyDecryptLyric)
+            this.props.loadLyrics(lyricResponse.timedLyric)
             let {entities:{lyricsData:{[lyricResponse.timedLyric]: lyricsDataRes} = {[lyricResponse.timedLyric]: {data: ''}}}} = this.props
             let lyricStr = ''
             if (lyricsDataRes.data.length > 0){
@@ -153,12 +153,17 @@ class Player extends React.Component {
                 }
             }
             return (
-                <View style={{height: Dimensions.get('window').height*0.76, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
+                <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <ScrollView>
                         <Text style={{top: 32, textAlign: 'center'}}>{
                             lyricStr
                         }</Text>
                     </ScrollView>
+                    {/*<PlaylistTouchableBtn*/}
+                        {/*size={16}*/}
+                        {/*img={'play'}*/}
+                        {/*style={{width:16, height: 16, marginLeft: 8, position: 'absolute', display: 'flex', flexDirection: 'row'}}*/}
+                        {/*onClick={()=>{sound.setCurrentTime(30)}}/>*/}
                 </View>
             )
         }
@@ -235,8 +240,8 @@ class Player extends React.Component {
         //     imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
         // }
        if (sound){
-           if (this.state.timer == null){
-               // this.addTimer()
+           if (this.timer == null){
+               this.addTimer()
                console.log('current time: ' + this.state.currentTime)
            }
        }
@@ -337,7 +342,7 @@ class Player extends React.Component {
     }
 
     addTimer(){
-        this.timer = setInterval(this.tick.bind(this), 1000)
+        this.timer = setInterval(this.tick.bind(this), 250)
     }
 }
 
