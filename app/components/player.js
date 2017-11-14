@@ -26,6 +26,10 @@ const pager = [
 class Player extends React.Component {
 
     timer = null
+    pageIndex = 0
+    playPosition = 0
+    jsonLyrics = []
+    lyricContentHeight = 0
 
     constructor(props) {
         super(props);
@@ -45,7 +49,8 @@ class Player extends React.Component {
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 console.log('dx : ' + gestureState.dx)
                 console.log('dy : ' + gestureState.dy)
-                return Math.abs(gestureState.dy) > Math.abs(gestureState.dx) //&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
+
+                return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) && this.pageIndex == 0 //&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -147,26 +152,56 @@ class Player extends React.Component {
             let lyricStr = ''
             if (lyricsDataRes.data.length > 0){
                 let result = (new arc4(lyricResponse.keyDecryptLyric)).decodeString(lyricsDataRes.data)
-                let jsonLyric = this.parseLyrics(result)
-                for (object of jsonLyric){
-                    lyricStr = lyricStr + '\n' +object.lyric
+                this.jsonLyrics = this.parseLyrics(result)
+                for (object of this.jsonLyrics){
+                    if (lyricStr.length > 0){
+                        lyricStr = lyricStr + '\n' +object.lyric
+                    } else {
+                        lyricStr = object.lyric
+                    }
                 }
             }
             return (
-                <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
-                    <ScrollView>
+                <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', justifyContent: 'center', flexDirection: 'column'}}>
+                    <ScrollView
+                        style={{position: 'absolute', width: '100%', height: '100%'}}
+                        onScroll = {this.onLyricsScrollEnd.bind(this)}
+                        onContentSizeChange={(width, height)=>{
+                            this.lyricContentHeight = height
+                        }}>
                         <Text style={{top: 32, textAlign: 'center'}}>{
                             lyricStr
                         }</Text>
                     </ScrollView>
-                    {/*<PlaylistTouchableBtn*/}
-                        {/*size={16}*/}
-                        {/*img={'play'}*/}
-                        {/*style={{width:16, height: 16, marginLeft: 8, position: 'absolute', display: 'flex', flexDirection: 'row'}}*/}
-                        {/*onClick={()=>{sound.setCurrentTime(30)}}/>*/}
+                    <PlaylistTouchableBtn
+                        size={26}
+                        img={'play'}
+                        style={{marginLeft: 8, position: 'absolute'}}
+                        onClick={()=>{
+                            if (this.playPosition < this.jsonLyrics.length){
+                                sound.setCurrentTime(this.jsonLyrics[this.playPosition - 1].duration)
+                            }
+                        }}/>
                 </View>
             )
         }
+    }
+
+    onScrollEnd(e) {
+        let contentOffset = e.nativeEvent.contentOffset;
+        let viewSize = e.nativeEvent.layoutMeasurement;
+
+        // Divide the horizontal offset by the width of the view to see which page is visible
+        let pageNum = Math.floor(contentOffset.x / viewSize.width);
+        this.pageIndex = pageNum
+        console.log('scrolled to page ', pageNum);
+    }
+
+    onLyricsScrollEnd(e){
+        let contentOffset = e.nativeEvent.contentOffset;
+        let viewSize = e.nativeEvent.layoutMeasurement;
+        this.playPosition = Math.round((contentOffset.y + viewSize.height/2 - 32)*this.jsonLyrics.length/this.lyricContentHeight)
+        console.log('play line: ' + this.playPosition)
     }
 
     componentDidUpdate() {
@@ -295,6 +330,7 @@ class Player extends React.Component {
                             showsHorizontalScrollIndicator={false}
                             renderItem={this._renderItem.bind(this)}
                             horizontal={true}
+                            onMomentumScrollEnd={this.onScrollEnd.bind(this)}
                         />
                     </View>
                     <View style={{position:'absolute', bottom: 0, width: '100%', height: '24%'}}>
