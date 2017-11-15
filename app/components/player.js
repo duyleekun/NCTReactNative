@@ -27,7 +27,7 @@ class Player extends React.Component {
 
     timer = null
     pageIndex = 0
-    playPosition = 0
+    playPosition = 1
     jsonLyrics = []
     lyricContentHeight = 0
 
@@ -155,22 +155,25 @@ class Player extends React.Component {
                 this.jsonLyrics = this.parseLyrics(result)
                 for (object of this.jsonLyrics){
                     if (lyricStr.length > 0){
-                        lyricStr = lyricStr + '\n' +object.lyric
-                    } else {
+                        lyricStr = lyricStr + '\n' + object.lyric
+                    } else{
                         lyricStr = object.lyric
                     }
                 }
             }
+            let scrollViewHeight = Dimensions.get('window').height*0.76 - 20
+            let contentMargin = scrollViewHeight/2 //- this.lyricContentHeight/this.jsonLyrics.length/2
             return (
-                <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', justifyContent: 'center', flexDirection: 'column'}}>
+                <View style={{height: scrollViewHeight, width: Dimensions.get('window').width, top: 20, backgroundColor: 'transparent', justifyContent: 'center', flexDirection: 'column'}}>
                     <ScrollView
                         style={{position: 'absolute', width: '100%', height: '100%'}}
                         onScroll = {this.onLyricsScrollEnd.bind(this)}
                         onContentSizeChange={(width, height)=>{
                             this.lyricContentHeight = height
-                        }}>
-                        <Text style={{top: 32, textAlign: 'center'}}>{
-                            lyricStr
+                        }}
+                        scrollEventThrottle={16}>
+                        <Text style={{marginTop: contentMargin, marginBottom: contentMargin, textAlign: 'center'}}>{
+                            lyricStr.length > 0 ? lyricStr: lyricResponse.content
                         }</Text>
                     </ScrollView>
                     <PlaylistTouchableBtn
@@ -179,7 +182,7 @@ class Player extends React.Component {
                         style={{marginLeft: 8, position: 'absolute'}}
                         onClick={()=>{
                             if (this.playPosition < this.jsonLyrics.length){
-                                sound.setCurrentTime(this.jsonLyrics[this.playPosition - 1].duration)
+                                sound.setCurrentTime(this.jsonLyrics[this.playPosition].duration)
                             }
                         }}/>
                 </View>
@@ -200,7 +203,9 @@ class Player extends React.Component {
     onLyricsScrollEnd(e){
         let contentOffset = e.nativeEvent.contentOffset;
         let viewSize = e.nativeEvent.layoutMeasurement;
-        this.playPosition = Math.round((contentOffset.y + viewSize.height/2 - 32)*this.jsonLyrics.length/this.lyricContentHeight)
+        this.playPosition = Math.round(contentOffset.y*this.jsonLyrics.length/(this.lyricContentHeight-viewSize.height))
+        console.log('y: ' + contentOffset.y)
+        console.log('line: ' + this.jsonLyrics.length)
         console.log('play line: ' + this.playPosition)
     }
 
