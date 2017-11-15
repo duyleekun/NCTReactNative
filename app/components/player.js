@@ -30,6 +30,7 @@ class Player extends React.Component {
     playPosition = 1
     jsonLyrics = []
     lyricContentHeight = 0
+    viewSizeHeight = 0
 
     constructor(props) {
         super(props);
@@ -166,8 +167,9 @@ class Player extends React.Component {
             return (
                 <View style={{height: scrollViewHeight, width: Dimensions.get('window').width, top: 20, backgroundColor: 'transparent', justifyContent: 'center', flexDirection: 'column'}}>
                     <ScrollView
+                        ref={ref=>this.scrollViewLyrics=ref}
                         style={{position: 'absolute', width: '100%', height: '100%'}}
-                        onScroll = {this.onLyricsScrollEnd.bind(this)}
+                        onScroll = {this.onLyricsScroll.bind(this)}
                         onContentSizeChange={(width, height)=>{
                             this.lyricContentHeight = height
                         }}
@@ -200,12 +202,11 @@ class Player extends React.Component {
         console.log('scrolled to page ', pageNum);
     }
 
-    onLyricsScrollEnd(e){
+    onLyricsScroll(e){
         let contentOffset = e.nativeEvent.contentOffset;
         let viewSize = e.nativeEvent.layoutMeasurement;
+        this.viewSizeHeight = viewSize.height
         this.playPosition = Math.round(contentOffset.y*this.jsonLyrics.length/(this.lyricContentHeight-viewSize.height))
-        console.log('y: ' + contentOffset.y)
-        console.log('line: ' + this.jsonLyrics.length)
         console.log('play line: ' + this.playPosition)
     }
 
@@ -281,12 +282,18 @@ class Player extends React.Component {
         // }
        if (sound){
            if (this.timer == null){
-               // this.addTimer()
+               this.addTimer()
                console.log('current time: ' + this.state.currentTime)
            }
        }
-       // let date = new Date(null)
-       //  date.setSeconds(SECONDS)
+       if (this.jsonLyrics.length > 0){
+           for (index in this.jsonLyrics){
+               if (parseInt(this.state.currentTime) == parseInt(this.jsonLyrics[index].duration)){
+                   this.scrollViewLyrics.scrollTo({x:0,y:(this.lyricContentHeight-this.viewSizeHeight)*index/(this.jsonLyrics.length+1)})
+               }
+           }
+       }
+
         return (
             <Animated.View style={{
                 ...imageStyle, overflow: "visible", position: 'absolute', bottom: -Dimensions.get('window').height, width: '100%'
