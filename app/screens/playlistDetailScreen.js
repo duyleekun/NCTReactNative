@@ -3,13 +3,13 @@ import {FlatList, Image, Text, TouchableWithoutFeedback, View, Animated} from "r
 import * as React from "react";
 
 import Dimensions from 'Dimensions';
-import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION} from "../actions/api";
+import {API_REQUEST_PLAYLIST_GET, API_REQUEST_PLAYLIST_RELATION,  API_REQUEST_SONG_GET, API_REQUEST_SONG_LYRIC, API_REQUEST_SONG_RELATION} from "../actions/api";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import PlaylistDetailSongItem from "../components/playlistDetailSongItemComponent"
 import PlaylistDetailRelatedItem from "../components/playlistDetailRelatedItemComponent"
 import {displayListenTime} from "../config/utils"
 import {keyFromAction} from "../lib/action_utilities";
-import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
+import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE, PLAYER_PLAY, PLAYER_NOWLIST_CLEAR} from "../actions/player";
 const fakeViewHeight = 100;
 const playerHeight = 50;
 class PlaylistDetailScreen extends React.Component {
@@ -394,8 +394,13 @@ export default connect(
             loadPlaylistRelation: (playlistKey) => {
                 dispatch(API_REQUEST_PLAYLIST_RELATION(playlistKey))
             },
-            playSelectedSong: (songKey) => {
-                dispatch(PLAYER_NOWLIST_ADD(songKey));
+            playSelectedSong: (songId) => {
+                dispatch(API_REQUEST_SONG_RELATION(songId));
+                dispatch(API_REQUEST_SONG_LYRIC(songId));
+                dispatch(API_REQUEST_SONG_GET(songId));
+                dispatch(PLAYER_NOWLIST_CLEAR());
+                dispatch(PLAYER_NOWLIST_ADD(songId));
+                dispatch(PLAYER_PLAY());
                 dispatch(PLAYER_TOGGLE());
             },
             goBack: () =>{

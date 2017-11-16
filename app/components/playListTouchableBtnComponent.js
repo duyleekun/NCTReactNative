@@ -15,6 +15,7 @@ const thumbnails = {
     prev: require('../assets/images/bt_lockscreen_prev_press.png'),
     list: require('../assets/images/bt_playpage_button_list_normal_new.png'),
     order: require('../assets/images/bt_playpage_order_normal_new.png'),
+    collapse: require('../assets/images/bt_playpage_button_return_normal_new.png'),
 };
 export default class PlayListTouchableBtn extends Component {
 

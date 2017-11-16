@@ -31,6 +31,7 @@ class Player extends React.Component {
     jsonLyrics = []
     lyricContentHeight = 0
     viewSizeHeight = 0
+    errorLoadBigImg = false
 
     constructor(props) {
         super(props);
@@ -127,7 +128,7 @@ class Player extends React.Component {
                 dataRelation.push({name: '', header: false, data: value})
             })
             return (
-                <View style={{top: 20,height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
+                <View style={{top: 64,height: Dimensions.get('window').height*0.76 - 64, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                     <FlatList
                         data={dataRelation}
                         renderItem={this._renderItemPager.bind(this)}
@@ -138,17 +139,32 @@ class Player extends React.Component {
                 </View>
             )
         case 1:
+            let imageSong = this.props.song.image
+            if (this.errorLoadBigImg==false){
+                if (imageSong != null){
+                    let imageSongExpand = imageSong.split('.').pop()
+                    imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
+                }
+            }
             return (
                 <View style={{height: Dimensions.get('window').height*0.76 - 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignItems: 'center'}}>
                     <View style={{width: '100%', height: '50%', backgroundColor: '#00000060', position: 'absolute', top: 0}}></View>
                     <View style={{width: '100%', height: '50%', position: 'absolute', bottom: 0}}></View>
-                    <Image source={{uri:this.props.song.image}} style={{position: 'absolute', width: 260, height: 260, top: 60}}/>
+                    <Image source={{uri:imageSong}}
+                           style={{position: 'absolute', width: 260, height: 260, top: 60}}
+                           onError={()=>{
+                               if (this.props.song.image.length > 0){
+                                   this.errorLoadBigImg = true
+                               }
+                           }}/>
                 </View>
             )
         default:
             let {[keyFromAction(API_REQUEST_SONG_LYRIC(this.props.song.songKey))] : lyricKey = {}} = this.props.entities
             let {entities:{lyric:{[lyricKey]: lyricResponse} = {[lyricKey]: {content: '', timedLyric: ''}}}} = this.props
-            this.props.loadLyrics(lyricResponse.timedLyric)
+            if (lyricResponse.timedLyric.length > 0){
+                this.props.loadLyrics(lyricResponse.timedLyric)
+            }
             let {entities:{lyricsData:{[lyricResponse.timedLyric]: lyricsDataRes} = {[lyricResponse.timedLyric]: {data: ''}}}} = this.props
             let lyricStr = ''
             if (lyricsDataRes.data.length > 0){
@@ -163,7 +179,7 @@ class Player extends React.Component {
                 }
             }
             let scrollViewHeight = Dimensions.get('window').height*0.76 - 20
-            let contentMargin = scrollViewHeight/2 //- this.lyricContentHeight/this.jsonLyrics.length/2
+            let contentMargin = lyricStr.length > 0 ? scrollViewHeight/2: 32 //- this.lyricContentHeight/this.jsonLyrics.length/2
             return (
                 <View style={{height: scrollViewHeight, width: Dimensions.get('window').width, top: 20, backgroundColor: 'transparent', justifyContent: 'center', flexDirection: 'column'}}>
                     <ScrollView
@@ -178,7 +194,7 @@ class Player extends React.Component {
                             lyricStr.length > 0 ? lyricStr: lyricResponse.content
                         }</Text>
                     </ScrollView>
-                    <PlaylistTouchableBtn
+                    {lyricStr.length > 0 ? (<PlaylistTouchableBtn
                         size={26}
                         img={'play'}
                         style={{marginLeft: 8, position: 'absolute'}}
@@ -186,7 +202,7 @@ class Player extends React.Component {
                             if (this.playPosition < this.jsonLyrics.length){
                                 sound.setCurrentTime(this.jsonLyrics[this.playPosition].duration)
                             }
-                        }}/>
+                        }}/>): (<View/>)}
                 </View>
             )
         }
@@ -276,10 +292,6 @@ class Player extends React.Component {
 
         // Calculate the transform property and set it as a value for our style which we add below to the Animated.View component
         let imageStyle = {transform: [{translateX}, {translateY}]};
-        // if (imageSong != null){
-        //     let imageSongExpand = imageSong.split('.').pop()
-        //     imageSong = imageSong.replace('.'+imageSongExpand, '_500.'+imageSongExpand)
-        // }
        if (sound){
            if (this.timer == null){
                this.addTimer()
@@ -289,7 +301,7 @@ class Player extends React.Component {
        if (this.jsonLyrics.length > 0){
            for (index in this.jsonLyrics){
                if (parseInt(this.state.currentTime) == parseInt(this.jsonLyrics[index].duration)){
-                   this.scrollViewLyrics.scrollTo({x:0,y:(this.lyricContentHeight-this.viewSizeHeight)*index/(this.jsonLyrics.length+1)})
+                   this.scrollViewLyrics.scrollTo({x:0,y:(this.lyricContentHeight-this.viewSizeHeight)*index/(this.jsonLyrics.length)})
                }
            }
        }
@@ -321,7 +333,7 @@ class Player extends React.Component {
                 <View style={{
                     height: Dimensions.get('window').height,
                     width: '100%',
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
                 }}>
                     <Image source={{uri:this.props.song.image}} resizeMode={'cover'} style={{
                         position: 'absolute',
@@ -343,7 +355,15 @@ class Player extends React.Component {
                             renderItem={this._renderItem.bind(this)}
                             horizontal={true}
                             onMomentumScrollEnd={this.onScrollEnd.bind(this)}
+                            style={{position: 'absolute'}}
                         />
+                        <View style={{backgroundColor:'transparent', position: 'absolute', marginTop: 28, marginLeft: 0}}>
+                            <PlaylistTouchableBtn
+                                size={26}
+                                img={'collapse'}
+                                onClick={()=>this.props.toggleView()}
+                            />
+                        </View>
                     </View>
                     <View style={{position:'absolute', bottom: 0, width: '100%', height: '24%'}}>
                         <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
@@ -383,7 +403,7 @@ class Player extends React.Component {
                                     size={56}
                                     img={'play'} style={{width:56, height: 56, marginLeft: 8, marginRight: 8}}
                                     onClick={()=>{
-                                        this.props.loadSong('DR5OA6BswpEk')}}/> // 6DHBZXxtNIKG
+                                        this.props.play()}}/> // 6DHBZXxtNIKG
                             )}
                             <PlaylistTouchableBtn size={46} img={'next'} style={{width:46, height: 46, marginRight: 8}} onClick={()=>this.props.next()}/>
                             <PlaylistTouchableBtn size={46} img={'list'} style={{width:46, height: 46}}/>
