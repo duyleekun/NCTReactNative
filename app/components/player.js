@@ -3,7 +3,7 @@
 import {connect} from "react-redux"
 import {PLAYER_NOWLIST_NEXT, PLAYER_PAUSE, PLAYER_PLAY, PLAYER_TOGGLE, PLAYER_NOWLIST_CLEAR, PLAYER_NOWLIST_ADD, PLAYER_UPDATE_TIME, PLAYER_NOWLIST_PREVIOUS} from "../actions/player";
 import React from "react";
-import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList} from "react-native";
+import { Image, Text, View, Animated, PanResponder, ScrollView, Slider, FlatList, TouchableHighlight} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 import { BlurView } from 'react-native-blur';
@@ -12,6 +12,7 @@ import {API_REQUEST_SONG_GET, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC,
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import {keyFromAction} from "../lib/action_utilities";
 import arc4 from '../lib/arc4'
+import { NavigationActions } from 'react-navigation'
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -42,6 +43,15 @@ class Player extends React.Component {
             stickyHeaderIndices: [],
         };
     }
+
+    static navigationOptions = ({navigation}) => {
+        let {state: {params: {title} = {title: (new Date()).toISOString()}}} = navigation
+        return {
+            title,
+            // header: null
+        }
+    }
+
     componentDidMount(){
 
     }
@@ -92,7 +102,7 @@ class Player extends React.Component {
         return Math.floor(value / 60) + ":" + (value % 60 ? value % 60 : '00')
     }
 
-    _renderItemPager = ({item}) => {
+    _renderItemPager = ({item, index}) => {
         if (item.header) {
             return (
                 <ListItem itemDivide style={{marginLeft: 0, position:'relative'}}>
@@ -105,14 +115,20 @@ class Player extends React.Component {
         } else {
             let playlistRelate = this.props.entities.playlists[item.data]
             return (
-                <ListItem style={{marginLeft: 0, backgroundColor: 'transparent'}}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginLeft: 8}}>
-                    <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
-                    <View style={{marginLeft: 8, display: 'flex', flexDirection: 'column', flex: 1}}>
-                        <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.playlistTitle}</Text>
-                        <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.artistName}</Text>
-                    </View>
-                    </View>
+                <ListItem style={{marginLeft: 0, backgroundColor: 'transparent'}}
+                    onPress={()=>{
+                        this.props.gotoPlayList(item.data)
+                    }}
+                >
+                    <TouchableHighlight style={{backgroundColor: 'transparent'}}>
+                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginLeft: 8}}>
+                            <Image source={{uri: playlistRelate.playlistImage}} style={{width: 40, height: 40}}/>
+                            <View style={{marginLeft: 8, display: 'flex', flexDirection: 'column', flex: 1}}>
+                                <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.playlistTitle}</Text>
+                                <Text style={{flex:1}} numberOfLines={1} ellipsizeMode={'tail'}>{playlistRelate.artistName}</Text>
+                            </View>
+                        </View>
+                    </TouchableHighlight>
                 </ListItem>
             );
         }
@@ -296,6 +312,8 @@ class Player extends React.Component {
            if (this.timer == null){
                this.addTimer()
                console.log('current time: ' + this.state.currentTime)
+           } else {
+
            }
        }
        if (this.jsonLyrics.length > 0){
@@ -305,6 +323,10 @@ class Player extends React.Component {
                }
            }
        }
+
+       // if (this.props.collapsed==true){
+       //     clearInterval(this.timer)
+       // }
 
         return (
             <Animated.View style={{
@@ -481,5 +503,9 @@ export default connect((state, ownProps) => {
     },
     loadLyrics: (lyricsLink) =>{
         dispatch(API_LOAD_LYRICS(lyricsLink));
+    },
+    gotoPlayList: (playlistKey) => {
+        dispatch(PLAYER_TOGGLE());
+        dispatch(NavigationActions.navigate({routeName:'PlaylistDetail',params:{playlistKey}}));
     }
 }))(Player)
