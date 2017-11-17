@@ -11,7 +11,7 @@ export default ({dispatch, getState}) => next => action => {
         const {method = 'GET', path, query = {}, schemaName} = payload;
         fetch(`${API_ROOT}${path}`, {
             headers: {
-                'x-nct-token': 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTA4MjkyNjcsIm5iZiI6MTUwODIzNzI2NywiZGV2aWNlaW5mbyI6IntcIkRldmljZUlEXCI6XCJEMzVFMDIwODhGQ0U0QThFOERDRERCQzlGMDFDQzU2NFwiLFwiT3NOYW1lXCI6XCJpT1NcIixcIk9zVmVyc2lvblwiOlwiMTEuMC4xXCIsXCJBcHBOYW1lXCI6XCJOQ1RWNlwiLFwiQXBwVmVyc2lvblwiOlwiNi4xLjBcIixcIlVzZXJOYW1lXCI6XCJmYi5tdXNpYy4xNTQ3NTU4OTQ4NjM0OTIyXCIsXCJQcm92aWRlclwiOlwiTkNUQ29ycFwiLFwiRGV2aWNlTmFtZVwiOlwiaVBob25lOCwxXCIsXCJRdWFsaXR5UGxheVwiOlwiMTI4XCIsXCJRdWFsaXR5RG93bmxvYWRcIjpcIjEyOFwiLFwiUXVhbGl0eUNsb3VkXCI6XCIxMjhcIixcIk5ldHdvcmtcIjpcIldJRklcIixcIlBob25lTnVtYmVyXCI6XCJcIixcIkxhbmd1YWdlXCI6XCJWTlwifSIsImlhdCI6MTUwODIzNzI2N30.eN6evWadl-XzU7wOwQOlRCrXpBZr8EsxuzsgFcWRWc0',
+                'x-nct-token': 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTE1MTYzNTYsIm5iZiI6MTUwODkyNDM1NiwiZGV2aWNlaW5mbyI6IntcIkRldmljZUlEXCI6XCJEMzVFMDIwODhGQ0U0QThFOERDRERCQzlGMDFDQzU2NFwiLFwiT3NOYW1lXCI6XCJpT1NcIixcIk9zVmVyc2lvblwiOlwiMTEuMC4xXCIsXCJBcHBOYW1lXCI6XCJOQ1RWNlwiLFwiQXBwVmVyc2lvblwiOlwiNi4xLjBcIixcIlVzZXJOYW1lXCI6XCJmYi5tdXNpYy4xNTQ3NTU4OTQ4NjM0OTIyXCIsXCJQcm92aWRlclwiOlwiTkNUQ29ycFwiLFwiRGV2aWNlTmFtZVwiOlwiaVBob25lOCwxXCIsXCJRdWFsaXR5UGxheVwiOlwiMTI4XCIsXCJRdWFsaXR5RG93bmxvYWRcIjpcIjEyOFwiLFwiUXVhbGl0eUNsb3VkXCI6XCIxMjhcIixcIk5ldHdvcmtcIjpcIldJRklcIixcIlBob25lTnVtYmVyXCI6XCJcIixcIkxhbmd1YWdlXCI6XCJWTlwifSIsImlhdCI6MTUwODkyNDM1Nn0.XUIjN6hEoJN8MeC6Mnb_jM4SquKffChsT019XDVNzsY',
                 'x-nct-deviceid': 'D35E02088FCE4A8E8DCDDBC9F01CC564',
             },
             method: method
