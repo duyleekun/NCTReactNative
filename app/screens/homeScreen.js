@@ -3,7 +3,7 @@ import {Button, FlatList, Image, Text, TouchableWithoutFeedback, View, ScrollVie
 import * as React from "react";
 
 import Dimensions from 'Dimensions';
-import {API_REQUEST_HOME_QUERY} from "../actions/api";
+import {API_REQUEST_HOME_QUERY, API_REQUEST_VIDEO_GET} from "../actions/api";
 import Feature from "../components/featureComponent"
 
 import {
@@ -18,6 +18,7 @@ import SongHot from "../components/songHotComponent"
 import HomeAlbum from "../components/homeAlbumComponent"
 import HomeVideo from "../components/homeVideoComponent"
 import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
+import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_ADD, VIDEOPLAYER_PLAY} from '../actions/videoPlayer'
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
@@ -165,12 +166,15 @@ export default connect(
             },
             playSelectedSong: (songKey) =>{ //TODO: navigate to player screen
                 // ownProps.navigation.navigate('MockScreen',{songKey})
-                console.log('aaa');
                 dispatch(PLAYER_NOWLIST_ADD(songKey));
                 dispatch(PLAYER_TOGGLE());
             },
             playSelectedMV: (videoKey)=>{
-                ownProps.navigation.navigate('MockScreen',{videoKey})
+                dispatch(API_REQUEST_VIDEO_GET(videoKey))
+                dispatch(VIDEOPLAYER_TOGGLE());
+                console.log('video key:' + videoKey);
+                dispatch(VIDEOPLAYER_ADD(videoKey))
+                // ownProps.navigation.navigate('MockScreen',{videoKey})
             }
         }
     })(HomeScreen);

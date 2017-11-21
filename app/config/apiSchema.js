@@ -24,3 +24,4 @@ export const home = new schema.Entity('home',{
 
 export const playlists = new schema.Array(playlist);
 export const songPlay = new schema.Entity('song',{},{idAttribute: 'songKey'})
+export const videoPlay = new schema.Entity('video',{},{idAttribute: 'videoKey'})

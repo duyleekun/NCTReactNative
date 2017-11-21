@@ -11,7 +11,7 @@ export default class HomeAlbumComponent extends Component{
             style={{width: (Dimensions.get('window').width -30)/2, position: 'relative',
             marginTop: 5,
             marginLeft: index % 2 ===0 ? 0 : separatorWidth,}}
-            onPress={()=>this.props.onclick(item.videoKey)}
+            onPress={()=>this.props.onClick(item.videoKey)}
         >
             <View style={Styles.albumImageContainer}>
                 <View>
