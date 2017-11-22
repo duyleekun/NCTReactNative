@@ -1,5 +1,6 @@
 import {connect} from "react-redux"
 import {VIDEOPLAYER_TOGGLE} from "../actions/videoPlayer";
+import {API_REQUEST_VIDEO_RELATION} from '../actions/api'
 import React from "react";
 import {Button, Image, Text, View, Animated, PanResponder, FlatList} from "react-native";
 import Sound from 'react-native-sound';
@@ -7,6 +8,8 @@ import Dimensions from 'Dimensions';
 import Video from "react-native-video";
 import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import Styles from '../assets/styles/videoPlayerStyle'
+import {ListItem, Left, Icon, Right, Title } from "native-base";
+import {keyFromAction} from "../lib/action_utilities";
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -15,11 +18,15 @@ let sound = null;
 
 
 class Player extends React.Component {
+
+    videoRelation = []
+
     constructor(props) {
         super(props);
 
         this.state = {
             pan: new Animated.ValueXY(),
+            stickyHeaderIndices: [],
         };
     }
 
@@ -46,6 +53,7 @@ class Player extends React.Component {
                 // Flatten the offset to avoid erratic behavior
                 const {pan} = this.state
                 const {collapsed} = this.props
+                console.log('collapsed: ' + collapsed)
                 pan.flattenOffset();
 
                 console.log(vx, vy);
@@ -66,21 +74,30 @@ class Player extends React.Component {
     }
 
     _renderItem = ({item, index})=>{
-        return(
-            <View style={{width: Dimensions.get('window').width, height: 80}}>
-                <Image source={{uri:'google.com'}}/>
+        let video = this.props.entities.videos[item.data]
+        if (item.header){
+            return (<ListItem style={{ marginLeft: 0, backgroundColor: 'white', width: Dimensions.get('window').width, height: 60}}>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                    <View>
-                        <Image source={{uri:'http://avatar.nct.nixcdn.com/mv/2017/11/12/d/4/3/9/1510502987683.jpg'}} style={{marginLeft: 8, height: 72, aspectRatio: 4/3}}/>
-                    </View>
-                    <View style={{justifyContent: 'center', marginLeft: 8}}>
-                        <Text style={Styles.title}>Bai Hat</Text>
-                        <Text style={Styles.artist}>Ca sy</Text>
-                        <Text>Views</Text>
-                    </View>
+                    <Image source={{uri: video.artistImage}} style={{ marginLeft: 8, marginRight: 8, width: 44, height: 44, borderRadius: 22}}/>
+                    <Text stype={Styles.title}>{video.artistName}</Text>
                 </View>
-            </View>
-        )
+            </ListItem>)
+        } else {
+            return(
+                <ListItem style={{marginLeft: 0, width: Dimensions.get('window').width, height: 60}}>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <View>
+                            <Image source={{uri:video.videoImage}} style={{marginLeft: 8, height: 52, aspectRatio: 4/3}}/>
+                        </View>
+                        <View style={{justifyContent: 'center', marginLeft: 8}}>
+                            <Text style={Styles.title}>{video.videoTitle}</Text>
+                            <Text style={Styles.artist}>{video.artistName}</Text>
+                            <Text style={Styles.artist}>{video.view}</Text>
+                        </View>
+                    </View>
+                </ListItem>
+            )
+        }
     }
 
     render() {
@@ -117,13 +134,23 @@ class Player extends React.Component {
             outputRange: [windowWidth/windowHeight,aspectRatio],
             extrapolate: 'clamp'
         })
-        // let streamurl = ''
-        // if (this.props.videoId.length > 0){
-        //     let video = this.props.entities.videos[this.props.videoId]
-        //     if (video.streamURL.length > 0){
-        //         streamurl = video.streamURL.pop()
-        //     }
-        // }
+        let temp = []
+        let streamurl = ''
+        if (this.props.videoId.length > 0){
+            if (this.videoRelation.length==0){
+                this.videoRelation.push({header: true, data:this.props.videoId})
+                this.props.getRelativeVideo(this.props.videoId)
+            }
+            const video = this.props.entities.videos[this.props.videoId]
+            if (video.streamURL.length > 0){
+                streamurl = video.streamURL[video.streamURL.length-1].stream
+            }
+            let {[keyFromAction(API_REQUEST_VIDEO_RELATION(this.props.videoId))] : videosRes = []} = this.props.entities
+            videosRes.map((value, index)=>{
+                this.videoRelation.push({header: false, data: value})
+            })
+            temp = this.videoRelation.slice()
+        }
         return (
             <Animated.View style={{
                 transform: [{translateY: translateAnim}],
@@ -135,8 +162,8 @@ class Player extends React.Component {
                 aspectRatio: aspectRatioAnim,
                 backgroundColor: 'green'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
-                <Video resizeMode='cover' source={{uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}}
-                style={{width: '100%', aspectRatio: aspectRatio}}/>
+                {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
+                                                style={{width: '100%', aspectRatio: aspectRatio}}/>) : (<View style={{width: '100%', aspectRatio: aspectRatio, backgroundColor: 'red'}}/>)}
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
                         <View style={{marginLeft: 8, flex: 1}}>
@@ -153,12 +180,13 @@ class Player extends React.Component {
 
                     </View>
                     <FlatList
-                        data={['a','b','c']}
+                        data={temp}
                         pagingEnabled={true}
-                        keyExtractor={(item) => item}
+                        keyExtractor={item => item.data}
                         showsHorizontalScrollIndicator={false}
                         renderItem={this._renderItem.bind(this)}
                         horizontal={false}
+                        stickyHeaderIndices = {this.state.stickyHeaderIndices}
                         // onMomentumScrollEnd={this.onScrollEnd.bind(this)}
                     />
                 </Animated.View>
@@ -173,5 +201,8 @@ export default connect((state, ownProps) => {
 }, (dispatch, ownProps) => ({
     toggleView:()=>{
         dispatch(VIDEOPLAYER_TOGGLE())
+    },
+    getRelativeVideo:(videoId)=>{
+        dispatch(API_REQUEST_VIDEO_RELATION(videoId))
     }
 }))(Player)

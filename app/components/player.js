@@ -19,7 +19,6 @@ Sound.setCategory('Playback');
 
 let sound = null;
 
-const template = []
 const pager = [
         {name: 'Nghệ sĩ - PLaylist', header: true, data:''}
         ]

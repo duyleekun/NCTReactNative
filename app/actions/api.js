@@ -79,6 +79,11 @@ export const API_REQUEST_VIDEO_GET = createAction('API/REQUEST/VIDEO/GET', (id, 
     query: query,
     schemaName: 'video'
 }))
+export const API_REQUEST_VIDEO_RELATION = createAction('API/REQUEST/VIDEO/RELATION', (id, ...query) => ({
+    path: `/videos/related/${id}`,
+    query: query,
+    schemaName: 'videos'
+}))
 export const API_REQUEST_TOPIC_QUERY = createAction('API/REQUEST/TOPIC/QUERY', (...query) => ({
     path: '/topics',
     query: query
