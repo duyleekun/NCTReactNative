@@ -18,7 +18,7 @@ import SongHot from "../components/songHotComponent"
 import HomeAlbum from "../components/homeAlbumComponent"
 import HomeVideo from "../components/homeVideoComponent"
 import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
-import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_EXPAND, VIDEOPLAYER_ADD, VIDEOPLAYER_PLAY} from '../actions/videoPlayer'
+import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_EXPAND, VIDEOPLAYER_ADD, VIDEOPLAYER_PLAY, VIDEOPLAYER_SHOW} from '../actions/videoPlayer'
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
@@ -170,9 +170,10 @@ export default connect(
                 dispatch(PLAYER_TOGGLE());
             },
             playSelectedMV: (videoKey)=>{
-                dispatch(API_REQUEST_VIDEO_GET(videoKey))
+                dispatch(VIDEOPLAYER_SHOW());
+                dispatch(API_REQUEST_VIDEO_GET(videoKey));
                 dispatch(VIDEOPLAYER_TOGGLE());
-                dispatch(VIDEOPLAYER_ADD(videoKey))
+                dispatch(VIDEOPLAYER_ADD(videoKey));
                 // ownProps.navigation.navigate('MockScreen',{videoKey})
             }
         }

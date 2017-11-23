@@ -21,9 +21,10 @@ const store = createStore(
 )
 
 const AppWithNavigationState = connect(
-    (state) => ({
-        nav: state.nav
-    })
+    (state) => {
+        const {videoplayer: {collapsed, isPlaying, videoId, isShow}, entities} = state
+        return ({nav: state.nav, isShow})
+    }
 )((props) => (
     <View style={{flex: 1}}>
         <StatusBar
@@ -37,7 +38,7 @@ const AppWithNavigationState = connect(
             style: {flex: 1}
         })}/>
         <Player style={{width: '100%'}} />
-        <VideoPlayer style={{width: '100%'}} />
+        {props.isShow ? (<VideoPlayer style={{width: '100%'}}/>): null}
     </View>));
 
 export default class extends React.Component {

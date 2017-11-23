@@ -1,6 +1,7 @@
 import {connect} from "react-redux"
-import {VIDEOPLAYER_TOGGLE} from "../actions/videoPlayer";
-import {API_REQUEST_VIDEO_RELATION} from '../actions/api'
+import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_HIDDEN} from "../actions/videoPlayer";
+import {API_REQUEST_VIDEO_RELATION, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC, API_REQUEST_SONG_GET} from '../actions/api'
+import {PLAYER_TOGGLE, PLAYER_NOWLIST_ADD, PLAYER_NOWLIST_CLEAR, PLAYER_PLAY} from '../actions/player'
 import React from "react";
 import {Button, Image, Text, View, Animated, PanResponder, FlatList} from "react-native";
 import Sound from 'react-native-sound';
@@ -37,7 +38,7 @@ class Player extends React.Component {
                 console.log('dx : ' + gestureState.dx)
                 console.log('dy : ' + gestureState.dy)
 
-                return true// (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) && this.pageIndex == 0 //&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
+                return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx))//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -136,12 +137,13 @@ class Player extends React.Component {
         })
         let temp = []
         let streamurl = ''
+        const video = this.props.entities.videos[this.props.videoId]
+
         if (this.props.videoId.length > 0){
             if (this.videoRelation.length==0){
                 this.videoRelation.push({header: true, data:this.props.videoId})
                 this.props.getRelativeVideo(this.props.videoId)
             }
-            const video = this.props.entities.videos[this.props.videoId]
             if (video.streamURL.length > 0){
                 streamurl = video.streamURL[video.streamURL.length-1].stream
             }
@@ -171,7 +173,7 @@ class Player extends React.Component {
                             <Text style={Styles.artist}>Ca si</Text>
                         </View>
                         <View style={{marginRight: 8, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                            <PlaylistTouchableBtn size={32} img={'download'}/>
+                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
                             <PlaylistTouchableBtn size={32} img={'download'}/>
                             <PlaylistTouchableBtn size={32} img={'download'}/>
                         </View>
@@ -204,5 +206,15 @@ export default connect((state, ownProps) => {
     },
     getRelativeVideo:(videoId)=>{
         dispatch(API_REQUEST_VIDEO_RELATION(videoId))
+    },
+    loadSong: (songId) => {
+        dispatch(VIDEOPLAYER_TOGGLE())
+        dispatch(API_REQUEST_SONG_RELATION(songId));
+        dispatch(API_REQUEST_SONG_LYRIC(songId));
+        dispatch(API_REQUEST_SONG_GET(songId));
+        dispatch(PLAYER_NOWLIST_CLEAR());
+        dispatch(PLAYER_NOWLIST_ADD(songId));
+        dispatch(PLAYER_PLAY());
+        dispatch(PLAYER_TOGGLE);
     }
 }))(Player)
