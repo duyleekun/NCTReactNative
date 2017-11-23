@@ -138,21 +138,21 @@ class Player extends React.Component {
         let temp = []
         let streamurl = ''
         const video = this.props.entities.videos[this.props.videoId]
-
-        if (this.props.videoId.length > 0){
-            if (this.videoRelation.length==0){
-                this.videoRelation.push({header: true, data:this.props.videoId})
-                this.props.getRelativeVideo(this.props.videoId)
-            }
-            if (video.streamURL.length > 0){
-                streamurl = video.streamURL[video.streamURL.length-1].stream
-            }
+        if (this.videoRelation.length==0){
+            this.videoRelation.push({header: true, data:this.props.videoId})
+            this.props.getRelativeVideo(this.props.videoId)
+        } else {
+            this.videoRelation = [{header: true, data:this.props.videoId}]
             let {[keyFromAction(API_REQUEST_VIDEO_RELATION(this.props.videoId))] : videosRes = []} = this.props.entities
             videosRes.map((value, index)=>{
                 this.videoRelation.push({header: false, data: value})
             })
-            temp = this.videoRelation.slice()
         }
+        if (video.streamURL.length > 0){
+            streamurl = video.streamURL[video.streamURL.length-1].stream
+        }
+        temp = this.videoRelation.slice()
+
         return (
             <Animated.View style={{
                 transform: [{translateY: translateAnim}],
