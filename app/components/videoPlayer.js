@@ -1,9 +1,9 @@
 import {connect} from "react-redux"
-import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_HIDDEN} from "../actions/videoPlayer";
+import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_HIDDEN, VIDEOPLAYER_PAUSE, VIDEOPLAYER_FULLSCREEN} from "../actions/videoPlayer";
 import {API_REQUEST_VIDEO_RELATION, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC, API_REQUEST_SONG_GET} from '../actions/api'
 import {PLAYER_TOGGLE, PLAYER_NOWLIST_ADD, PLAYER_NOWLIST_CLEAR, PLAYER_PLAY} from '../actions/player'
 import React from "react";
-import {Button, Image, Text, View, Animated, PanResponder, FlatList} from "react-native";
+import {Button, Image, Text, View, Animated, PanResponder, FlatList, Slider} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 import Video from "react-native-video";
@@ -11,6 +11,7 @@ import PlaylistTouchableBtn from "../components/playListTouchableBtnComponent"
 import Styles from '../assets/styles/videoPlayerStyle'
 import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {keyFromAction} from "../lib/action_utilities";
+import PlayListTouchableBtn from "./playListTouchableBtnComponent";
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -21,6 +22,8 @@ let sound = null;
 class Player extends React.Component {
 
     videoRelation = []
+    videoDuration = 0
+    videoCurrentTime = 0
 
     constructor(props) {
         super(props);
@@ -28,6 +31,7 @@ class Player extends React.Component {
         this.state = {
             pan: new Animated.ValueXY(),
             stickyHeaderIndices: [],
+            sliderProgress: 0,
         };
     }
 
@@ -101,6 +105,16 @@ class Player extends React.Component {
         }
     }
 
+    playerOnProgress = (progress)=>{
+        this.videoCurrentTime = progress.currentTime
+        this.videoDuration = progress.playableDuration
+        this.setState({sliderProgress: parseFloat(progress.currentTime/progress.playableDuration)})
+    }
+
+    fancyTime(value) {
+        return Math.floor(value / 60) + ":" + (value % 60 ? value % 60 : '00')
+    }
+
     render() {
         let props = this.props;
         let {pan: {y: translateY}} = this.state;
@@ -135,7 +149,6 @@ class Player extends React.Component {
             outputRange: [windowWidth/windowHeight,aspectRatio],
             extrapolate: 'clamp'
         })
-        let temp = []
         let streamurl = ''
         const video = this.props.entities.videos[this.props.videoId]
         if (this.videoRelation.length==0){
@@ -151,8 +164,6 @@ class Player extends React.Component {
         if (video.streamURL.length > 0){
             streamurl = video.streamURL[video.streamURL.length-1].stream
         }
-        temp = this.videoRelation.slice()
-
         return (
             <Animated.View style={{
                 transform: [{translateY: translateAnim}],
@@ -164,8 +175,38 @@ class Player extends React.Component {
                 aspectRatio: aspectRatioAnim,
                 backgroundColor: 'green'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
-                {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
-                                                style={{width: '100%', aspectRatio: aspectRatio}}/>) : (<View style={{width: '100%', aspectRatio: aspectRatio, backgroundColor: 'red'}}/>)}
+                <View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio}}>
+                    {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
+                                                    style={{width: '100%', height: '100%', position: 'absolute'}}
+                                                    paused={this.props.isPlaying}
+                                                    fullscreen={this.props.fullScreen}
+                                                    progressUpdateInterval={250.0}
+                                                    onProgress={this.playerOnProgress.bind(this)}
+                    />) : (<View style={{width: '100%', height: '100%', position: 'absolute'}}></View>)}
+                    <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
+                <View style={{position: 'absolute', bottom: 0, width: '100%', height: '20%', backgroundColor: '#00000040', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{width: '100%', height: '20%', flexDirection: 'row', display: 'flex'}}>
+                        <View style={{width: '60%', height: '100%', marginLeft: 0,alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
+                            <Text style={{fontSize: 10, color: '#fff', marginLeft: 2}}>{this.fancyTime(parseInt(this.videoCurrentTime))}</Text>
+                            <Slider style={{width:'60%'}}
+                                    minimumTrackTintColor={'black'}
+                                    maximumTrackTintColor={'#666666'}
+                                    thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
+                                    value={this.state.sliderProgress}
+                                // onValueChange={val => {
+                                //     if (this.props.song.duration>0){
+                                //         this.timer = null
+                                //         sound.setCurrentTime(val*this.props.song.duration)
+                                //         this.addTimer()
+                                //     }
+                                // }}
+                            />
+                            <Text style={{fontSize: 10, color: '#fff', marginRight: 2}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
+                        </View>
+                        <PlaylistTouchableBtn style={{position: 'absolute', right: 2}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                    </View>
+                </View>
+                </View>
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
                         <View style={{marginLeft: 8, flex: 1}}>
@@ -174,7 +215,7 @@ class Player extends React.Component {
                         </View>
                         <View style={{marginRight: 8, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                             <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
-                            <PlaylistTouchableBtn size={32} img={'download'}/>
+                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
                             <PlaylistTouchableBtn size={32} img={'download'}/>
                         </View>
                     </View>
@@ -182,7 +223,7 @@ class Player extends React.Component {
 
                     </View>
                     <FlatList
-                        data={temp}
+                        data={this.videoRelation.slice()}
                         pagingEnabled={true}
                         keyExtractor={item => item.data}
                         showsHorizontalScrollIndicator={false}
@@ -198,8 +239,8 @@ class Player extends React.Component {
 }
 
 export default connect((state, ownProps) => {
-    const {videoplayer: {collapsed, isPlaying, videoId}, entities} = state
-    return {entities, collapsed, isPlaying, videoId}
+    const {videoplayer: {collapsed, isPlaying, videoId, fullScreen}, entities} = state
+    return {entities, collapsed, isPlaying, videoId, fullScreen}
 }, (dispatch, ownProps) => ({
     toggleView:()=>{
         dispatch(VIDEOPLAYER_TOGGLE())
@@ -208,13 +249,19 @@ export default connect((state, ownProps) => {
         dispatch(API_REQUEST_VIDEO_RELATION(videoId))
     },
     loadSong: (songId) => {
-        dispatch(VIDEOPLAYER_TOGGLE())
+        dispatch(VIDEOPLAYER_HIDDEN())
+        dispatch(API_REQUEST_SONG_GET(songId));
         dispatch(API_REQUEST_SONG_RELATION(songId));
         dispatch(API_REQUEST_SONG_LYRIC(songId));
-        dispatch(API_REQUEST_SONG_GET(songId));
         dispatch(PLAYER_NOWLIST_CLEAR());
         dispatch(PLAYER_NOWLIST_ADD(songId));
         dispatch(PLAYER_PLAY());
         dispatch(PLAYER_TOGGLE);
+    },
+    pause:()=>{
+        dispatch(VIDEOPLAYER_PAUSE());
+    },
+    setFullScreen:(isFull)=>{
+        dispatch(VIDEOPLAYER_FULLSCREEN(isFull))
     }
 }))(Player)

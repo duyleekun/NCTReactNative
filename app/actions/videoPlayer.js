@@ -11,3 +11,4 @@ export const VIDEOPLAYER_EXPAND = createAction("VIDEOPLAYER/EXPAND");
 export const VIDEOPLAYER_COLLAPSE = createAction("VIDEOPLAYER/COLLAPSE");
 export const VIDEOPLAYER_SHOW = createAction("VIDEOPLAYER/SHOW");
 export const VIDEOPLAYER_HIDDEN = createAction("VIDEOPLAYER/HIDDEN");
+export const VIDEOPLAYER_FULLSCREEN = createAction("VIDEOPLAYER/FULLSCREEN");
