@@ -187,8 +187,8 @@ class Player extends React.Component {
                 <View style={{position: 'absolute', bottom: 0, width: '100%', height: '20%', backgroundColor: '#00000040', alignItems: 'center', justifyContent: 'center'}}>
                     <View style={{width: '100%', height: '20%', flexDirection: 'row', display: 'flex'}}>
                         <View style={{width: '60%', height: '100%', marginLeft: 0,alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
-                            <Text style={{fontSize: 10, color: '#fff', marginLeft: 2}}>{this.fancyTime(parseInt(this.videoCurrentTime))}</Text>
-                            <Slider style={{width:'60%'}}
+                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginLeft: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoCurrentTime))}</Text>
+                            <Slider style={{width:'60%', alignSelf: 'center'}}
                                     minimumTrackTintColor={'black'}
                                     maximumTrackTintColor={'#666666'}
                                     thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
@@ -201,9 +201,13 @@ class Player extends React.Component {
                                 //     }
                                 // }}
                             />
-                            <Text style={{fontSize: 10, color: '#fff', marginRight: 2}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
+                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginRight: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
                         </View>
-                        <PlaylistTouchableBtn style={{position: 'absolute', right: 2}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'blue', display: 'flex', flexDirection: 'row'}}>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                        </View>
                     </View>
                 </View>
                 </View>
