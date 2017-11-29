@@ -78,6 +78,19 @@ class Player extends React.Component {
         });
     }
 
+    componentDidUpdate() {
+        const {collapsed} = this.props
+        Animated.spring(                            // Animate value over time
+            this.state.pan,                      // The value to drive
+            {
+                velocity: {x: 0, y: 0},
+                // deceleration: {x: 1, y:1},
+                // toValue: {x: 0, y: -Dimensions.get('window').height},
+                toValue: {x: 0, y: (collapsed ? 0 : -Dimensions.get('window').height)}, // Animate to final value of 1
+            }
+        ).start();
+    }
+
     _renderItem = ({item, index})=>{
         let video = this.props.entities.videos[item.data]
         if (item.header){
@@ -103,6 +116,37 @@ class Player extends React.Component {
                         </View>
                     </TouchableHighlight>
                 </ListItem>
+            )
+        }
+    }
+
+    PlayerBottomControl(){
+        const video = this.props.entities.videos[this.props.videoId]
+
+        if (this.props.collapsed == false){
+            return (
+                <View style={{position: 'absolute', bottom: 0, width: '100%', height: '20%', backgroundColor: '#00000040', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{width: '100%', height: '20%', flexDirection: 'row', display: 'flex'}}>
+                        <View style={{width: '60%', height: '100%', marginLeft: 0,alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
+                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginLeft: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoCurrentTime))}</Text>
+                            <Slider style={{width:'60%', alignSelf: 'center'}}
+                                    minimumTrackTintColor={'black'}
+                                    maximumTrackTintColor={'#666666'}
+                                    thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
+                                    value={this.state.sliderProgress}
+                                     onValueChange={val => {
+                                         this.videoPlayer.seek(val*this.videoDuration)
+                                    }}
+                            />
+                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginRight: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
+                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                        </View>
+                    </View>
+                </View>
             )
         }
     }
@@ -179,6 +223,7 @@ class Player extends React.Component {
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
                 <View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio}}>
                     {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
+                                                    ref = {ref=>this.videoPlayer=ref}
                                                     style={{width: '100%', height: '100%', position: 'absolute'}}
                                                     paused={this.props.isPlaying}
                                                     fullscreen={this.props.fullScreen}
@@ -186,32 +231,7 @@ class Player extends React.Component {
                                                     onProgress={this.playerOnProgress.bind(this)}
                     />) : (<View style={{width: '100%', height: '100%', position: 'absolute'}}></View>)}
                     <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
-                <View style={{position: 'absolute', bottom: 0, width: '100%', height: '20%', backgroundColor: '#00000040', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{width: '100%', height: '20%', flexDirection: 'row', display: 'flex'}}>
-                        <View style={{width: '60%', height: '100%', marginLeft: 0,alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
-                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginLeft: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoCurrentTime))}</Text>
-                            <Slider style={{width:'60%', alignSelf: 'center'}}
-                                    minimumTrackTintColor={'black'}
-                                    maximumTrackTintColor={'#666666'}
-                                    thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
-                                    value={this.state.sliderProgress}
-                                // onValueChange={val => {
-                                //     if (this.props.song.duration>0){
-                                //         this.timer = null
-                                //         sound.setCurrentTime(val*this.props.song.duration)
-                                //         this.addTimer()
-                                //     }
-                                // }}
-                            />
-                            <Text style={{flex: 1, fontSize: 10, color: '#fff', marginRight: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
-                        </View>
-                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'blue', display: 'flex', flexDirection: 'row'}}>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                        </View>
-                    </View>
-                </View>
+                    {this.PlayerBottomControl()}
                 </View>
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
@@ -273,5 +293,6 @@ export default connect((state, ownProps) => {
     loadVideo:(videoId)=>{
         dispatch(API_REQUEST_VIDEO_GET(videoId));
         dispatch(VIDEOPLAYER_ADD(videoId));
+        dispatch(API_REQUEST_VIDEO_RELATION(videoId))
     }
 }))(Player)
