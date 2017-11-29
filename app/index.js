@@ -10,6 +10,7 @@ import AppNavigator from "./config/routes";
 import Player from "./components/player"
 import VideoPlayer from "./components/videoPlayer"
 import {StatusBar, View} from "react-native";
+import ShareScreen from './screens/shareScreen'
 
 const store = createStore(
     rootReducer,
@@ -23,7 +24,8 @@ const store = createStore(
 const AppWithNavigationState = connect(
     (state) => {
         const {videoplayer: {collapsed, isPlaying, videoId, isShow}, entities} = state
-        return ({nav: state.nav, isShow})
+        const {share: {show}} = state
+        return ({nav: state.nav, isShow, shareShow: show})
     }
 )((props) => (
     <View style={{flex: 1}}>
@@ -39,6 +41,7 @@ const AppWithNavigationState = connect(
         })}/>
         <Player style={{width: '100%'}} />
         {props.isShow ? (<VideoPlayer style={{width: '100%'}}/>): null}
+        {props.shareShow ? (<ShareScreen style={{width: '100%', height: '100%'}}/>): null}
     </View>));
 
 export default class extends React.Component {

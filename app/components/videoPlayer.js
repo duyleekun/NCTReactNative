@@ -2,6 +2,7 @@ import {connect} from "react-redux"
 import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_HIDDEN, VIDEOPLAYER_PAUSE, VIDEOPLAYER_FULLSCREEN, VIDEOPLAYER_ADD} from "../actions/videoPlayer";
 import {API_REQUEST_VIDEO_RELATION, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_LYRIC, API_REQUEST_SONG_GET, API_REQUEST_VIDEO_GET} from '../actions/api'
 import {PLAYER_TOGGLE, PLAYER_NOWLIST_ADD, PLAYER_NOWLIST_CLEAR, PLAYER_PLAY} from '../actions/player'
+import {SHARE_TOGGLE} from '../actions/share'
 import React from "react";
 import {Button, Image, Text, View, Animated, PanResponder, FlatList, Slider, TouchableHighlight} from "react-native";
 import Sound from 'react-native-sound';
@@ -241,8 +242,8 @@ class Player extends React.Component {
                         </View>
                         <View style={{marginRight: 8, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                             <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
+                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.showShareScreen()}/>
                             <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <PlaylistTouchableBtn size={32} img={'download'}/>
                         </View>
                     </View>
                     <View>
@@ -294,5 +295,8 @@ export default connect((state, ownProps) => {
         dispatch(API_REQUEST_VIDEO_GET(videoId));
         dispatch(VIDEOPLAYER_ADD(videoId));
         dispatch(API_REQUEST_VIDEO_RELATION(videoId))
+    },
+    showShareScreen:()=>{
+        dispatch(SHARE_TOGGLE())
     }
 }))(Player)
