@@ -24,8 +24,8 @@ const store = createStore(
 const AppWithNavigationState = connect(
     (state) => {
         const {videoplayer: {collapsed, isPlaying, videoId, isShow}, entities} = state
-        const {share: {show}} = state
-        return ({nav: state.nav, isShow, shareShow: show})
+        const {share: {showAnim}} = state
+        return ({nav: state.nav, isShow, shareShow: showAnim})
     }
 )((props) => (
     <View style={{flex: 1}}>

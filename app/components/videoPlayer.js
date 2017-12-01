@@ -4,7 +4,7 @@ import {API_REQUEST_VIDEO_RELATION, API_REQUEST_SONG_RELATION, API_REQUEST_SONG_
 import {PLAYER_TOGGLE, PLAYER_NOWLIST_ADD, PLAYER_NOWLIST_CLEAR, PLAYER_PLAY} from '../actions/player'
 import {SHARE_TOGGLE} from '../actions/share'
 import React from "react";
-import {Button, Image, Text, View, Animated, PanResponder, FlatList, Slider, TouchableHighlight} from "react-native";
+import {Button, Image, Text, View, Animated, PanResponder, FlatList, Slider, TouchableHighlight, StatusBar} from "react-native";
 import Sound from 'react-native-sound';
 import Dimensions from 'Dimensions';
 import Video from "react-native-video";
@@ -13,6 +13,7 @@ import Styles from '../assets/styles/videoPlayerStyle'
 import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {keyFromAction} from "../lib/action_utilities";
 import PlayListTouchableBtn from "./playListTouchableBtnComponent";
+import ImgButton from './imgButton'
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -142,9 +143,9 @@ class Player extends React.Component {
                             <Text style={{flex: 1, fontSize: 10, color: '#fff', marginRight: 2, textAlign: 'center'}}>{this.fancyTime(parseInt(this.videoDuration))}</Text>
                         </View>
                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <PlaylistTouchableBtn style={{position: 'absolute', right: 2, width: 26, height: 26}} size={26} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <View style={{flex: 1}}/>
+                            <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'setting'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
                         </View>
                     </View>
                 </View>
@@ -220,8 +221,9 @@ class Player extends React.Component {
                 bottom: bottomMargin,
                 width: widthAnim,
                 aspectRatio: aspectRatioAnim,
-                backgroundColor: 'green'
+                backgroundColor: 'white'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
+                <StatusBar hidden={!this.props.collapsed}/>
                 <View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio}}>
                     {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
                                                     ref = {ref=>this.videoPlayer=ref}
@@ -231,6 +233,11 @@ class Player extends React.Component {
                                                     progressUpdateInterval={250.0}
                                                     onProgress={this.playerOnProgress.bind(this)}
                     />) : (<View style={{width: '100%', height: '100%', position: 'absolute'}}></View>)}
+                    <View style={{position: 'absolute', display: 'flex', flexDirection: 'row', top: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000040', width: '100%', height: '20%'}}>
+                        <ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}}/>
+                        <View style={{flex: 1}}/>
+                        <ImgButton img={'like'} style={{marginRight: 8, width: 36, height: 36}}/>
+                    </View>
                     <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
                     {this.PlayerBottomControl()}
                 </View>
@@ -241,9 +248,9 @@ class Player extends React.Component {
                             <Text style={Styles.artist}>Ca si</Text>
                         </View>
                         <View style={{marginRight: 8, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
-                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.showShareScreen()}/>
-                            <PlaylistTouchableBtn size={32} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <ImgButton style={{height: 36, aspectRatio: 1, marginRight: 8}} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
+                            <ImgButton style={{height: 36, aspectRatio: 1, marginRight: 8}} img={'download'} onClick={()=>this.props.showShareScreen()}/>
+                            <ImgButton style={{height: 36, aspectRatio: 1, marginRight: 8}} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
                         </View>
                     </View>
                     <View>
