@@ -14,6 +14,7 @@ import {ListItem, Left, Icon, Right, Title } from "native-base";
 import {keyFromAction} from "../lib/action_utilities";
 import PlayListTouchableBtn from "./playListTouchableBtnComponent";
 import ImgButton from './imgButton'
+import SystemSetting from 'react-native-system-setting'
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -40,8 +41,9 @@ class Player extends React.Component {
     }
 
     componentWillMount() {
-        let sound = require('react-native-sound')
-        debugger
+        SystemSetting.getVolume().then((volume)=>{
+            this.volume = volume
+        });
         this.StartImageRotateFunction()
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
@@ -53,21 +55,21 @@ class Player extends React.Component {
                         if (gestureState.dx>0){
                             if (gestureState.dx>this.maxX){
                                 this.maxX = gestureState.dx
-                                this.volume = this.volume + 0.1
+                                this.volume = this.volume < 1 ? this.volume + 0.1: 1
                             } else {
-                                this.volume = this.volume - 0.1
+                                this.volume = this.volume > 0 ? this.volume - 0.1: 0
                             }
                         } else {
                             if (gestureState.dx<this.minX){
                                 this.minX = gestureState.dx
-                                this.volume = this.volume - 0.1
+                                this.volume = this.volume > 0 ? this.volume - 0.1: 0
                             } else {
-                                this.volume = this.volume + 0.1
+                                this.volume = this.volume < 1 ? this.volume + 0.1: 1
                             }
                         }
+                        SystemSetting.setVolume(this.volume)
                     } else {
-                        this.volume = this.volume + 1
-                        debugger
+                        // this.volume = this.volume + 1
                     }
                 }
                 console.log('vol : ' + this.volume)
