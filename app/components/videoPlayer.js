@@ -29,6 +29,7 @@ class Player extends React.Component {
     maxX = 0
     minY = 0
     maxY = 0
+    panCurrentSeek = 0
 
     constructor(props) {
         super(props);
@@ -69,10 +70,25 @@ class Player extends React.Component {
                         }
                         SystemSetting.setVolume(this.volume)
                     } else {
-                        // this.volume = this.volume + 1
+                        if (gestureState.dx>0){
+                            if (gestureState.dy>this.maxY){
+                                this.maxY = gestureState.dy
+                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration
+                            } else {
+                                this.panCurrentSeek = this.panCurrentSeek > 0 ? this.panCurrentSeek - (this.videoDuration/100): 0
+                            }
+                        } else {
+                            if (gestureState.dy<this.minY){
+                                this.minY = gestureState.dy
+                                this.panCurrentSeek = this.panCurrentSeek > 0 ? this.panCurrentSeek - (this.videoDuration/100): 0
+                            } else {
+                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration
+                            }
+                        }
                     }
+                    this.videoPlayer.seek(this.panCurrentSeek)
                 }
-                console.log('vol : ' + this.volume)
+                console.log('vol : ' + this.panCurrentSeek)
 
                 return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) && this.props.fullScreen == false//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
