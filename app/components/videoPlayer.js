@@ -18,18 +18,20 @@ import ImgButton from './imgButton'
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
 
-let sound = null;
-
-
 class Player extends React.Component {
 
     videoRelation = []
     videoDuration = 0
     videoCurrentTime = 0
+    volume = 0
+    minX = 0
+    maxX = 0
+    minY = 0
+    maxY = 0
 
     constructor(props) {
         super(props);
-
+        this.RotateValueHolder = new Animated.Value(0);
         this.state = {
             pan: new Animated.ValueXY(),
             stickyHeaderIndices: [],
@@ -38,13 +40,39 @@ class Player extends React.Component {
     }
 
     componentWillMount() {
+        let sound = require('react-native-sound')
+        debugger
+        this.StartImageRotateFunction()
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 console.log('dx : ' + gestureState.dx)
                 console.log('dy : ' + gestureState.dy)
+                if (this.props.fullScreen == true){
+                    if (Math.abs(gestureState.dx)>Math.abs(gestureState.dy)){
+                        if (gestureState.dx>0){
+                            if (gestureState.dx>this.maxX){
+                                this.maxX = gestureState.dx
+                                this.volume = this.volume + 0.1
+                            } else {
+                                this.volume = this.volume - 0.1
+                            }
+                        } else {
+                            if (gestureState.dx<this.minX){
+                                this.minX = gestureState.dx
+                                this.volume = this.volume - 0.1
+                            } else {
+                                this.volume = this.volume + 0.1
+                            }
+                        }
+                    } else {
+                        this.volume = this.volume + 1
+                        debugger
+                    }
+                }
+                console.log('vol : ' + this.volume)
 
-                return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx))//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
+                return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) && this.props.fullScreen == false//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
 
             onPanResponderGrant: (e, gestureState) => {
@@ -58,6 +86,10 @@ class Player extends React.Component {
 
             onPanResponderRelease: (e, {vx, vy}) => {
                 // Flatten the offset to avoid erratic behavior
+                this.minX = 0
+                this.maxX = 0
+                this.minY = 0
+                this.maxY = 0
                 const {pan} = this.state
                 const {collapsed} = this.props
                 console.log('collapsed: ' + collapsed)
@@ -91,6 +123,21 @@ class Player extends React.Component {
                 toValue: {x: 0, y: (collapsed ? 0 : -Dimensions.get('window').height)}, // Animate to final value of 1
             }
         ).start();
+    }
+
+    StartImageRotateFunction () {
+
+        this.RotateValueHolder.setValue(0)
+
+        Animated.timing(
+            this.RotateValueHolder,
+            {
+                toValue: 1,
+                duration: 1200,
+                // easing: Easing.linear
+            }
+        ).start(() => {console.log('end anim')})
+
     }
 
     _renderItem = ({item, index})=>{
@@ -145,9 +192,24 @@ class Player extends React.Component {
                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row'}}>
                             <View style={{flex: 1}}/>
                             <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'setting'} onClick={()=>this.props.setFullScreen(true)}/>
-                            <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'download'} onClick={()=>this.props.setFullScreen(true)}/>
+                            <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'download'} onClick={()=>{
+                                this.props.setFullScreen(!this.props.fullScreen)
+                                this.StartImageRotateFunction()
+                            }}/>
                         </View>
                     </View>
+                </View>
+            )
+        }
+    }
+
+    PlayerTopControl(){
+        if (this.props.collapsed == false){
+            return(
+                <View style={{position: 'absolute', display: 'flex', flexDirection: 'row', top: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000040', width: '100%', height: '20%'}}>
+                    <ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}} onClick={()=>this.props.toggleView()}/>
+                    <View style={{flex: 1}}/>
+                    <ImgButton img={'like'} style={{marginRight: 8, width: 36, height: 36}}/>
                 </View>
             )
         }
@@ -172,6 +234,11 @@ class Player extends React.Component {
         const aspectRatio = 16/9
         const videoComponentMaxHeight = windowWidth/aspectRatio
         const videoComponentMinHeight = windowWidth/2/aspectRatio
+        const RotateData = this.RotateValueHolder.interpolate({
+            inputRange: [0, 1],
+            outputRange: this.props.fullScreen ? ['0deg', '90deg']: ['90deg', '0deg'],
+            extrapolate: 'clamp'
+        })
         let widthAnim = translateY.interpolate({
             inputRange: inputRange,
             outputRange: ['100%', '50%'],
@@ -224,23 +291,18 @@ class Player extends React.Component {
                 backgroundColor: 'white'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
                 <StatusBar hidden={!this.props.collapsed}/>
-                <View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio}}>
+                <Animated.View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio, zIndex: 10, transform: [{rotate: RotateData}]}}>
                     {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
                                                     ref = {ref=>this.videoPlayer=ref}
                                                     style={{width: '100%', height: '100%', position: 'absolute'}}
                                                     paused={this.props.isPlaying}
-                                                    fullscreen={this.props.fullScreen}
                                                     progressUpdateInterval={250.0}
                                                     onProgress={this.playerOnProgress.bind(this)}
                     />) : (<View style={{width: '100%', height: '100%', position: 'absolute'}}></View>)}
-                    <View style={{position: 'absolute', display: 'flex', flexDirection: 'row', top: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000040', width: '100%', height: '20%'}}>
-                        <ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}}/>
-                        <View style={{flex: 1}}/>
-                        <ImgButton img={'like'} style={{marginRight: 8, width: 36, height: 36}}/>
-                    </View>
+                    {this.PlayerTopControl()}
                     <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
                     {this.PlayerBottomControl()}
-                </View>
+                </Animated.View>
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
                         <View style={{marginLeft: 8, flex: 1}}>

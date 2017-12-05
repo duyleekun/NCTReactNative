@@ -17,5 +17,5 @@ export default handleActions({
     [VIDEOPLAYER_TOGGLE]: (state, action) => state.update('collapsed', (now) => !now),
     [VIDEOPLAYER_SHOW]: (state, action) => state.set('isShow', true),
     [VIDEOPLAYER_HIDDEN]: (state, action) => state.set('isShow', false),
-    [VIDEOPLAYER_FULLSCREEN]: (state, action) => state.set('fullScreen', (now)=>!now),
+    [VIDEOPLAYER_FULLSCREEN]: (state, action) => state.set('fullScreen', action.payload),
 }, initialState)

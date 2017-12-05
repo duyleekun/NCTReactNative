@@ -6,6 +6,7 @@ import {FlatList, Image, Text, View, Animated, TouchableOpacity} from "react-nat
 import * as React from "react";
 import FadeInView from '../components/fadeInView'
 import {SHARE_TOGGLE, SHARE_SHOW} from '../actions/share'
+import Share from 'react-native-share'
 
 import Dimensions from 'Dimensions';
 
@@ -47,16 +48,25 @@ class ShareScreen extends React.Component {
     }
 
     _renderItemPager = ({item, index}) => {
+        const video = this.props.entities.videos[this.props.videoId]
+        let shareOptions = {
+            title: 'QWork-Nhaccuatui',
+            message: video.videoTitle,
+            url: video.linkShare,
+            subject: 'Share link'
+        }
         return(
             <View style={{width: Dimensions.get('window').width/4, height: '100%'}}>
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <View style={{flex: 1}}/>
+                <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}
+                    onPress={()=>{Share.shareSingle(Object.assign(shareOptions,{
+                        'social': 'facebook'
+                    }))}}
+                >
                     <View style={{alignItems: 'center'}}>
                         <Image source={require('../assets/images/com_facebook_button_icon_blue.png')} style={{width: '80%', aspectRatio: 1}}/>
                         <Text style={{ marginTop: 4, fontSize: 14, textAlign: 'center', textTransform: 'capitalize', color: 'white'}}>{item.name}</Text>
                     </View>
-                    <View style={{flex: 1}}/>
-                </View>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -93,9 +103,10 @@ class ShareScreen extends React.Component {
 
 
 export default connect(
-    (state, ownProps)=>{
+(state, ownProps)=>{
         const {share: {showAnim}} = state
-        return {showAnim}
+    const {videoplayer: {collapsed, isPlaying, videoId, fullScreen}, entities} = state
+    return {showAnim, videoId, entities}
     }, (dispatch, ownProps)=>({
         shareToggle:()=>{
             dispatch(SHARE_SHOW(false));

@@ -3,6 +3,7 @@ package com.mynct;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.tapme.RNVolume.VolumePackage;
 import cl.json.RNSharePackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.cmcewen.blurview.BlurViewPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new VolumePackage(),
             new RNSharePackage(),
             new RNFetchBlobPackage(),
             new BlurViewPackage(),
