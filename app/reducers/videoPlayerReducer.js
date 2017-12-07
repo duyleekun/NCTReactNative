@@ -10,7 +10,7 @@ let initialState = Immutable({collapsed: true, isPlaying: false, videoId: '', is
 
 export default handleActions({
     [VIDEOPLAYER_PLAY]: (state, action) => state.set('isPlaying', true),
-    [VIDEOPLAYER_PAUSE]: (state, action) => state.set('isPlaying', false),
+    [VIDEOPLAYER_PAUSE]: (state, action) => state.update('isPlaying', (now)=>!now),
     [VIDEOPLAYER_ADD]: (state, action) => state.set('videoId', action.payload),
     [VIDEOPLAYER_EXPAND]: (state, action) => state.set('collapsed', false),
     [VIDEOPLAYER_COLLAPSE]: (state, action) => state.set('collapsed', true),

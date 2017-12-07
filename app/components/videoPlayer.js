@@ -37,7 +37,6 @@ class Player extends React.Component {
         this.state = {
             pan: new Animated.ValueXY(),
             stickyHeaderIndices: [],
-            sliderProgress: 0,
         };
     }
 
@@ -47,27 +46,50 @@ class Player extends React.Component {
         });
         this.StartImageRotateFunction()
         this._panResponder = PanResponder.create({
-            onMoveShouldSetResponderCapture: () => true,
+            onMoveShouldSetResponderCapture: () => {
+                return true
+            },
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
                 console.log('dx : ' + gestureState.dx)
                 console.log('dy : ' + gestureState.dy)
-                if (this.props.fullScreen == true){
+                if (this.props.fullScreen){
+                    return gestureState.dx != 0 && gestureState.dy != 0
+                } else {
+                    return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx))//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
+                }
+            },
+
+            onPanResponderGrant: (e, gestureState) => {
+                if (this.props.fullScreen == false){
+                    this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
+                    this.state.pan.setValue({x: 0, y: 0});
+                }
+            },
+
+            onPanResponderMove:(event, gestureState)=>{
+                console.log('on move')
+                if (this.props.fullScreen == false){
+                    return Animated.event([
+                        null, {dx: 0, dy: this.state.pan.y},
+                    ])
+                } else {
                     if (Math.abs(gestureState.dx)>Math.abs(gestureState.dy)){
                         if (gestureState.dx>0){
                             if (gestureState.dx>this.maxX){
                                 this.maxX = gestureState.dx
-                                this.volume = this.volume < 1 ? this.volume + 0.1: 1
+                                this.volume = this.volume < 1 ? this.volume + 0.05: 1
                             } else {
-                                this.volume = this.volume > 0 ? this.volume - 0.1: 0
+                                this.volume = this.volume > 0 ? this.volume - 0.05: 0
                             }
                         } else {
                             if (gestureState.dx<this.minX){
                                 this.minX = gestureState.dx
-                                this.volume = this.volume > 0 ? this.volume - 0.1: 0
+                                this.volume = this.volume > 0 ? this.volume - 0.01: 0
                             } else {
-                                this.volume = this.volume < 1 ? this.volume + 0.1: 1
+                                this.volume = this.volume < 1 ? this.volume + 0.01: 1
                             }
                         }
+                        console.log('volume : ' + this.volume)
                         SystemSetting.setVolume(this.volume)
                     } else {
                         if (gestureState.dx>0){
@@ -85,22 +107,11 @@ class Player extends React.Component {
                                 this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration
                             }
                         }
+                        console.log('seek time: ' + this.panCurrentSeek)
+                        this.videoPlayer.seek(this.panCurrentSeek)
                     }
-                    this.videoPlayer.seek(this.panCurrentSeek)
                 }
-                console.log('vol : ' + this.panCurrentSeek)
-
-                return (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) && this.props.fullScreen == false//&& Math.max([Math.abs(gestureState.dx), Math.abs(gestureState.dy)]) < 10
             },
-
-            onPanResponderGrant: (e, gestureState) => {
-                this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
-                this.state.pan.setValue({x: 0, y: 0});
-            },
-
-            onPanResponderMove: Animated.event([
-                null, {dx: 0, dy: this.state.pan.y},
-            ]),
 
             onPanResponderRelease: (e, {vx, vy}) => {
                 // Flatten the offset to avoid erratic behavior
@@ -108,24 +119,27 @@ class Player extends React.Component {
                 this.maxX = 0
                 this.minY = 0
                 this.maxY = 0
+                console.log('reset pangesture')
                 const {pan} = this.state
                 const {collapsed} = this.props
                 console.log('collapsed: ' + collapsed)
-                pan.flattenOffset();
+                if (this.props.fullScreen == false){
+                    pan.flattenOffset();
 
-                console.log(vx, vy);
-                if (Math.abs(vy) > 1 || Math.abs(this.state.pan.y._value) > 100) {
-                    this.props.toggleView()
-                }
-                Animated.spring(                            // Animate value over time
-                    this.state.pan,                      // The value to drive
-                    {
-                        velocity: {x: 0, y: vy},
-                        // deceleration: {x: 1, y:1},
-                        toValue: {x: 0, y: collapsed ? 0 : -Dimensions.get('window').height},                             // Animate to final value of 1
+                    console.log(vx, vy);
+                    if (Math.abs(vy) > 1 || Math.abs(this.state.pan.y._value) > 100) {
+                        this.props.toggleView()
                     }
-                ).start();                                  // Start the animation
+                    Animated.spring(                            // Animate value over time
+                        this.state.pan,                      // The value to drive
+                        {
+                            velocity: {x: 0, y: vy},
+                            // deceleration: {x: 1, y:1},
+                            toValue: {x: 0, y: collapsed ? 0 : -Dimensions.get('window').height},                             // Animate to final value of 1
+                        }
+                    ).start();                                  // Start the animation
 
+                }
             }
         });
     }
@@ -200,7 +214,7 @@ class Player extends React.Component {
                                     minimumTrackTintColor={'black'}
                                     maximumTrackTintColor={'#666666'}
                                     thumbImage={require('../assets/images/bt_playpage_button_progress_normal.png')}
-                                    value={this.state.sliderProgress}
+                                    value={this.videoCurrentTime/this.videoDuration}
                                      onValueChange={val => {
                                          this.videoPlayer.seek(val*this.videoDuration)
                                     }}
@@ -223,10 +237,13 @@ class Player extends React.Component {
 
     PlayerTopControl(){
         if (this.props.collapsed == false){
+            const video = this.props.entities.videos[this.props.videoId]
             return(
                 <View style={{position: 'absolute', display: 'flex', flexDirection: 'row', top: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000040', width: '100%', height: '20%'}}>
-                    <ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}} onClick={()=>this.props.toggleView()}/>
+                    {this.props.fullScreen ? (<Text style={{fontSize: 14, color: 'white'}}>{video.videoTitle}</Text>):(<ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}} onClick={()=>this.props.toggleView()}/>)}
                     <View style={{flex: 1}}/>
+                    {this.props.fullScreen ? (<ImgButton img={'download'} style={{marginRight: 8, width: 36, height: 36}}/>): null}
+                    {this.props.fullScreen ? (<ImgButton img={'download'} style={{marginRight: 8, width: 36, height: 36}}/>): null}
                     <ImgButton img={'like'} style={{marginRight: 8, width: 36, height: 36}}/>
                 </View>
             )
@@ -236,7 +253,7 @@ class Player extends React.Component {
     playerOnProgress = (progress)=>{
         this.videoCurrentTime = progress.currentTime
         this.videoDuration = progress.playableDuration
-        this.setState({sliderProgress: parseFloat(progress.currentTime/progress.playableDuration)})
+        this.forceUpdate();
     }
 
     fancyTime(value) {
@@ -316,6 +333,7 @@ class Player extends React.Component {
                                                     paused={this.props.isPlaying}
                                                     progressUpdateInterval={250.0}
                                                     onProgress={this.playerOnProgress.bind(this)}
+                                                    onend={()=>this.props.loadVideo(this.videoRelation[0].videoKey)}
                     />) : (<View style={{width: '100%', height: '100%', position: 'absolute'}}></View>)}
                     {this.PlayerTopControl()}
                     <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
@@ -324,8 +342,9 @@ class Player extends React.Component {
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
                         <View style={{marginLeft: 8, flex: 1}}>
-                            <Text style={Styles.title}>Bai Hat Cua Em</Text>
-                            <Text style={Styles.artist}>Ca si</Text>
+                            <Text style={Styles.title}>{video.videoTitle}</Text>
+                            <Text style={Styles.artist}>{video.artistName}</Text>
+                            <Text style={Styles.artist}>{video.view}</Text>
                         </View>
                         <View style={{marginRight: 8, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                             <ImgButton style={{height: 36, aspectRatio: 1, marginRight: 8}} img={'download'} onClick={()=>this.props.loadSong(video.songKey)}/>
