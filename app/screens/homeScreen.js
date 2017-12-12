@@ -19,11 +19,21 @@ import HomeAlbum from "../components/homeAlbumComponent"
 import HomeVideo from "../components/homeVideoComponent"
 import {PLAYER_NOWLIST_ADD, PLAYER_TOGGLE} from "../actions/player";
 import {VIDEOPLAYER_TOGGLE, VIDEOPLAYER_EXPAND, VIDEOPLAYER_ADD, VIDEOPLAYER_PLAY, VIDEOPLAYER_SHOW} from '../actions/videoPlayer'
+import Orientation from 'react-native-orientation';
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({navigationOptions}) => ({
         title: 'Home'
     });
+
+    componentWillMount(){
+        Orientation.getOrientation((err, orientation)=>{
+            if (orientation === 'LANDSCAPE'){
+                Orientation.lockToPortrait()
+                Orientation.unlockAllOrientations()
+            }
+        })
+    }
 
     componentDidMount() {
         let props = this.props;

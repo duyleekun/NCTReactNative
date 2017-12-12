@@ -132,6 +132,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-orientation')
     compile project(':react-native-system-setting')
     compile project(':react-native-volume')
     compile project(':react-native-share')

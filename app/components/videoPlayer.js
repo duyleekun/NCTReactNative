@@ -15,6 +15,7 @@ import {keyFromAction} from "../lib/action_utilities";
 import PlayListTouchableBtn from "./playListTouchableBtnComponent";
 import ImgButton from './imgButton'
 import SystemSetting from 'react-native-system-setting'
+import Orientation from 'react-native-orientation';
 
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
@@ -33,7 +34,6 @@ class Player extends React.Component {
 
     constructor(props) {
         super(props);
-        this.RotateValueHolder = new Animated.Value(0);
         this.state = {
             pan: new Animated.ValueXY(),
             stickyHeaderIndices: [],
@@ -44,7 +44,6 @@ class Player extends React.Component {
         SystemSetting.getVolume().then((volume)=>{
             this.volume = volume
         });
-        this.StartImageRotateFunction()
         this._panResponder = PanResponder.create({
             onMoveShouldSetResponderCapture: () => {
                 return true
@@ -73,42 +72,48 @@ class Player extends React.Component {
                         null, {dx: 0, dy: this.state.pan.y},
                     ])
                 } else {
+                    console.log('dx : ' + gestureState.dx)
+                    console.log('dy : ' + gestureState.dy)
                     if (Math.abs(gestureState.dx)>Math.abs(gestureState.dy)){
                         if (gestureState.dx>0){
                             if (gestureState.dx>this.maxX){
+                                console.log('max 1')
                                 this.maxX = gestureState.dx
-                                this.volume = this.volume < 1 ? this.volume + 0.05: 1
+                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration - 1
                             } else {
-                                this.volume = this.volume > 0 ? this.volume - 0.05: 0
+                                console.log('max 2')
+                                this.panCurrentSeek = this.panCurrentSeek > 0 ? this.panCurrentSeek - (this.videoDuration/100): 0
                             }
                         } else {
                             if (gestureState.dx<this.minX){
+                                console.log('min 1')
                                 this.minX = gestureState.dx
-                                this.volume = this.volume > 0 ? this.volume - 0.01: 0
+                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration - 1
                             } else {
-                                this.volume = this.volume < 1 ? this.volume + 0.01: 1
-                            }
-                        }
-                        console.log('volume : ' + this.volume)
-                        SystemSetting.setVolume(this.volume)
-                    } else {
-                        if (gestureState.dx>0){
-                            if (gestureState.dy>this.maxY){
-                                this.maxY = gestureState.dy
-                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration
-                            } else {
+                                console.log('min 2')
                                 this.panCurrentSeek = this.panCurrentSeek > 0 ? this.panCurrentSeek - (this.videoDuration/100): 0
-                            }
-                        } else {
-                            if (gestureState.dy<this.minY){
-                                this.minY = gestureState.dy
-                                this.panCurrentSeek = this.panCurrentSeek > 0 ? this.panCurrentSeek - (this.videoDuration/100): 0
-                            } else {
-                                this.panCurrentSeek = this.panCurrentSeek < this.videoDuration ? this.panCurrentSeek + (this.videoDuration/100): this.videoDuration
                             }
                         }
                         console.log('seek time: ' + this.panCurrentSeek)
                         this.videoPlayer.seek(this.panCurrentSeek)
+                    } else {
+                        if (gestureState.dy>0){
+                            if (gestureState.dy>this.maxY){
+                                this.maxY = gestureState.dy
+                                this.volume = this.volume > 0 ? this.volume - 0.01: 0
+                            } else {
+                                this.volume = this.volume < 1 ? this.volume + 0.01: 1
+                            }
+                        } else {
+                            if (gestureState.dy<this.minY){
+                                this.minY = gestureState.dy
+                                this.volume = this.volume < 1 ? this.volume + 0.01: 1
+                            } else {
+                                this.volume = this.volume > 0 ? this.volume - 0.01: 0
+                            }
+                        }
+                        console.log('volume : ' + this.volume)
+                        SystemSetting.setVolume(this.volume)
                     }
                 }
             },
@@ -155,21 +160,13 @@ class Player extends React.Component {
                 toValue: {x: 0, y: (collapsed ? 0 : -Dimensions.get('window').height)}, // Animate to final value of 1
             }
         ).start();
-    }
 
-    StartImageRotateFunction () {
-
-        this.RotateValueHolder.setValue(0)
-
-        Animated.timing(
-            this.RotateValueHolder,
-            {
-                toValue: 1,
-                duration: 1200,
-                // easing: Easing.linear
-            }
-        ).start(() => {console.log('end anim')})
-
+        if (this.props.fullScreen){
+            Orientation.lockToLandscapeRight()
+        } else {
+            Orientation.lockToPortrait()
+        }
+        Orientation.unlockAllOrientations()
     }
 
     _renderItem = ({item, index})=>{
@@ -226,7 +223,6 @@ class Player extends React.Component {
                             <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'setting'} onClick={()=>this.props.setFullScreen(true)}/>
                             <ImgButton style={{marginRight: 8, height: 36, aspectRatio: 1}} img={'download'} onClick={()=>{
                                 this.props.setFullScreen(!this.props.fullScreen)
-                                this.StartImageRotateFunction()
                             }}/>
                         </View>
                     </View>
@@ -243,7 +239,7 @@ class Player extends React.Component {
                     {this.props.fullScreen ? (<Text style={{fontSize: 14, color: 'white'}}>{video.videoTitle}</Text>):(<ImgButton img={'hide'} style={{marginLeft: 8, width: 36, height: 36}} onClick={()=>this.props.toggleView()}/>)}
                     <View style={{flex: 1}}/>
                     {this.props.fullScreen ? (<ImgButton img={'download'} style={{marginRight: 8, width: 36, height: 36}}/>): null}
-                    {this.props.fullScreen ? (<ImgButton img={'download'} style={{marginRight: 8, width: 36, height: 36}}/>): null}
+                    {this.props.fullScreen ? (<ImgButton img={'download'} style={{marginRight: 8, width: 36, height: 36}} onClick={()=>this.props.shareToggle()}/>): null}
                     <ImgButton img={'like'} style={{marginRight: 8, width: 36, height: 36}}/>
                 </View>
             )
@@ -252,7 +248,7 @@ class Player extends React.Component {
 
     playerOnProgress = (progress)=>{
         this.videoCurrentTime = progress.currentTime
-        this.videoDuration = progress.playableDuration
+        // this.videoDuration = progress.playableDuration
         this.forceUpdate();
     }
 
@@ -269,11 +265,6 @@ class Player extends React.Component {
         const aspectRatio = 16/9
         const videoComponentMaxHeight = windowWidth/aspectRatio
         const videoComponentMinHeight = windowWidth/2/aspectRatio
-        const RotateData = this.RotateValueHolder.interpolate({
-            inputRange: [0, 1],
-            outputRange: this.props.fullScreen ? ['0deg', '90deg']: ['90deg', '0deg'],
-            extrapolate: 'clamp'
-        })
         let widthAnim = translateY.interpolate({
             inputRange: inputRange,
             outputRange: ['100%', '50%'],
@@ -314,6 +305,7 @@ class Player extends React.Component {
         if (video.streamURL.length > 0){
             streamurl = video.streamURL[video.streamURL.length-1].stream
         }
+        this.videoDuration = video.time
         return (
             <Animated.View style={{
                 transform: [{translateY: translateAnim}],
@@ -326,7 +318,7 @@ class Player extends React.Component {
                 backgroundColor: 'white'
             }} {...this._panResponder.panHandlers} clipsToBounds={false}>
                 <StatusBar hidden={!this.props.collapsed}/>
-                <Animated.View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio, zIndex: 10, transform: [{rotate: RotateData}]}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', position: 'relative', top: 0, width: '100%', aspectRatio: aspectRatio, zIndex: 10}}>
                     {streamurl.length > 0 ? (<Video resizeMode='cover' source={{uri: streamurl}}
                                                     ref = {ref=>this.videoPlayer=ref}
                                                     style={{width: '100%', height: '100%', position: 'absolute'}}
@@ -338,7 +330,7 @@ class Player extends React.Component {
                     {this.PlayerTopControl()}
                     <PlayListTouchableBtn size={36} img={'play'} onClick={()=>this.props.pause()} style={{position: 'absolute'}}/>
                     {this.PlayerBottomControl()}
-                </Animated.View>
+                </View>
                 <Animated.View style={{width: windowWidth, opacity: opacityAnim, backgroundColor: 'white'}}>
                     <View style={{width: '100%', height: 80, display: 'flex',flexDirection: 'row' , alignItems:'center'}}>
                         <View style={{marginLeft: 8, flex: 1}}>
